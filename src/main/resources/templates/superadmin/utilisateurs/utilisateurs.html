@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<body>
+<!-- This is a fragment that will be included in the dashboard -->
+<div th:fragment="utilisateurs-content">
+    <div class="welcome-banner">
+        <h2>Gestion des Utilisateurs</h2>
+        <p>Consultez et gérez les utilisateurs de la plateforme.</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" th:if="${utilisateurs == null || utilisateurs.isEmpty() }">
+        <i class="fas fa-users"></i>
+        <h3>Aucun utilisateur</h3>
+        <p>Aucun utilisateur n'a été trouvé dans le système.</p>
+    </div>
+
+    <!-- Users Grid -->
+    <div class="user-grid" th:unless="${utilisateurs == null || utilisateurs.isEmpty() }">
+        <!-- User Card as Figure -->
+        <div class="user-card" th:each="user : ${utilisateurs}" th:attr="data-user-id=${user.userId}" onclick="showUserDetails(this)">
+            <!-- User Avatar -->
+            <div class="user-avatar">
+                <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Photo de profil">
+                <i th:if="${user.logoPath == null || user.logoPath.isEmpty()}" class="fas fa-user fa-3x"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" th:text="${user.nom}">Nom d'utilisateur</div>
+
+                <div class="user-info">
+                    <i class="fas fa-envelope"></i>
+                    <span th:text="${user.email}">email@example.com</span>
+                </div>
+
+                <div class="user-info">
+                    <i class="fas fa-phone"></i>
+                    <span th:text="${user.telephone}">0123456789</span>
+                </div>
+
+                <div class="user-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${user.localisation}">Paris, France</span>
+                </div>
+            </div>
+            <div class="user-actions">
+                <button class="action-btn edit-btn"
+                        th:attr="onclick=|editUser('${user.userId}'); event.stopPropagation();|">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+                <button class="action-btn delete-btn"
+                        th:attr="onclick=|deleteUser('${user.userId}'); event.stopPropagation();|">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="user-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="user-details-container">
+                <!-- User details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal - MOVED OUTSIDE THE DETAILS MODAL -->
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div th:replace="~{superadmin/utilisateurs/editUserForm :: editUserForm}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

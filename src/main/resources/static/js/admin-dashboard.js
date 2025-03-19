@@ -264,11 +264,6 @@ function showOrganizationDetails(element) {
         })
         .then(org => {
             // Format registration date
-            const registrationDate = new Date(org.dateInscription).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
 
             // Create HTML for organization details
             let html = `
@@ -351,4 +346,301 @@ function showOrganizationDetails(element) {
             modal.style.display = 'none';
         }
     };
+}
+// User Management Functions
+
+function loadUsersContent() {
+    // Hide other content
+    document.getElementById('dashboard-content').style.display = 'none';
+    document.getElementById('organisations-content').style.display = 'none';
+    document.getElementById('charities-content').style.display = 'none';
+    document.getElementById('users-content').style.display = 'block';
+
+    // Update active tab
+    setActiveTab('users-nav');
+
+    // Fetch users content
+    fetch('/superadmin/utilisateurs-content')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('users-content').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading users content:', error);
+            document.getElementById('users-content').innerHTML = '<div class="error-message">Error loading content. Please try again.</div>';
+        });
+}
+
+// User detail modal functions
+function showUserDetails(element) {
+    const userId = element.getAttribute('data-user-id');
+    const modal = document.getElementById('user-details-modal');
+
+    // Get the user details
+    fetch(`/superadmin/api/utilisateurs/${userId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(user => {
+            // Create HTML for user details with all attributes
+            let html = `
+                <div class="user-detail-header">
+                    <div class="user-detail-avatar">
+                       ${user.logoPath ? `<img src="data:image/png;base64,${user.logoPath }" alt="Logo de ${user.nom }">` :
+                '<i class="fas fa-building fa-3x" style="color: #2c3e50;"></i>'}
+                    </div>
+                    <div class="user-detail-title">
+                        <h2>${user.nom}</h2>
+                        <div class="user-detail-id"> ${user.email}</div>
+                        <div class="user-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${user.localisation}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-detail-section">
+                    <h3>Informations de contact</h3>
+                    <div class="user-detail-grid">
+                        <div class="user-detail-item">
+                            <div class="user-detail-label">Email</div>
+                            <div class="user-detail-value">${user.email}</div>
+                        </div>
+                        
+                        <div class="user-detail-item">
+                            <div class="user-detail-label">Téléphone</div>
+                            <div class="user-detail-value">${user.telephone}</div>
+                        </div>
+                        
+                        <div class="user-detail-item">
+                            <div class="user-detail-label">Localisation</div>
+                            <div class="user-detail-value">${user.localisation}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-detail-section">
+                    <h3>Historique des dons</h3>
+                    ${user.historiqueDons && user.historiqueDons.length > 0 ?
+                `<div class="donation-history">
+                            ${user.historiqueDons.map(don => `
+                                <div class="donation-item">
+                                    <div class="donation-info">
+                                        <div class="donation-title">${don.actionChariteNom || 'Action de charité'}</div>
+                                        <div class="donation-date">${new Date(don.date).toLocaleDateString('fr-FR')}</div>
+                                    </div>
+                                    <div class="donation-amount">${don.montant} €</div>
+                                </div>
+                            `).join('')}
+                        </div>` :
+                '<p>Aucun don effectué par cet utilisateur.</p>'
+            }
+                </div>
+                
+                <div class="user-detail-section">
+                    <h3>Actions aimées</h3>
+                    ${user.likedActions && user.likedActions.length > 0 ?
+                `<div class="liked-actions">
+                            <div class="user-detail-value">
+                                ${user.likedActions.map(action => `
+                                    <span class="liked-action-badge">${action}</span>
+                                `).join(' ')}
+                            </div>
+                        </div>` :
+                '<p>Aucune action aimée par cet utilisateur.</p>'
+            }
+                </div>
+                
+                <div class="user-detail-section">
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editUser('${user.userId}')">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteUser('${user.userId}')">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('user-details-container').innerHTML = html;
+            modal.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+            alert('Une erreur est survenue lors du chargement des détails de l\'utilisateur.');
+        });
+
+
+    // Get the <span> element that closes the modal
+    const span = document.getElementsByClassName('close-modal')[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = 'none';
+    };
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+
+
+}
+
+
+
+/* User Management Functions */
+// Edit user function - complete rewrite
+function editUser(userId) {
+    console.log("Edit user function called with ID:", userId);
+
+    // Close details modal if it's open
+    const detailsModal = document.getElementById('user-details-modal');
+    if (detailsModal) {
+        detailsModal.style.display = 'none';
+    }
+
+    // Get user data to populate the form
+    fetch(`/superadmin/api/utilisateurs/${userId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(user => {
+            console.log("Fetched user data for editing:", user);
+
+            // Get the edit form
+            const editForm = document.getElementById('editUserForm');
+            if (editForm) {
+                // CRITICAL: Make form visible
+                editForm.style.display = 'block';
+                console.log("Made edit form visible");
+            }
+
+            // Set the form fields
+            document.getElementById('editUserId').value = user.userId;
+            document.getElementById('editNom').value = user.nom || '';
+            document.getElementById('editEmail').value = user.email || '';
+            document.getElementById('editTelephone').value = user.telephone || '';
+            document.getElementById('editLocalisation').value = user.localisation || '';
+
+            // Set the current logo
+            const logoContainer = document.getElementById('currentUserLogo');
+            if (logoContainer) {
+                if (user.logoPath) {
+                    logoContainer.innerHTML = `<img src="data:image/png;base64,${user.logoPath}" alt="Logo actuel">`;
+                } else {
+                    logoContainer.innerHTML = `<i class="fas fa-user fa-3x"></i>`;
+                }
+            }
+
+            // Show the edit modal
+            const editModal = document.getElementById('edit-user-modal');
+            if (editModal) {
+                editModal.style.display = 'block';
+                console.log("Edit modal displayed");
+
+                // Setup close button
+                const closeBtn = editModal.querySelector('.close-modal');
+                if (closeBtn) {
+                    closeBtn.onclick = function() {
+                        editModal.style.display = 'none';
+                    };
+                }
+            } else {
+                console.error("Could not find edit modal");
+            }
+
+            // Setup cancel button
+            const cancelBtn = document.getElementById('cancelEditUser');
+            if (cancelBtn) {
+                cancelBtn.onclick = function() {
+                    editModal.style.display = 'none';
+                };
+            }
+
+            // Setup form submission
+            const form = document.getElementById('userEditForm');
+            if (form) {
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateUser(form);
+                };
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user for editing:', error);
+            alert('Une erreur est survenue lors du chargement des informations de l\'utilisateur.');
+        });
+
+    // When user clicks outside the modal, close it
+    window.onclick = function(event) {
+        const modal = document.getElementById('edit-user-modal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+}
+
+// Function to handle user update form submission
+function updateUser(form) {
+    const userId = document.getElementById('editUserId').value;
+    const formData = new FormData(form);
+
+    fetch(`/superadmin/api/utilisateurs/${userId}`, {
+        method: 'PUT',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(result => {
+            // Close the modal
+            const modal = document.getElementById('edit-user-modal');
+            modal.style.display = 'none';
+
+            // Show success message
+            alert('Utilisateur mis à jour avec succès!');
+
+            // Reload users list
+            loadUsersContent();
+        })
+        .catch(error => {
+            console.error('Error updating user:', error);
+            alert('Une erreur est survenue lors de la mise à jour de l\'utilisateur.');
+        });
+}
+
+// Delete user function
+function deleteUser(userId) {
+    // Confirm deletion
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur? Cette action est irréversible.')) {
+        fetch(`/superadmin/api/utilisateurs/${userId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // Close modal if open
+                const modal = document.getElementById('user-details-modal');
+                if (modal) modal.style.display = 'none';
+
+                // Show success message
+                alert('Utilisateur supprimé avec succès!');
+
+                // Reload users list
+                loadUsersContent();
+            })
+            .catch(error => {
+                console.error('Error deleting user:', error);
+                alert('Une erreur est survenue lors de la suppression de l\'utilisateur.');
+            });
+    }
 }

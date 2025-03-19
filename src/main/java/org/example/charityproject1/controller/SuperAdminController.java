@@ -3,9 +3,11 @@ package org.example.charityproject1.controller;
 import jakarta.servlet.http.HttpSession;
 import org.example.charityproject1.model.Organisations;
 import org.example.charityproject1.model.SuperAdmin;
+import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.repository.SuperAdminRepository;
 import org.example.charityproject1.service.SuperAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Base64;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/superadmin")
@@ -185,6 +190,97 @@ public class SuperAdminController {
             e.printStackTrace();
             return ResponseEntity.status(500)
                     .body(Map.of("status", "error", "message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/utilisateurs-content")
+    public String getUtilisateursContent(HttpSession session, Model model) {
+        // Check if admin is logged in
+        String adminEmail = (String) session.getAttribute("admin_email");
+        if (adminEmail == null) {
+            return "redirect:/login";
+        }
+
+        // Get all users and add to model
+        List<Utilisateurs> utilisateurs = superAdminService.getAllUtilisateurs();
+        model.addAttribute("utilisateurs", utilisateurs);
+
+        return "superadmin/utilisateurs/utilisateurs :: utilisateurs-content";
+    }
+
+    // Get user by ID
+    @GetMapping("/api/utilisateurs/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getUtilisateurDetails(@PathVariable String id) {
+        try {
+            Utilisateurs utilisateur = superAdminService.getUtilisateurById(id);
+            if (utilisateur == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(utilisateur);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching user details: " + e.getMessage());
+        }
+    }
+// Add this method to your SuperAdminController class
+
+
+
+    @PutMapping("/api/utilisateurs/{id}")
+    @ResponseBody
+    public ResponseEntity<?> updateUtilisateur(@PathVariable String id,
+                                               @RequestParam("nom") String nom,
+                                               @RequestParam("email") String email,
+                                               @RequestParam("telephone") String telephone,
+                                               @RequestParam("localisation") String localisation,
+                                               @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) {
+        try {
+            // Get the current user
+            Utilisateurs utilisateur = superAdminService.getUtilisateurById(id);
+            if (utilisateur == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update fields
+            utilisateur.setNom(nom);
+            utilisateur.setEmail(email);
+            utilisateur.setTelephone(telephone);
+            utilisateur.setLocalisation(localisation);
+
+            // Update logo if provided
+            if (logoFile != null && !logoFile.isEmpty()) {
+                try {
+                    // Convert the MultipartFile to a Base64 string
+                    byte[] logoBytes = logoFile.getBytes();
+                    String base64Logo = Base64.getEncoder().encodeToString(logoBytes);
+                    utilisateur.setLogoPath(base64Logo);
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Error processing the logo: " + e.getMessage());
+                }
+            }
+
+            // Save the updated user
+            Utilisateurs updated = superAdminService.updateUtilisateur(utilisateur);
+
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating user: " + e.getMessage());
+        }
+    }
+    // Delete a user
+    @DeleteMapping("/api/utilisateurs/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteUtilisateur(@PathVariable String id) {
+        try {
+            superAdminService.deleteUtilisateur(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting user: " + e.getMessage());
         }
     }
     // Update profile

@@ -6,7 +6,8 @@
     <title>Tableau de Bord - Super Admin</title>
     <link rel="stylesheet" th:href="@{/styles/admin/admin-dashboard.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/organisations.css}">
-    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/utilisateurs.css}">
+
     <!-- Adding Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -70,18 +71,20 @@
             <p>Gérez les organisations, les actions de charité et les utilisateurs de la plateforme.</p>
         </div>
 
-        <!-- Dashboard stats and other content -->
-        <!-- ...existing content... -->
     </div>
 
     <!-- Container for organizations content - initially hidden -->
     <div id="organisations-content" style="display: none;">
         <!-- Organizations content will be loaded here -->
     </div>
+    <!-- Container for users content - initially hidden -->
+    <div id="users-content" style="display: none;">
+        <!-- Users content will be loaded here -->
+    </div>
 
     <!-- Containers for other sections -->
     <div id="charities-content" style="display: none;"></div>
-    <div id="users-content" style="display: none;"></div>
+
 </div>
 
 <!-- Include the profile modal fragment -->

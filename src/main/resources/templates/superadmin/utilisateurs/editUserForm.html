@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<body>
+<div th:fragment="editUserForm" id="editUserForm">
+    <div class="profile-header">
+        <h2>Modifier l'utilisateur</h2>
+    </div>
+
+    <div class="profile-body">
+        <form id="userEditForm" enctype="multipart/form-data">
+            <input type="hidden" id="editUserId" name="userId">
+
+            <div class="form-group">
+                <div class="logo-upload">
+                    <label>Photo de profil</label>
+                    <div class="current-logo" id="currentUserLogo">
+                        <!-- Image will be set by JavaScript -->
+                    </div>
+                    <input type="file" id="logoFile" name="logoFile" accept="image/*">
+                    <div class="file-hint">Format recommandé: JPG ou PNG, max 2MB</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editNom">Nom</label>
+                <input type="text" id="editNom" name="nom" class="form-control" required>
+                <div class="invalid-feedback">Le nom est requis</div>
+            </div>
+
+            <div class="form-group">
+                <label for="editEmail">Email</label>
+                <input type="email" id="editEmail" name="email" class="form-control" required>
+                <div class="invalid-feedback">Un email valide est requis</div>
+            </div>
+
+            <div class="form-group">
+                <label for="editTelephone">Téléphone</label>
+                <input type="tel" id="editTelephone" name="telephone" class="form-control"
+                       pattern="^[0-9]{10}$" required>
+                <div class="invalid-feedback">Le téléphone doit contenir 10 chiffres</div>
+            </div>
+
+            <div class="form-group">
+                <label for="editLocalisation">Localisation</label>
+                <input type="text" id="editLocalisation" name="localisation" class="form-control" required>
+                <div class="invalid-feedback">La localisation est requise</div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+                <button type="button" id="cancelEditUser" class="cancel-btn">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

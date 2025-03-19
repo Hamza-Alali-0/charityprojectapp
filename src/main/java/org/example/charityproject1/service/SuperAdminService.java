@@ -1,7 +1,9 @@
 package org.example.charityproject1.service;
 
 import org.example.charityproject1.model.Organisations;
+import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.repository.OrganisationsRepository;
+import org.example.charityproject1.repository.UtilisateursRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,8 @@ public class SuperAdminService {
 
     @Autowired
     private OrganisationsRepository organisationsRepository;
-
+    @Autowired
+    private UtilisateursRepository utilisateursRepository;
     public void validateOrganisation(String id) {
         System.out.println("Finding organization with ID: " + id);
 
@@ -96,4 +99,28 @@ public class SuperAdminService {
     public Optional<Organisations> getOrganisationById(String id) {
         return organisationsRepository.findByNumeroIdentif(id);
     }
+    /**
+     * Get all users in the system
+     */
+    public List<Utilisateurs> getAllUtilisateurs() {
+        return utilisateursRepository.findAll();
+    }
+
+    /**
+     * Get a specific user by ID
+     */
+    public Utilisateurs getUtilisateurById(String id) {
+        return utilisateursRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Delete a user by ID
+     */
+    public void deleteUtilisateur(String id) {
+        utilisateursRepository.deleteById(id);
+    }
+
+    public Utilisateurs updateUtilisateur(Utilisateurs utilisateur) {
+        return utilisateursRepository.save(utilisateur);}
+
 }

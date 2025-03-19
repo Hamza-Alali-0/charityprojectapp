@@ -5,8 +5,8 @@
 <div th:fragment="organisations-content">
     <div class="welcome-banner">
         <h2>Gestion des Organisations</h2>
-        <p>Consultez, validez et gérez les organisations inscrites sur la plateforme.</p>
-    </div>
+
+
 
     <!-- Empty State -->
     <div class="empty-state" th:if="${organisations.empty}">
@@ -17,13 +17,14 @@
 
     <!-- Organizations Grid -->
     <div class="org-grid" th:unless="${organisations.empty}">
-        <!-- Organization Card -->
+        <!-- Organization Card as Building -->
         <div class="org-card" th:each="org : ${organisations}" th:attr="data-org-id=${org.numeroIdentif}" onclick="showOrganizationDetails(this)">
+            <!-- Logo positioned like a sign on the building -->
             <div class="org-logo">
                 <img th:if="${org.logo != null && !org.logo.isEmpty()}"
                      th:src="@{'data:image/png;base64,' + ${org.logo}}"
                      alt="Logo"/>
-                <i th:if="${org.logo == null || org.logo.isEmpty()}" class="fas fa-building fa-3x" style="color: #ccc;"></i>
+                <i th:if="${org.logo == null || org.logo.isEmpty()}" class="fas fa-building fa-3x" style="color: #555;"></i>
             </div>
             <div class="org-details">
                 <div class="org-name" th:text="${org.nom}">Organisation Name</div>
@@ -43,11 +44,11 @@
                 </div>
 
                 <div>
-                    <span class="validation-badge"
-                          th:classappend="${org.valideParAdmin ? 'badge-validated' : 'badge-pending'}"
-                          th:text="${org.valideParAdmin ? 'Validée' : 'En attente de validation'}">
-                        Status
-                    </span>
+                <span class="validation-badge"
+                      th:classappend="${org.valideParAdmin ? 'badge-validated' : 'badge-pending'}"
+                      th:text="${org.valideParAdmin ? 'Validée' : 'En attente de validation'}">
+                    Status
+                </span>
                 </div>
             </div>
             <div class="org-actions">
@@ -73,6 +74,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>

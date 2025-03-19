@@ -1,0 +1,567 @@
+/* Utilisateurs styling with figure/person theme */
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-gap: 25px;
+    margin-top: 30px;
+}
+
+/* User card styled as a person/figure */
+.user-card {
+    position: relative;
+    background: linear-gradient(to bottom, #f8f8f8 0%, #f0f0f0 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 20px;
+    /* Person-like shape with gold accents */
+    border-bottom: 5px solid #d4af37;
+}
+
+/* User hover effect */
+.user-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+            0 15px 30px rgba(0,0,0,0.15),
+            0 8px 15px rgba(0,0,0,0.1);
+}
+
+/* Profile head - circular logo */
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 3px solid #d4af37;
+    overflow: hidden;
+}
+
+/* Gold halo effect around avatar */
+.user-avatar::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: 50%;
+    background: linear-gradient(45deg,
+    rgba(212,175,55,0.5) 0%,
+    rgba(212,175,55,0.2) 50%,
+    rgba(212,175,55,0.5) 100%);
+    z-index: -1;
+    animation: rotateHalo 8s linear infinite;
+}
+
+@keyframes rotateHalo {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Default user icon */
+.user-avatar i {
+    font-size: 3em;
+    color: #555;
+}
+
+/* Body of the figure */
+.user-details {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* User name */
+.user-name {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+/* Gold underline for name */
+.user-name::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(to right,
+    transparent 0%,
+    #d4af37 30%,
+    #d4af37 70%,
+    transparent 100%);
+}
+
+/* User info items */
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.user-info i {
+    margin-right: 8px;
+    color: #d4af37;
+    width: 16px;
+    text-align: center;
+}
+
+/* User location with map marker styling */
+.user-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 0.9em;
+    margin: 10px 0;
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 20px;
+    border: 1px solid rgba(212,175,55,0.3);
+}
+
+.user-location i {
+    color: #d4af37;
+    margin-right: 5px;
+}
+
+/* Actions section */
+.user-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Action buttons */
+.user-actions .action-btn {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+
+.edit-btn {
+    background:  grey;
+    color: white;
+}
+
+.edit-btn:hover {
+    background:  #d4af37;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.delete-btn {
+    color: #d4af37;
+    background: rgba(255,255,255,0.9);
+}
+
+.delete-btn:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.empty-state i {
+    font-size: 3em;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+/* User Details Modal Styling */
+#user-details-modal .modal-content {
+    background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+    max-width: 700px;
+    padding: 0;
+    border-radius: 10px;
+    border-bottom: 5px solid #d4af37;
+    overflow: hidden;
+}
+
+.user-detail-header {
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.user-detail-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    border: 3px solid #d4af37;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.user-detail-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-detail-title {
+    flex-grow: 1;
+}
+
+.user-detail-title h2 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.user-detail-section {
+    padding: 20px 25px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.user-detail-section h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 1.2em;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.user-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 15px;
+}
+
+.user-detail-item {
+    margin-bottom: 15px;
+}
+
+.user-detail-label {
+    font-size: 0.85em;
+    color: darkblue;
+    margin-bottom: 5px;
+}
+
+.user-detail-value {
+    background: rgba(255,255,255,0.7);
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 3px solid #d4af37;
+}
+
+.donation-history {
+    margin-top: 20px;
+}
+
+.donation-item {
+    background: rgba(255,255,255,0.6);
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid #d4af37;
+}
+
+.donation-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.donation-title {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.donation-date {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.donation-amount {
+    font-weight: bold;
+    color: #d4af37;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #777;
+    font-size: 1.5em;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.close-modal:hover {
+    color: #d4af37;
+    background: white;
+    transform: rotate(90deg);
+}
+
+/* Modal animation */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+/* Add these styles for liked actions */
+.liked-actions {
+    margin-top: 10px;
+}
+
+.liked-action-badge {
+    display: inline-block;
+    background: rgba(212,175,55,0.2);
+    border: 1px solid rgba(212,175,55,0.5);
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin: 3px;
+    font-size: 0.9em;
+}
+
+.user-detail-id {
+    font-size: 0.8em;
+    color: darkblue;
+    margin-bottom: 5px;
+}
+
+/* Enhanced style for avatar display */
+.user-avatar img, .user-detail-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Edit user form styles */
+/* Edit user form styles */
+/* Edit user form styles */
+/* Edit user form styles */
+#editUserForm {
+    width: 100%;
+}
+
+.logo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.current-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    border: 3px solid #d4af37;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.current-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-hint {
+    font-size: 0.8em;
+    color: #777;
+    margin-top: 5px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.form-control:focus {
+    border-color: #d4af37;
+    outline: none;
+    box-shadow: 0 0 5px rgba(212,175,55,0.5);
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: none;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-control.is-invalid + .invalid-feedback {
+    display: block;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.submit-btn,
+.cancel-btn {
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    font-size: 1em;
+    transition: all 0.2s;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    transform: translateY(-2px);
+}
+
+.cancel-btn {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+}
+
+.cancel-btn:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #4e555b 100%);
+    transform: translateY(-2px);
+}
+
+/* Add these rules to fix modal display issues */
+#edit-user-modal {
+    z-index: 1001; /* Higher than other modals */
+}
+
+#edit-user-modal .modal-content {
+    position: relative;
+    background: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Fix for modal close button */
+#edit-user-modal .close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+}
+
+/* Fix for editUserForm visibility */
+#editUserForm {
+    /* Remove display: none from here; we'll control it with JS */
+    width: 100%;
+}
