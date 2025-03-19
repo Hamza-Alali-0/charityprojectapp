@@ -1,26 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Tableau de Bord - Utilisateur</title>
+  <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+  <!-- Adding Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body th:data-password-error="${passwordError}" th:data-profile-error="${profileError}">
+<!-- Main Navigation Bar -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <div class="logo-circle">
+      <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Logo utilisateur">
+      <img th:unless="${user.logoPath != null}" src="https://via.placeholder.com/40" alt="Logo par défaut">
+    </div>
+    <div class="org-name" th:text="${user.nom}">Nom de l'Utilisateur</div>
+  </div>
 
-<span th:if="${user != null}" th:text="${user.nom}">Name</span>
+  <div class="navbar-right">
+    <span class="id-info" th:text="${user.email}">email@example.com</span>
 
+    <!-- Notification Bell -->
+    <div class="notification">
+      <a href="#" class="notification-icon">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </a>
+    </div>
 
-<p>Email: <span th:text="${user.email}">Email</span></p>
-<p>Phone: <span th:text="${user.telephone}">Phone</span></p>
-<p>Location: <span th:text="${user.localisation}">Location</span></p>
-<img th:if="${user.logoPath != null}"
-     th:src="'data:image/png;base64,' + ${user.logoPath}"
-     alt="User Logo" width="150"/>
+    <div class="dropdown">
+      <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+      <div class="dropdown-content">
+        <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+        <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+        <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+      </div>
+    </div>
+  </div>
+</nav>
 
+<!-- Sub Navigation with Rectangles -->
+<div class="sub-navbar">
+  <a href="#section1" class="sub-nav-item">
+    <i class="fas fa-chart-line"></i>
+    <span>Tableau de bord</span>
+  </a>
+  <a href="#section2" class="sub-nav-item">
+    <i class="fas fa-heart"></i>
+    <span>Actions Favorites</span>
+  </a>
+  <a href="#section3" class="sub-nav-item">
+    <i class="fas fa-history"></i>
+    <span>Historique des Dons</span>
+  </a>
+</div>
 
-<form action="/logout" method="POST">
-  <button type="submit">Logout</button>
-</form>
+<!-- Include the profile modal fragment -->
+<div th:replace="~{user/profile/profileModal :: profileModal}"></div>
 
+<script th:src="@{/js/user-dashboard.js}"></script>
 </body>
 </html>

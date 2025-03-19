@@ -7,9 +7,11 @@ import org.example.charityproject1.repository.SuperAdminRepository;
 import org.example.charityproject1.service.SuperAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,10 @@ public class SuperAdminController {
 
     @Autowired
     private SuperAdminService superAdminService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         // Check if admin is logged in
@@ -42,12 +48,12 @@ public class SuperAdminController {
         // Add admin to model
         model.addAttribute("admin", adminOptional.get());
 
-        // Note: The flash attribute will be automatically added to the model
-        // No need to explicitly add "successMessage" here
+        // Get all organisations and add to model
+        List<Organisations> organisations = superAdminService.getAllOrganisations();
+        model.addAttribute("organisations", organisations);
 
         return "superadmin/dashboard";
     }
-
     // REST API endpoints for future implementation
 
     @PostMapping("/api/organisations/{id}/validate")
@@ -87,8 +93,6 @@ public class SuperAdminController {
         return ResponseEntity.ok(organisations);
     }
 
-    // Add these methods to your existing SuperAdminController class
-
     // View all organisations in a web page
     @GetMapping("/organisations")
     public String viewAllOrganisations(HttpSession session, Model model) {
@@ -112,10 +116,10 @@ public class SuperAdminController {
         List<Organisations> organisations = superAdminService.getAllOrganisations();
         model.addAttribute("organisations", organisations);
 
-        return "superadmin/organisations";
+        return "superadmin/organisations/organisations";
     }
 
-    // Placeholder for charities page
+    // Charities page
     @GetMapping("/charities")
     public String viewCharities(HttpSession session, Model model) {
         // Check if admin is logged in
@@ -134,8 +138,171 @@ public class SuperAdminController {
         // Add admin to model
         model.addAttribute("admin", adminOptional.get());
 
-        // This page will be implemented later
-
         return "superadmin/charities";
+    }
+
+    @GetMapping("/organisations-content")
+    public String getOrganisationsContent(HttpSession session, Model model) {
+        // Check if admin is logged in
+        String adminEmail = (String) session.getAttribute("admin_email");
+        if (adminEmail == null) {
+            return "redirect:/auth/login/superadmin";
+        }
+
+        // Get admin details
+        Optional<SuperAdmin> adminOptional = superAdminRepository.findByEmail(adminEmail);
+        if (!adminOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/auth/login/superadmin";
+        }
+
+        // Add admin to model
+        model.addAttribute("admin", adminOptional.get());
+
+        // Get all organisations and add to model
+        List<Organisations> organisations = superAdminService.getAllOrganisations();
+        model.addAttribute("organisations", organisations);
+
+        // Return only the fragment containing organizations content
+        return "superadmin/organisations/organisations :: organisations-content";
+    }
+    // Get organization details by ID
+    // Update this existing method with a complete implementation
+    @GetMapping("/api/organisations/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getOrganisationDetails(@PathVariable String id) {
+        try {
+            // Find the organization by ID
+            Optional<Organisations> organisation = superAdminService.getOrganisationById(id);
+
+            if (organisation.isPresent()) {
+                return ResponseEntity.ok(organisation.get());
+            } else {
+                return ResponseEntity.status(404)
+                        .body(Map.of("status", "error", "message", "Organisation non trouvée"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body(Map.of("status", "error", "message", e.getMessage()));
+        }
+    }
+    // Update profile
+    @PostMapping("/update-profile")
+    public String updateProfile(@RequestParam("nom") String nom,
+                                @RequestParam("email") String email,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+
+        String adminEmail = (String) session.getAttribute("admin_email");
+        if (adminEmail == null) {
+            return "redirect:/auth/login/superadmin";
+        }
+
+        Optional<SuperAdmin> adminOptional = superAdminRepository.findByEmail(adminEmail);
+        if (!adminOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/auth/login/superadmin";
+        }
+
+        // Validate form data
+        if (nom == null || nom.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("profileError", "name-invalid");
+            redirectAttributes.addFlashAttribute("profileErrorMessage", "Le nom est obligatoire.");
+            return "redirect:/superadmin/dashboard?profileError=true";
+        }
+
+        // Validate email
+        if (email == null || email.trim().isEmpty() || !email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            redirectAttributes.addFlashAttribute("profileError", "email-invalid");
+            redirectAttributes.addFlashAttribute("profileErrorMessage", "Veuillez saisir un email valide.");
+            return "redirect:/superadmin/dashboard?profileError=true";
+        }
+
+        SuperAdmin admin = adminOptional.get();
+
+        // Check if email changed and is unique
+        if (!email.equals(adminEmail)) {
+            Optional<SuperAdmin> existingAdmin = superAdminRepository.findByEmail(email);
+            if (existingAdmin.isPresent() && !existingAdmin.get().getIdAdmin().equals(admin.getIdAdmin())) {
+                redirectAttributes.addFlashAttribute("profileError", "email-exists");
+                redirectAttributes.addFlashAttribute("profileErrorMessage", "Cet email est déjà utilisé.");
+                return "redirect:/superadmin/dashboard?profileError=true";
+            }
+
+            // Update email and logout
+            admin.setEmail(email);
+            superAdminRepository.save(admin);
+
+            session.invalidate();
+            redirectAttributes.addFlashAttribute("message", "Votre email a été modifié. Veuillez vous reconnecter.");
+            return "redirect:/auth/login/superadmin";
+        }
+
+        // Update admin data
+        admin.setNom(nom);
+        superAdminRepository.save(admin);
+
+        redirectAttributes.addFlashAttribute("success", "Profil mis à jour avec succès.");
+        return "redirect:/superadmin/dashboard";
+    }
+
+    // Change password
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam("currentPassword") String currentPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes) {
+
+        String adminEmail = (String) session.getAttribute("admin_email");
+        if (adminEmail == null) {
+            return "redirect:/auth/login/superadmin";
+        }
+
+        Optional<SuperAdmin> adminOptional = superAdminRepository.findByEmail(adminEmail);
+        if (!adminOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/auth/login/superadmin";
+        }
+
+        SuperAdmin admin = adminOptional.get();
+
+        // Check if current password is correct
+        if (!passwordEncoder.matches(currentPassword, admin.getPassword())) {
+            redirectAttributes.addFlashAttribute("passwordError", "password-incorrect");
+            redirectAttributes.addFlashAttribute("errorMessage", "Le mot de passe actuel est incorrect.");
+            return "redirect:/superadmin/dashboard?passwordError=true";
+        }
+
+        // Check if new passwords match
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("passwordError", "password-mismatch");
+            redirectAttributes.addFlashAttribute("errorMessage", "Les nouveaux mots de passe ne correspondent pas.");
+            return "redirect:/superadmin/dashboard?passwordError=true";
+        }
+
+        // Check if new password is different from current
+        if (passwordEncoder.matches(newPassword, admin.getPassword())) {
+            redirectAttributes.addFlashAttribute("passwordError", "password-same");
+            redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe doit être différent de l'ancien.");
+            return "redirect:/superadmin/dashboard?passwordError=true";
+        }
+
+        // Password strength validation
+        if (newPassword.length() < 8) {
+            redirectAttributes.addFlashAttribute("passwordError", "password-weak");
+            redirectAttributes.addFlashAttribute("errorMessage", "Le mot de passe doit contenir au moins 8 caractères.");
+            return "redirect:/superadmin/dashboard?passwordError=true";
+        }
+
+        // Update password
+        admin.setPassword(passwordEncoder.encode(newPassword));
+        superAdminRepository.save(admin);
+
+        // Log out the user
+        session.invalidate();
+        redirectAttributes.addFlashAttribute("message", "Votre mot de passe a été modifié avec succès. Veuillez vous reconnecter.");
+        return "redirect:/auth/login/superadmin";
     }
 }

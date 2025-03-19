@@ -93,4 +93,7 @@ public class SuperAdminService {
     public List<Organisations> getAllOrganisations() {
         return organisationsRepository.findAll();
     }
+    public Optional<Organisations> getOrganisationById(String id) {
+        return organisationsRepository.findByNumeroIdentif(id);
+    }
 }

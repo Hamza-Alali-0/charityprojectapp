@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="profileModal" id="profileModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+
+        <!-- Profile View -->
+        <div id="profileView">
+            <div class="profile-header">
+                <h2>Profil Super Admin</h2>
+                <div class="profile-actions">
+                    <button id="modifyBtn" class="action-btn"><i class="fas fa-edit"></i> Modifier</button>
+                    <button id="passwordBtn" class="action-btn"><i class="fas fa-key"></i> Modifier mot de passe</button>
+                </div>
+            </div>
+
+            <div class="profile-body">
+                <div class="profile-logo admin-badge">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <span class="label">Nom:</span>
+                        <span class="value" th:text="${admin.nom}">Nom de l'Admin</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Email:</span>
+                        <span class="value" th:text="${admin.email}">admin@example.com</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Rôle:</span>
+                        <span class="value">Super Administrateur</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Include the edit profile form fragment -->
+        <div th:replace="~{superadmin/profile/editProfileForm :: editProfileForm}"></div>
+
+        <!-- Include the password change form fragment -->
+        <div th:replace="~{superadmin/profile/passwordForm :: passwordForm}"></div>
+    </div>
+</div>
+</body>
+</html>

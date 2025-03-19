@@ -96,6 +96,7 @@ public class OrganisationController {
         }
 
         Organisations organisation = orgOptional.get();
+        organisation.setValideParAdmin(false);
 
         // Check if ID changed and is unique
         if (!newNumeroIdentif.equals(orgId)) {
