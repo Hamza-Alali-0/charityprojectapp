@@ -15,10 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Base64;
+import java.util.*;
+
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
@@ -209,9 +207,10 @@ public class SuperAdminController {
     }
 
     // Get user by ID
+// Add this method to your SuperAdminController class
     @GetMapping("/api/utilisateurs/{id}")
     @ResponseBody
-    public ResponseEntity<?> getUtilisateurDetails(@PathVariable String id) {
+    public ResponseEntity<?> getUtilisateur(@PathVariable String id) {
         try {
             Utilisateurs utilisateur = superAdminService.getUtilisateurById(id);
             if (utilisateur == null) {
@@ -219,8 +218,9 @@ public class SuperAdminController {
             }
             return ResponseEntity.ok(utilisateur);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error fetching user details: " + e.getMessage());
+                    .body(Map.of("message", "Error retrieving user: " + e.getMessage()));
         }
     }
 // Add this method to your SuperAdminController class
@@ -232,17 +232,56 @@ public class SuperAdminController {
     public ResponseEntity<?> updateUtilisateur(@PathVariable String id,
                                                @RequestParam("nom") String nom,
                                                @RequestParam("email") String email,
+                                               @RequestParam("originalEmail") String originalEmail,
                                                @RequestParam("telephone") String telephone,
                                                @RequestParam("localisation") String localisation,
                                                @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) {
         try {
+            // Field validation
+            Map<String, String> fieldErrors = new HashMap<>();
+
+            if (nom == null || nom.isEmpty()) {
+                fieldErrors.put("nom", "Le nom est obligatoire");
+            }
+
+            if (email == null || email.isEmpty()) {
+                fieldErrors.put("email", "L'email est obligatoire");
+            }
+
+            if (telephone == null || !telephone.matches("^[0-9]{10}$")) {
+                fieldErrors.put("telephone", "Le téléphone doit contenir 10 chiffres");
+            }
+
+            if (localisation == null || localisation.isEmpty()) {
+                fieldErrors.put("localisation", "La localisation est obligatoire");
+            }
+
+            // Email changed? Check if new email is already used
+            if (!email.equals(originalEmail)) {
+                System.out.println("Email changed from " + originalEmail + " to " + email);
+                // Check if email exists for another user
+                if (superAdminService.isEmailInUse(email)) {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("error", "EMAIL_EXISTS");
+                    response.put("message", "Cet email est déjà utilisé par un autre utilisateur");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            }
+
+            if (!fieldErrors.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("fieldErrors", fieldErrors);
+                response.put("message", "Veuillez corriger les erreurs dans le formulaire");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
             // Get the current user
             Utilisateurs utilisateur = superAdminService.getUtilisateurById(id);
             if (utilisateur == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            // Update fields
+            // Update user fields
             utilisateur.setNom(nom);
             utilisateur.setEmail(email);
             utilisateur.setTelephone(telephone);
@@ -257,18 +296,18 @@ public class SuperAdminController {
                     utilisateur.setLogoPath(base64Logo);
                 } catch (IOException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body("Error processing the logo: " + e.getMessage());
+                            .body(Map.of("message", "Error processing the logo: " + e.getMessage()));
                 }
             }
 
             // Save the updated user
-            Utilisateurs updated = superAdminService.updateUtilisateur(utilisateur);
+            utilisateur = superAdminService.updateUtilisateur(utilisateur);
 
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.ok(utilisateur);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error updating user: " + e.getMessage());
+                    .body(Map.of("message", "Error updating user: " + e.getMessage()));
         }
     }
     // Delete a user
@@ -305,14 +344,14 @@ public class SuperAdminController {
         if (nom == null || nom.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("profileError", "name-invalid");
             redirectAttributes.addFlashAttribute("profileErrorMessage", "Le nom est obligatoire.");
-            return "redirect:/superadmin/dashboard?profileError=true";
+            return "redirect:/superadmin/dashboard";
         }
 
         // Validate email
         if (email == null || email.trim().isEmpty() || !email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
             redirectAttributes.addFlashAttribute("profileError", "email-invalid");
             redirectAttributes.addFlashAttribute("profileErrorMessage", "Veuillez saisir un email valide.");
-            return "redirect:/superadmin/dashboard?profileError=true";
+            return "redirect:/superadmin/dashboard";
         }
 
         SuperAdmin admin = adminOptional.get();
@@ -323,7 +362,7 @@ public class SuperAdminController {
             if (existingAdmin.isPresent() && !existingAdmin.get().getIdAdmin().equals(admin.getIdAdmin())) {
                 redirectAttributes.addFlashAttribute("profileError", "email-exists");
                 redirectAttributes.addFlashAttribute("profileErrorMessage", "Cet email est déjà utilisé.");
-                return "redirect:/superadmin/dashboard?profileError=true";
+                return "redirect:/superadmin/dashboard";
             }
 
             // Update email and logout
@@ -368,28 +407,28 @@ public class SuperAdminController {
         if (!passwordEncoder.matches(currentPassword, admin.getPassword())) {
             redirectAttributes.addFlashAttribute("passwordError", "password-incorrect");
             redirectAttributes.addFlashAttribute("errorMessage", "Le mot de passe actuel est incorrect.");
-            return "redirect:/superadmin/dashboard?passwordError=true";
+            return "redirect:/superadmin/dashboard";
         }
 
         // Check if new passwords match
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("passwordError", "password-mismatch");
             redirectAttributes.addFlashAttribute("errorMessage", "Les nouveaux mots de passe ne correspondent pas.");
-            return "redirect:/superadmin/dashboard?passwordError=true";
+            return "redirect:/superadmin/dashboard";
         }
 
         // Check if new password is different from current
         if (passwordEncoder.matches(newPassword, admin.getPassword())) {
             redirectAttributes.addFlashAttribute("passwordError", "password-same");
             redirectAttributes.addFlashAttribute("errorMessage", "Le nouveau mot de passe doit être différent de l'ancien.");
-            return "redirect:/superadmin/dashboard?passwordError=true";
+            return "redirect:/superadmin/dashboard";
         }
 
         // Password strength validation
         if (newPassword.length() < 8) {
             redirectAttributes.addFlashAttribute("passwordError", "password-weak");
             redirectAttributes.addFlashAttribute("errorMessage", "Le mot de passe doit contenir au moins 8 caractères.");
-            return "redirect:/superadmin/dashboard?passwordError=true";
+            return "redirect:/superadmin/dashboard";
         }
 
         // Update password

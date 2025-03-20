@@ -6,7 +6,7 @@
     <div class="welcome-banner">
         <h2>Gestion des Utilisateurs</h2>
         <p>Consultez et gérez les utilisateurs de la plateforme.</p>
-    </div>
+
 
     <!-- Empty State -->
     <div class="empty-state" th:if="${utilisateurs == null || utilisateurs.isEmpty() }">
@@ -54,7 +54,7 @@
             </div>
         </div>
     </div>
-
+    </div>
     <!-- User Details Modal -->
     <div id="user-details-modal" class="modal">
         <div class="modal-content">

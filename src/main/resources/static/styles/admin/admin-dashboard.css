@@ -442,7 +442,7 @@
 
 .label {
     font-weight: bold;
-    color: #555;
+    color: darkblue;
     font-size: 0.9em;
     margin-bottom: 12px;
     display: block;
@@ -464,7 +464,7 @@
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
-    color: #555;
+    color: darkblue;
 }
 
 .form-group input,

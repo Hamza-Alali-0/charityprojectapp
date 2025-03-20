@@ -494,7 +494,7 @@ function showUserDetails(element) {
 
 
 /* User Management Functions */
-// Edit user function - complete rewrite
+// Edit user function - complete implementation
 function editUser(userId) {
     console.log("Edit user function called with ID:", userId);
 
@@ -504,27 +504,40 @@ function editUser(userId) {
         detailsModal.style.display = 'none';
     }
 
+    // Clear any previous errors
+    clearFormErrors();
+
+    // Show loading indicator
+    const errorContainer = document.getElementById('userEditError');
+    if (errorContainer) {
+        errorContainer.textContent = 'Chargement des données utilisateur...';
+        errorContainer.style.backgroundColor = '#e2f3f5';
+        errorContainer.style.color = '#333';
+        errorContainer.style.borderColor = '#b3e0e5';
+        errorContainer.style.display = 'block';
+    }
+
     // Get user data to populate the form
     fetch(`/superadmin/api/utilisateurs/${userId}`)
         .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
+            // Hide loading message
+            if (errorContainer) {
+                errorContainer.style.display = 'none';
+            }
+
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
             return response.json();
         })
         .then(user => {
-            console.log("Fetched user data for editing:", user);
-
-            // Get the edit form
-            const editForm = document.getElementById('editUserForm');
-            if (editForm) {
-                // CRITICAL: Make form visible
-                editForm.style.display = 'block';
-                console.log("Made edit form visible");
-            }
+            console.log("Fetched user data:", user);
 
             // Set the form fields
             document.getElementById('editUserId').value = user.userId;
             document.getElementById('editNom').value = user.nom || '';
             document.getElementById('editEmail').value = user.email || '';
+            document.getElementById('originalEmail').value = user.email || '';
             document.getElementById('editTelephone').value = user.telephone || '';
             document.getElementById('editLocalisation').value = user.localisation || '';
 
@@ -542,7 +555,6 @@ function editUser(userId) {
             const editModal = document.getElementById('edit-user-modal');
             if (editModal) {
                 editModal.style.display = 'block';
-                console.log("Edit modal displayed");
 
                 // Setup close button
                 const closeBtn = editModal.querySelector('.close-modal');
@@ -551,30 +563,41 @@ function editUser(userId) {
                         editModal.style.display = 'none';
                     };
                 }
+
+                // Setup cancel button
+                const cancelBtn = document.getElementById('cancelEditUser');
+                if (cancelBtn) {
+                    cancelBtn.onclick = function() {
+                        editModal.style.display = 'none';
+                    };
+                }
+
+                // Setup form submission
+                const form = document.getElementById('userEditForm');
+                if (form) {
+                    form.onsubmit = function(e) {
+                        e.preventDefault();
+                        updateUser(form);
+                    };
+                }
             } else {
-                console.error("Could not find edit modal");
-            }
-
-            // Setup cancel button
-            const cancelBtn = document.getElementById('cancelEditUser');
-            if (cancelBtn) {
-                cancelBtn.onclick = function() {
-                    editModal.style.display = 'none';
-                };
-            }
-
-            // Setup form submission
-            const form = document.getElementById('userEditForm');
-            if (form) {
-                form.onsubmit = function(e) {
-                    e.preventDefault();
-                    updateUser(form);
-                };
+                console.error("Could not find edit modal element");
+                alert('Une erreur est survenue: Modal introuvable');
             }
         })
         .catch(error => {
             console.error('Error fetching user for editing:', error);
-            alert('Une erreur est survenue lors du chargement des informations de l\'utilisateur.');
+
+            // Show error message in the error container
+            if (errorContainer) {
+                errorContainer.textContent = 'Une erreur est survenue lors du chargement des informations de l\'utilisateur: ' + error.message;
+                errorContainer.style.backgroundColor = '#f8d7da';
+                errorContainer.style.color = '#721c24';
+                errorContainer.style.borderColor = '#f5c6cb';
+                errorContainer.style.display = 'block';
+            } else {
+                alert('Une erreur est survenue lors du chargement des informations de l\'utilisateur: ' + error.message);
+            }
         });
 
     // When user clicks outside the modal, close it
@@ -585,24 +608,89 @@ function editUser(userId) {
         }
     };
 }
-
-// Function to handle user update form submission
 function updateUser(form) {
+    console.log("updateUser function called");
+
+    // Reset previous error states
+    clearFormErrors();
+
+    // Form validation
+    let isValid = true;
+
+    // Validate name
+    const nameField = document.getElementById('editNom');
+    if (!nameField.value.trim()) {
+        showFieldError(nameField, 'editNom-error', 'Le nom est obligatoire');
+        isValid = false;
+    }
+
+    // Validate email
+    const emailField = document.getElementById('editEmail');
+    if (!emailField.value.trim() || !emailField.value.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+        showFieldError(emailField, 'editEmail-error', 'Veuillez saisir un email valide');
+        isValid = false;
+    }
+
+    // Validate phone
+    const phoneField = document.getElementById('editTelephone');
+    if (!phoneField.value.match(/^[0-9]{10}$/)) {
+        showFieldError(phoneField, 'editTelephone-error', 'Le téléphone doit contenir 10 chiffres');
+        isValid = false;
+    }
+
+    // Validate location
+    const locationField = document.getElementById('editLocalisation');
+    if (!locationField.value.trim()) {
+        showFieldError(locationField, 'editLocalisation-error', 'La localisation est obligatoire');
+        isValid = false;
+    }
+
+    // Check file if provided
+    const fileField = document.getElementById('logoFile');
+    if (fileField.files.length > 0) {
+        const file = fileField.files[0];
+
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            showFieldError(fileField, 'logoFile-error', 'La taille de la photo ne doit pas dépasser 2MB');
+            isValid = false;
+        }
+
+        // Check file type
+        if (!file.type.match(/^image\/(jpeg|png)$/)) {
+            showFieldError(fileField, 'logoFile-error', 'Le format de la photo doit être JPG ou PNG');
+            isValid = false;
+        }
+    }
+
+    if (!isValid) {
+        return false;
+    }
+
     const userId = document.getElementById('editUserId').value;
     const formData = new FormData(form);
+
+    console.log("Updating user with ID:", userId);
 
     fetch(`/superadmin/api/utilisateurs/${userId}`, {
         method: 'PUT',
         body: formData
     })
         .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
+            if (response.ok) {
+                return response.json();
+            } else {
+                // If response is not OK, parse the error JSON
+                return response.json().then(errorData => {
+                    throw errorData;
+                });
+            }
         })
         .then(result => {
+            console.log("Update successful:", result);
             // Close the modal
             const modal = document.getElementById('edit-user-modal');
-            modal.style.display = 'none';
+            if (modal) modal.style.display = 'none';
 
             // Show success message
             alert('Utilisateur mis à jour avec succès!');
@@ -610,12 +698,59 @@ function updateUser(form) {
             // Reload users list
             loadUsersContent();
         })
-        .catch(error => {
-            console.error('Error updating user:', error);
-            alert('Une erreur est survenue lors de la mise à jour de l\'utilisateur.');
+        .catch(errorData => {
+            console.error('Error updating user:', errorData);
+
+            // Handle email exists error
+            if (errorData.error === 'EMAIL_EXISTS') {
+                showFieldError(document.getElementById('editEmail'), 'editEmail-error',
+                    'Cet email est déjà utilisé par un autre utilisateur');
+            }
+            // Handle other field errors
+            else if (errorData.fieldErrors) {
+                for (const [field, message] of Object.entries(errorData.fieldErrors)) {
+                    const fieldId = 'edit' + field.charAt(0).toUpperCase() + field.slice(1);
+                    showFieldError(document.getElementById(fieldId), `${fieldId}-error`, message);
+                }
+            }
+            // Handle general errors
+            else {
+                const errorContainer = document.getElementById('userEditError');
+                errorContainer.textContent = errorData.message || 'Une erreur est survenue lors de la mise à jour de l\'utilisateur';
+                errorContainer.style.display = 'block';
+            }
         });
 }
+// Helper function to show field error
+function showFieldError(field, errorElementId, message) {
+    field.classList.add('is-invalid');
+    const errorElement = document.getElementById(errorElementId);
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+}
 
+// Helper function to clear all form errors
+function clearFormErrors() {
+    // Hide error container
+    const errorContainer = document.getElementById('userEditError');
+    if (errorContainer) {
+        errorContainer.style.display = 'none';
+    }
+
+    // Clear field errors
+    const fields = document.querySelectorAll('.form-control');
+    fields.forEach(field => {
+        field.classList.remove('is-invalid');
+    });
+
+    // Hide error messages
+    const errorMessages = document.querySelectorAll('.invalid-feedback');
+    errorMessages.forEach(msg => {
+        msg.style.display = 'none';
+    });
+}
 // Delete user function
 function deleteUser(userId) {
     // Confirm deletion

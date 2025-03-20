@@ -419,149 +419,206 @@
 /* Edit user form styles */
 /* Edit user form styles */
 /* Edit user form styles */
+/* Keep existing styles until line ~350 where duplicates begin */
+/* ...existing code... */
+
+/* Remove duplicate modal content styling and replace with this improved version */
+/* User profile edit form styling */
 #editUserForm {
-    width: 100%;
+    background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-top: 10px solid #d4af37;
 }
 
-.logo-upload {
+#editUserForm .profile-header {
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+#editUserForm .profile-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5em;
+}
+
+#editUserForm .profile-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#editUserForm .form-group {
+    margin-bottom: 15px;
+}
+
+#editUserForm label {
+    display: block;
+    margin-bottom: 5px;
+    color: darkblue;
+    font-size: 0.9em;
+}
+
+#editUserForm .required-mark {
+    color: #dc3545;
+}
+
+#editUserForm .form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: rgba(255,255,255,0.8);
+    transition: all 0.3s;
+}
+
+#editUserForm .form-control:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+    outline: none;
+}
+
+/* Logo upload styling */
+#editUserForm .logo-upload {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.current-logo {
-    width: 100px;
-    height: 100px;
+#editUserForm .current-logo {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background: white;
+    border: 3px solid #d4af37;
+    margin: 10px auto;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px 0;
-    border: 3px solid #d4af37;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    overflow: hidden;
 }
 
-.current-logo img {
+#editUserForm .current-logo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-.file-hint {
+#editUserForm .file-hint {
     font-size: 0.8em;
     color: #777;
     margin-top: 5px;
 }
 
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: #2c3e50;
-}
-
-.form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-.form-control:focus {
-    border-color: #d4af37;
-    outline: none;
-    box-shadow: 0 0 5px rgba(212,175,55,0.5);
-}
-
-.invalid-feedback {
-    color: #dc3545;
-    font-size: 0.85em;
-    margin-top: 5px;
-    display: none;
-}
-
-.form-control.is-invalid {
-    border-color: #dc3545;
-}
-
-.form-control.is-invalid + .invalid-feedback {
-    display: block;
-}
-
-.form-actions {
+/* Form actions styling */
+#editUserForm .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
 }
 
-.submit-btn,
-.cancel-btn {
-    padding: 10px 15px;
-    border-radius: 4px;
+#editUserForm .submit-btn,
+#editUserForm .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
-    border: none;
-    font-size: 1em;
-    transition: all 0.2s;
+    gap: 8px;
+    transition: all 0.3s;
 }
 
-.submit-btn {
-    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+#editUserForm .submit-btn {
+    background: #d4af37;
     color: white;
 }
 
-.submit-btn:hover {
-    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+#editUserForm .submit-btn:hover {
+    background: #c19b2e;
     transform: translateY(-2px);
 }
 
-.cancel-btn {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-    color: white;
+#editUserForm .cancel-btn {
+    background: #f0f0f0;
+    color: #333;
 }
 
-.cancel-btn:hover {
-    background: linear-gradient(135deg, #5a6268 0%, #4e555b 100%);
+#editUserForm .cancel-btn:hover {
+    background: #e0e0e0;
     transform: translateY(-2px);
 }
 
-/* Add these rules to fix modal display issues */
-#edit-user-modal {
-    z-index: 1001; /* Higher than other modals */
+/* Fix avatar display issues in all locations */
+.user-avatar,
+.user-detail-avatar,
+#editUserForm .current-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-#edit-user-modal .modal-content {
-    position: relative;
-    background: white;
-    margin: 5% auto;
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-/* Fix for modal close button */
-#edit-user-modal .close-modal {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 10;
-}
-
-/* Fix for editUserForm visibility */
-#editUserForm {
-    /* Remove display: none from here; we'll control it with JS */
+.user-avatar img,
+.user-detail-avatar img,
+#editUserForm .current-logo img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Make sure default icons are properly centered */
+.user-avatar i,
+.user-detail-avatar i,
+#editUserForm .current-logo i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 3em;
+    color: #555;
+}
+/* Add form validation styles */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+
+.form-control.is-invalid + .invalid-feedback {
+    display: block;
+}
+
+.alert {
+    position: relative;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }

@@ -6,9 +6,15 @@
         <h2>Modifier l'utilisateur</h2>
     </div>
 
+    <!-- Error message display -->
+    <div id="userEditError" class="alert alert-danger" style="display: none; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 0.75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: 0.25rem;">
+        Une erreur est survenue
+    </div>
+
     <div class="profile-body">
         <form id="userEditForm" enctype="multipart/form-data">
             <input type="hidden" id="editUserId" name="userId">
+            <input type="hidden" id="originalEmail" name="originalEmail">
 
             <div class="form-group">
                 <div class="logo-upload">
@@ -18,32 +24,44 @@
                     </div>
                     <input type="file" id="logoFile" name="logoFile" accept="image/*">
                     <div class="file-hint">Format recommandé: JPG ou PNG, max 2MB</div>
+                    <div class="invalid-feedback" id="logoFile-error">
+                        Le format ou la taille de la photo est invalide.
+                    </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="editNom">Nom</label>
-                <input type="text" id="editNom" name="nom" class="form-control" required>
-                <div class="invalid-feedback">Le nom est requis</div>
+                <label for="editNom">Nom <span class="required-mark">*</span></label>
+                <input type="text" id="editNom" name="nom" class="form-control" required
+                       minlength="2" maxlength="50">
+                <div class="invalid-feedback" id="editNom-error">
+                    Le nom est requis et doit contenir entre 2 et 50 caractères
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="editEmail">Email</label>
+                <label for="editEmail">Email <span class="required-mark">*</span></label>
                 <input type="email" id="editEmail" name="email" class="form-control" required>
-                <div class="invalid-feedback">Un email valide est requis</div>
+                <div class="invalid-feedback" id="editEmail-error">
+                    Un email valide est requis. Cet email est peut-être déjà utilisé.
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="editTelephone">Téléphone</label>
+                <label for="editTelephone">Téléphone <span class="required-mark">*</span></label>
                 <input type="tel" id="editTelephone" name="telephone" class="form-control"
                        pattern="^[0-9]{10}$" required>
-                <div class="invalid-feedback">Le téléphone doit contenir 10 chiffres</div>
+                <div class="invalid-feedback" id="editTelephone-error">
+                    Le téléphone doit contenir 10 chiffres
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="editLocalisation">Localisation</label>
+                <label for="editLocalisation">Localisation <span class="required-mark">*</span></label>
                 <input type="text" id="editLocalisation" name="localisation" class="form-control" required>
-                <div class="invalid-feedback">La localisation est requise</div>
+                <div class="invalid-feedback" id="editLocalisation-error">
+                    La localisation est requise
+                </div>
             </div>
 
             <div class="form-actions">

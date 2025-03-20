@@ -122,5 +122,8 @@ public class SuperAdminService {
 
     public Utilisateurs updateUtilisateur(Utilisateurs utilisateur) {
         return utilisateursRepository.save(utilisateur);}
+    public boolean isEmailInUse(String email) {
+        return utilisateursRepository.existsByEmail(email);
+    }
 
 }
