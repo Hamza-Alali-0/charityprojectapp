@@ -35,13 +35,14 @@ public class ActionCharite {
     @PositiveOrZero(message = "Le montant actuel ne peut pas être négatif")
     private float montantActuel;
 
+    private Date datelimite;
     private int nombreParticipants; // Suivi du nombre de participants
 
     private List<String> mediaUrls; // URLs des médias (images, vidéos)
 
     @NotNull(message = "La catégorie est obligatoire")
     private String categorieId; // Référence à la catégorie
-    private List<String> likedByUsers;
+    private List<Utilisateurs> likedByUsers;
 
     private List<Utilisateurs> listUsersContribue;
     private List<Don> listedons;
@@ -103,6 +104,10 @@ public class ActionCharite {
         this.montantActuel = montantActuel;
     }
 
+    public Date getDatelimite() {return datelimite; }
+
+    public void setDatelimite(Date datelimite) {this.datelimite = datelimite; }
+
     public int getNombreParticipants() {
         return nombreParticipants;
     }
@@ -126,11 +131,11 @@ public class ActionCharite {
     public void setCategorieId(String categorieId) {
         this.categorieId = categorieId;
     }
-    public List<String> getLikedByUsers() {
+    public List<Utilisateurs> getLikedByUsers() {
         return likedByUsers;
     }
 
-    public void setLikedByUsers(List<String> likedByUsers) {
+    public void setLikedByUsers(List<Utilisateurs> likedByUsers) {
         this.likedByUsers = likedByUsers;
     }
 
@@ -158,8 +163,10 @@ public class ActionCharite {
         OrganisationId = organisationId;
     }
 
+
+
     // Méthode pour ajouter un like
-    public void ajouterLike(String userId) {
+    public void ajouterLike(Utilisateurs userId) {
         if (!this.likedByUsers.contains(userId)) {
             this.likedByUsers.add(userId);
         }

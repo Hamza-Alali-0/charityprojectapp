@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Suppression</title>
+    <link rel="stylesheet" th:href="@{/styles/admin/admin-dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/utilisateurs.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="confirmation-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Confirmation de Suppression</h2>
+        </div>
+
+        <div class="confirmation-content">
+            <p class="confirmation-message">Êtes-vous sûr de vouloir supprimer cet utilisateur?</p>
+
+            <div class="user-summary" th:if="${user != null}">
+                <div class="user-avatar">
+                    <img th:if="${user.logoPath != null}" th:src="@{'data:image/png;base64,' + ${user.logoPath}}" alt="Photo de profil">
+                    <i th:unless="${user.logoPath != null}" class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h3 th:text="${user.nom}">Nom de l'utilisateur</h3>
+                    <p><i class="fas fa-envelope"></i> <span th:text="${user.email}">email@example.com</span></p>
+                    <p><i class="fas fa-phone"></i> <span th:text="${user.telephone}">0123456789</span></p>
+                </div>
+            </div>
+
+            <p class="warning-text">Cette action est irréversible et supprimera toutes les données associées à cet utilisateur.</p>
+        </div>
+
+        <div class="confirmation-actions">
+            <a th:href="@{/superadmin/dashboard#users}" class="btn cancel-btn">
+                <i class="fas fa-arrow-left"></i> Annuler
+            </a>
+            <form th:action="@{/superadmin/utilisateurs/delete}" method="post">
+                <input type="hidden" name="userId" th:value="${user.userId}">
+                <button type="submit" class="btn delete-btn">
+                    <i class="fas fa-trash"></i> Confirmer la suppression
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

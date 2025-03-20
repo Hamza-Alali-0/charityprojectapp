@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Catégories</title>
+</head>
+<body>
+<!-- This is a fragment that will be included in the dashboard -->
+<div th:fragment="categories-content">
+  <div class="welcome-banner">
+    <h2>Gestion des Catégories</h2>
+
+
+    <button class="cat-add-btn" onclick="showAddCategoryModal()">
+      <i class="fas fa-plus"></i> Ajouter une catégorie
+    </button>
+    <br>
+
+  <!-- Empty state for when there are no categories -->
+  <div class="cat-empty-state" th:if="${#lists.isEmpty(categories)}">
+    <i class="fas fa-tags cat-empty-icon"></i>
+    <p>Aucune catégorie disponible</p>
+    <p class="cat-empty-subtitle">Créez des catégories pour faciliter la classification des actions caritatives</p>
+  </div>
+
+  <!-- Categories Grid -->
+  <div class="cat-grid" th:unless="${#lists.isEmpty(categories)}">
+    <div class="cat-card" th:each="category : ${categories}">
+      <div class="cat-card-content">
+        <div class="cat-icon">
+          <i class="fas fa-tag"></i>
+        </div>
+        <h3 class="cat-title" th:text="${category.nom}">Nom de la catégorie</h3>
+      </div>
+      <div class="cat-actions">
+        <button class="cat-edit-btn"
+                th:data-id="${category.idCategorie}"
+                th:data-name="${category.nom}">
+          <i class="fas fa-edit"></i> Modifier
+        </button>
+        <button class="cat-delete-btn"
+                th:data-id="${category.idCategorie}"
+                th:data-name="${category.nom}">
+          <i class="fas fa-trash"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!-- Add Category Modal -->
+  <div id="add-category-modal" class="cat-modal" style="display: none;">
+    <div class="cat-modal-content">
+      <span class="cat-modal-close" onclick="closeAddCategoryModal()">&times;</span>
+      <h2>Ajouter une catégorie</h2>
+      <form id="addCategoryForm">
+        <div class="cat-form-group">
+          <label for="categoryName">Nom de la catégorie <span class="cat-required-mark">*</span></label>
+          <input type="text" id="categoryName" name="nom" required maxlength="50" class="cat-form-control" placeholder="Ex: Éducation, Environnement, Santé...">
+          <div class="cat-invalid-feedback" id="categoryName-error"></div>
+        </div>
+        <div class="cat-form-actions">
+          <button type="button" onclick="closeAddCategoryModal()" class="cat-btn-cancel">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button type="submit" class="cat-btn-submit">
+            <i class="fas fa-save"></i> Ajouter
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Category Modal -->
+  <div id="edit-category-modal" class="cat-modal" style="display: none;">
+    <div class="cat-modal-content">
+      <span class="cat-modal-close" onclick="closeEditCategoryModal()">&times;</span>
+      <h2>Modifier la catégorie</h2>
+      <form id="editCategoryForm">
+        <input type="hidden" id="editCategoryId" name="idCategorie">
+        <div class="cat-form-group">
+          <label for="editCategoryName">Nom de la catégorie <span class="cat-required-mark">*</span></label>
+          <input type="text" id="editCategoryName" name="nom" required maxlength="50" class="cat-form-control">
+          <div class="cat-invalid-feedback" id="editCategoryName-error"></div>
+        </div>
+        <div class="cat-form-actions">
+          <button type="button" onclick="closeEditCategoryModal()" class="cat-btn-cancel">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button type="submit" class="cat-btn-submit">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-category-modal" class="cat-modal" style="display: none;">
+    <div class="cat-modal-content">
+      <span class="cat-modal-close" onclick="closeDeleteCategoryModal()">&times;</span>
+      <h2>Confirmer la suppression</h2>
+      <p>Êtes-vous sûr de vouloir supprimer la catégorie <span id="categoryToDelete" class="cat-name-highlight"></span>?</p>
+      <p class="cat-warning-text">Cette action est irréversible et pourrait affecter des actions caritatives existantes.</p>
+      <div class="cat-form-actions">
+        <button type="button" onclick="closeDeleteCategoryModal()" class="cat-btn-cancel">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+        <button type="button" id="confirmDeleteBtn" class="cat-btn-delete">
+          <i class="fas fa-trash"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Set up event handlers when fragment is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("Categories fragment loaded");
+
+      // Add event listeners to buttons using delegation
+      document.querySelector('.cat-grid').addEventListener('click', function(e) {
+        // Check for edit button click
+        if (e.target.closest('.cat-edit-btn')) {
+          const button = e.target.closest('.cat-edit-btn');
+          const id = button.getAttribute('data-id');
+          const name = button.getAttribute('data-name');
+          editCategory(id, name);
+        }
+
+        // Check for delete button click
+        if (e.target.closest('.cat-delete-btn')) {
+          const button = e.target.closest('.cat-delete-btn');
+          const id = button.getAttribute('data-id');
+          const name = button.getAttribute('data-name');
+          confirmDeleteCategory(id, name);
+        }
+      });
+
+      // Setup add category form submission
+      const addForm = document.getElementById('addCategoryForm');
+      if (addForm) {
+        addForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          addCategory(this);
+        });
+      }
+
+      // Setup edit category form submission
+      const editForm = document.getElementById('editCategoryForm');
+      if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          updateCategory(this);
+        });
+      }
+    });
+  </script>
+</div>
+</body>
+</html>

@@ -176,13 +176,15 @@
 }
 
 .edit-btn {
-    background:  grey;
-    color: white;
+    background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+    color: #d4af37;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .edit-btn:hover {
-    background:  #d4af37;
+    background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     color: white;
 }
 
@@ -538,23 +540,27 @@
 }
 
 #editUserForm .submit-btn {
-    background: #d4af37;
-    color: white;
+    background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+    color: #d4af37;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 #editUserForm .submit-btn:hover {
-    background: #c19b2e;
+    background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    color: white;
 }
 
 #editUserForm .cancel-btn {
-    background: #f0f0f0;
-    color: #333;
+    color: #d4af37;
+    background: rgba(255,255,255,0.9);
 }
 
 #editUserForm .cancel-btn:hover {
-    background: #e0e0e0;
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
     transform: translateY(-2px);
+    color: white;
 }
 
 /* Fix avatar display issues in all locations */
@@ -622,3 +628,149 @@
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
+
+/* Confirmation delete  page styling */
+/* Confirmation page styling */
+/* Confirmation page styling */
+/* Confirmation page styling */
+.confirmation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+}
+
+.confirmation-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+    border-top: 10px solid #d4af37;
+}
+
+.confirmation-header {
+    background: #f8f8f8;
+    padding: 25px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.confirmation-header i {
+    font-size: 3em;
+    color: #dc3545;
+    margin-bottom: 15px;
+}
+
+.confirmation-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.75em;
+}
+
+.confirmation-content {
+    padding: 25px;
+}
+
+.confirmation-message {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.warning-text {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.user-summary {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    border-left: 3px solid #d4af37;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    border: 3px solid #d4af37;
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar i {
+    font-size: 2.5em;
+    color: #555;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.user-info h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.user-info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.user-info i {
+    width: 20px;
+    color: #d4af37;
+    margin-right: 5px;
+}
+
+.confirmation-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 25px;
+    background: #f8f8f8;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.cancel-btn {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+

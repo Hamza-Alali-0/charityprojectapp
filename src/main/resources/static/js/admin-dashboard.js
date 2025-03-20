@@ -161,24 +161,10 @@ function validateOrganisation(id) {
         });
 }
 
+// Delete organization function - now redirects to confirmation page
 function deleteOrganisation(id) {
-    if (confirm('Are you sure you want to delete this organization?')) {
-        fetch(`/superadmin/api/organisations/${id}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Reload organizations content to remove deleted organization
-                    loadOrganisationsContent();
-                } else {
-                    alert('Error deleting organization');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting organization:', error);
-                alert('An error occurred while deleting the organization.');
-            });
-    }
+    // Redirect to the confirmation page
+    window.location.href = `/superadmin/organisations/confirm-delete/${id}`;
 }
 
 
@@ -190,6 +176,7 @@ function loadOrganisationsContent() {
     document.getElementById('organisations-content').style.display = 'block';
     document.getElementById('charities-content').style.display = 'none';
     document.getElementById('users-content').style.display = 'none';
+    document.getElementById('categories-content').style.display = 'none';
 
     // Update active tab
     setActiveTab('organisations-nav');
@@ -211,6 +198,7 @@ function loadCharitiesContent() {
     document.getElementById('organisations-content').style.display = 'none';
     document.getElementById('charities-content').style.display = 'block';
     document.getElementById('users-content').style.display = 'none';
+    document.getElementById('categories-content').style.display = 'none';
 
     setActiveTab('charities-nav');
     // Fetch charities content here
@@ -221,6 +209,7 @@ function loadUsersContent() {
     document.getElementById('organisations-content').style.display = 'none';
     document.getElementById('charities-content').style.display = 'none';
     document.getElementById('users-content').style.display = 'block';
+    document.getElementById('categories-content').style.display = 'none';
 
     setActiveTab('users-nav');
     // Fetch users content here
@@ -348,12 +337,13 @@ function showOrganizationDetails(element) {
     };
 }
 // User Management Functions
-
+// Replace the existing loadUsersContent function with this one
 function loadUsersContent() {
-    // Hide other content
+    // Hide ALL other content sections
     document.getElementById('dashboard-content').style.display = 'none';
     document.getElementById('organisations-content').style.display = 'none';
     document.getElementById('charities-content').style.display = 'none';
+    document.getElementById('categories-content').style.display = 'none'; // Make sure this is set to 'none'
     document.getElementById('users-content').style.display = 'block';
 
     // Update active tab
@@ -364,13 +354,14 @@ function loadUsersContent() {
         .then(response => response.text())
         .then(html => {
             document.getElementById('users-content').innerHTML = html;
+            console.log("Users content loaded successfully");
         })
         .catch(error => {
             console.error('Error loading users content:', error);
-            document.getElementById('users-content').innerHTML = '<div class="error-message">Error loading content. Please try again.</div>';
+            document.getElementById('users-content').innerHTML =
+                '<div class="error-message">Error loading content. Please try again.</div>';
         });
 }
-
 // User detail modal functions
 function showUserDetails(element) {
     const userId = element.getAttribute('data-user-id');
@@ -753,29 +744,90 @@ function clearFormErrors() {
 }
 // Delete user function
 function deleteUser(userId) {
-    // Confirm deletion
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur? Cette action est irréversible.')) {
-        fetch(`/superadmin/api/utilisateurs/${userId}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                // Close modal if open
-                const modal = document.getElementById('user-details-modal');
-                if (modal) modal.style.display = 'none';
-
-                // Show success message
-                alert('Utilisateur supprimé avec succès!');
-
-                // Reload users list
-                loadUsersContent();
-            })
-            .catch(error => {
-                console.error('Error deleting user:', error);
-                alert('Une erreur est survenue lors de la suppression de l\'utilisateur.');
-            });
-    }
+    // Redirect to the confirmation page
+    window.location.href = `/superadmin/utilisateurs/confirm-delete/${userId}`;
 }
+// Add this function to your existing admin-dashboard.js file
+
+// Add this function to your existing admin-dashboard.js file
+
+function loadCategoriesContent() {
+    // Hide other content
+    document.getElementById('dashboard-content').style.display = 'none';
+    document.getElementById('organisations-content').style.display = 'none';
+    document.getElementById('charities-content').style.display = 'none';
+    document.getElementById('users-content').style.display = 'none';
+    document.getElementById('categories-content').style.display = 'block';
+
+    // Update active tab
+    setActiveTab('categories-nav');
+
+    // Fetch categories content
+    fetch('/superadmin/categories-content')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('categories-content').innerHTML = html;
+
+            // Let's check if our category functions are available
+            console.log("addCategory function available:", typeof addCategory === 'function');
+            console.log("updateCategory function available:", typeof updateCategory === 'function');
+            console.log("deleteCategory function available:", typeof deleteCategory === 'function');
+
+            // Explicitly call setupCategoryEventListeners if it exists in the inserted HTML
+            if (typeof setupCategoryEventListeners === 'function') {
+                setTimeout(setupCategoryEventListeners, 200);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading categories content:', error);
+            document.getElementById('categories-content').innerHTML =
+                '<div class="error-message">Error loading content. Please try again.</div>';
+        });
+}
+// Add this function definition to your admin-dashboard.js file
+
+/**
+ * Load the dashboard content
+ * Displays the main dashboard and hides other sections
+ */
+function loadDashboardContent() {
+    // Hide all other content sections
+    document.getElementById('organisations-content').style.display = 'none';
+    document.getElementById('charities-content').style.display = 'none';
+    document.getElementById('users-content').style.display = 'none';
+    document.getElementById('categories-content').style.display = 'none';
+
+    // Show dashboard content
+    document.getElementById('dashboard-content').style.display = 'block';
+
+    // Set active tab
+    setActiveTab('dashboard-nav');
+
+    // You could fetch dashboard statistics here if needed
+    // For example:
+    /*
+    fetch('/superadmin/dashboard-statistics')
+        .then(response => response.json())
+        .then(data => {
+            // Update dashboard with statistics
+            updateDashboardStats(data);
+        })
+        .catch(error => {
+            console.error('Error loading dashboard statistics:', error);
+        });
+    */
+}
+// Update the DOMContentLoaded event listener to include categories hash
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if URL has a hash and load the appropriate content
+    const hash = window.location.hash;
+    if (hash === '#organisations') {
+        loadOrganisationsContent();
+    } else if (hash === '#charities') {
+        loadCharitiesContent();
+    } else if (hash === '#users') {
+        loadUsersContent();
+    } else if (hash === '#categories') {
+        loadCategoriesContent();
+    }
+});

@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/styles/admin/admin-dashboard.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/organisations.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/utilisateurs.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/categories.css}">
 
     <!-- Adding Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -56,40 +57,62 @@
         <i class="fas fa-hand-holding-heart"></i>
         <span>Actions de Charité</span>
     </a>
+    <a href="#categories" class="sub-nav-item" id="categories-nav" onclick="loadCategoriesContent()">
+        <i class="fas fa-tags"></i>
+        <span>Catégories</span>
+    </a>
     <a href="#users" class="sub-nav-item" id="users-nav" onclick="loadUsersContent()">
         <i class="fas fa-users"></i>
         <span>Utilisateurs</span>
     </a>
 </div>
 
-<!-- Main Content Area -->
+<!-- Main Content Area - FIXED STRUCTURE -->
 <div class="dashboard-content" id="content-container">
+    <!-- Dashboard section -->
     <div id="dashboard-content">
-        <!-- Original dashboard content -->
         <div class="welcome-banner">
             <h2>Bienvenue, <span th:text="${admin.nom}">Admin</span>!</h2>
             <p>Gérez les organisations, les actions de charité et les utilisateurs de la plateforme.</p>
         </div>
-
     </div>
 
-    <!-- Container for organizations content - initially hidden -->
+    <!-- Organizations section -->
     <div id="organisations-content" style="display: none;">
         <!-- Organizations content will be loaded here -->
     </div>
-    <!-- Container for users content - initially hidden -->
+
+    <!-- Charities section -->
+    <div id="charities-content" style="display: none;">
+        <!-- Charities content will be loaded here -->
+    </div>
+
+    <!-- Categories section -->
+    <div id="categories-content" style="display: none;">
+        <!-- Categories content will be loaded here -->
+    </div>
+
+    <!-- Users section -->
     <div id="users-content" style="display: none;">
         <!-- Users content will be loaded here -->
     </div>
+</div>
 
-    <!-- Containers for other sections -->
-    <div id="charities-content" style="display: none;"></div>
-
+<!-- Success/Error Messages -->
+<div th:if="${successMessage}" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    <span th:text="${successMessage}"></span>
+</div>
+<div th:if="${errorMessage}" class="alert alert-danger">
+    <i class="fas fa-exclamation-circle"></i>
+    <span th:text="${errorMessage}"></span>
 </div>
 
 <!-- Include the profile modal fragment -->
 <div th:replace="~{superadmin/profile/profileModal :: profileModal}"></div>
 
 <script th:src="@{/js/admin-dashboard.js}"></script>
+<!-- Add this line to the bottom of the dashboard.html file, just before the closing </body> tag -->
+<script th:src="@{/js/categories.js}"></script>
 </body>
 </html>

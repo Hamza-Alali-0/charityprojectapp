@@ -1,12 +1,37 @@
-/* Navbar styling */
+/* Navbar styling - Enhanced with luxury gold theme */
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #ffffff;
-    padding: 10px 20px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    padding: 12px 25px;
     color: #333;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow:
+            0 3px 8px rgba(0,0,0,0.1),
+            0 1px 3px rgba(0,0,0,0.08);
+    border-bottom: 3px solid #d4af37; /* Gold accent */
+    position: relative;
+}
+
+/* Gold decorative line under navbar */
+.navbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right,
+    transparent 0%,
+    #d4af37 20%,
+    #f4e38d 30%,
+    #d4af37 40%,
+    transparent 50%,
+    #d4af37 60%,
+    #f4e38d 70%,
+    #d4af37 80%,
+    transparent 100%);
+    z-index: 2;
 }
 
 .navbar-left {
@@ -21,7 +46,7 @@
     border-radius: 50%;
     overflow: hidden;
     margin-right: 15px;
-    border: 2px solid #2c3e50;
+    border: 2px solid #d4af37;
     flex-shrink: 0;
 }
 
@@ -48,9 +73,13 @@
     font-size: 0.9em;
     color: #555;
     white-space: nowrap;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%);
+    border-radius: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-/* Notification styles */
+/* Notification styles - Enhanced */
 .notification {
     margin: 0 15px;
     position: relative;
@@ -61,12 +90,16 @@
     font-size: 1.2em;
     position: relative;
     display: block;
-    padding: 5px;
+    padding: 8px;
     transition: color 0.3s;
+    background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%);
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .notification-icon:hover {
-    color: #3498db;
+    color: #d4af37; /* Changed to gold */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 .notification-badge {
@@ -83,9 +116,10 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    border: 1px solid white;
 }
 
-/* Dropdown styles */
+/* Dropdown styles - Enhanced */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -94,27 +128,33 @@
 .param-icon {
     color: #2c3e50;
     font-size: 1.5em;
-    transition: transform 0.3s;
+    transition: transform 0.3s, color 0.3s;
     cursor: pointer;
     display: block;
-    padding: 5px;
+    padding: 8px;
+    background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%);
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .param-icon:hover {
     transform: rotate(45deg);
-    color: #3498db;
+    color: #d4af37; /* Changed to gold */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
     right: 0;
-    background-color: #ffffff;
+    background-color: white;
     min-width: 180px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    border-radius: 4px;
+    border-radius: 8px;
     margin-top: 5px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-bottom: 3px solid #d4af37;
 }
 
 .dropdown-content.show {
@@ -124,30 +164,39 @@
 
 .dropdown-item {
     color: #333;
+    background-color: #ffffff;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
     font-size: 14px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .dropdown-item i {
     margin-right: 8px;
     width: 16px;
     text-align: center;
+    color: #d4af37; /* Gold icon color */
 }
 
 .dropdown-item:hover {
-    background-color: #f1f1f1;
+    background-color: #f7f1dc;
+    color: #d4af37;
 }
 
-/* Sub Navigation Bar */
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Sub Navigation Bar - Enhanced with luxury style */
 .sub-navbar {
     display: flex;
     justify-content: center;
-    background-color: white;
-    padding: 15px 20px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    padding: 18px 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .sub-nav-item {
@@ -156,9 +205,9 @@
     align-items: center;
     text-decoration: none;
     color: #555;
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
     padding: 15px;
     margin: 0 15px;
     min-width: 120px;
@@ -178,63 +227,99 @@
 
 .sub-nav-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border-color: #3498db;
-    color: #3498db;
+    box-shadow:
+            0 5px 15px rgba(0,0,0,0.1),
+            0 0 20px rgba(212, 175, 55, 0.2);
+    border-color: #d4af37;
+    color: #d4af37;
 }
 
 .sub-nav-item:hover i {
-    color: #3498db;
+    color: #d4af37;
 }
 
 /* Animation for dropdown */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Main content container */
 .container {
     padding: 20px;
-    margin-top: 10px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-     /* Basic Modal Styles */
- .modal {
-     display: none;
-     position: fixed;
-     z-index: 1000;
-     left: 0;
-     top: 0;
-     width: 100%;
-     height: 100%;
-     background-color: rgba(0, 0, 0, 0.5);
-     overflow: auto;
- }
+/* Basic Modal Styles - Enhanced with gold accents */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    backdrop-filter: blur(3px);
+}
 
 .modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 8px;
+    position: relative;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    margin: 5% auto;
+    padding: 25px;
     width: 80%;
     max-width: 600px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: 0px 5px 25px rgba(0,0,0,0.3);
+    animation: modalFadeIn 0.4s;
+    border-top: 3px solid #d4af37;
+    border-bottom: 3px solid #d4af37;
 }
 
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #555;
+    font-size: 1.5em;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.3s;
+    width: 30px;
+    height: 30px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .close:hover {
-    color: #000;
+    color: #d4af37;
+    background: rgba(255,255,255,0.9);
 }
 
-/* Profile styles */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Profile styles - Enhanced with gold accents */
 .profile-actions {
     display: flex;
     gap: 10px;
@@ -243,23 +328,28 @@
 
 .action-btn {
     padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+    color: #555;
+    border: 1px solid rgba(212, 175, 55, 0.3);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
+    transition: all 0.3s;
+    font-size: 0.9em;
 }
 
 .action-btn:hover {
-    background-color: #45a049;
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 .profile-body {
     display: flex;
-    gap: 20px;
+    gap: 25px;
     margin-top: 20px;
 }
 
@@ -270,6 +360,8 @@
 .profile-logo img {
     max-width: 100%;
     border-radius: 8px;
+    border: 2px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .profile-details {
@@ -277,74 +369,97 @@
 }
 
 .detail-item {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .label {
     font-weight: bold;
-    display: inline-block;
-    min-width: 150px;
+    color: darkblue;
+    margin-bottom: 5px;
+    display: block;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
     font-weight: bold;
+    margin-bottom: 5px;
+    color: darkblue;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 5px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    outline: none;
 }
 
 .form-actions {
     display: flex;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 25px;
+    justify-content: flex-end;
 }
 
 .submit-btn,
 .cancel-btn {
-    padding: 8px 15px;
+    padding: 10px 20px;
+    border-radius: 5px;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
 }
 
 .submit-btn {
-    background-color: #4CAF50;
-    color: white;
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%); /* Changed to gold gradient */
+    color: #333;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%); /* Reversed gradient on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
 }
 
 .cancel-btn {
-    background-color: #f44336;
-    color: white;
-}
-/* Logo styles for consistency */
-.profile-logo img {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #e0e0e0 0%, #bbbbbb 100%); /* Changed to neutral gradient */
+    color: #333;
 }
 
+.cancel-btn:hover {
+    background: linear-gradient(135deg, #bbbbbb 0%, #999999 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Logo styles for consistency */
 .logo-upload .current-logo {
     width: 200px;
     height: 200px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .logo-upload .current-logo img {
@@ -352,11 +467,13 @@
     height: 100%;
     object-fit: contain;
 }
+
 .file-hint {
     color: #666;
     font-size: 0.85em;
     margin-top: 5px;
 }
+
 .invalid-feedback {
     color: #dc3545;
     font-size: 0.875em;
@@ -380,4 +497,67 @@
     margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: 0.25rem;
+}
+
+/* Welcome banner with gold accents */
+.welcome-banner {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border-left: 3px solid #d4af37;
+    position: relative;
+}
+
+.welcome-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right,
+    #d4af37 0%,
+    #f4e38d 50%,
+    #d4af37 100%);
+    border-radius: 3px 3px 0 0;
+}
+
+.welcome-banner h2 {
+    color: #2c3e50;
+    margin-top: 0;
+    font-family: 'Georgia', serif;
+}
+
+.welcome-banner p {
+    color: #555;
+    margin-bottom: 0;
+}
+/* Updated profile-actions styling for under-logo placement */
+.profile-logo {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-logo img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 2px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.profile-actions .action-btn {
+    width: 100%;
+    justify-content: center;
 }

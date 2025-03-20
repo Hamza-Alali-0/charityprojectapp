@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Suppression</title>
+    <link rel="stylesheet" th:href="@{/styles/admin/admin-dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/categories.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="confirmation-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Confirmation de Suppression</h2>
+        </div>
+
+        <div class="confirmation-content">
+            <p class="confirmation-message">Êtes-vous sûr de vouloir supprimer cette catégorie?</p>
+
+            <div class="category-summary" th:if="${category != null}">
+                <div class="category-icon">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <div class="category-info">
+                    <h3 th:text="${category.nom}">Nom de la catégorie</h3>
+                </div>
+            </div>
+
+            <p class="warning-text">Cette action est irréversible et pourrait affecter les actions caritatives associées à cette catégorie.</p>
+        </div>
+
+        <div class="confirmation-actions">
+            <a th:href="@{/superadmin/dashboard#categories}" class="btn cancel-btn">
+                <i class="fas fa-arrow-left"></i> Annuler
+            </a>
+            <form th:action="@{/superadmin/categories/delete}" method="post">
+                <input type="hidden" name="categoryId" th:value="${category.idCategorie}">
+                <button type="submit" class="btn delete-btn">
+                    <i class="fas fa-trash"></i> Confirmer la suppression
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

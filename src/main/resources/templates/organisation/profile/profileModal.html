@@ -9,16 +9,18 @@
         <div id="profileView">
             <div class="profile-header">
                 <h2>Profil de l'Organisation</h2>
-                <div class="profile-actions">
-                    <button id="modifyBtn" class="action-btn"><i class="fas fa-edit"></i> Modifier</button>
-                    <button id="passwordBtn" class="action-btn"><i class="fas fa-key"></i> Modifier mot de passe</button>
-                </div>
             </div>
 
             <div class="profile-body">
                 <div class="profile-logo">
                     <img th:if="${organisation.logo}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo de l'organisation">
                     <img th:unless="${organisation.logo}" src="https://via.placeholder.com/200" alt="Logo par défaut">
+
+                    <!-- Moved action buttons under the logo -->
+                    <div class="profile-actions">
+                        <button id="modifyBtn" class="action-btn"><i class="fas fa-edit"></i> Modifier</button>
+                        <button id="passwordBtn" class="action-btn"><i class="fas fa-key"></i> Modifier mot de passe</button>
+                    </div>
                 </div>
 
                 <div class="profile-details">

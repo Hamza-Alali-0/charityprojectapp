@@ -1,10 +1,13 @@
 package org.example.charityproject1.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.charityproject1.model.CategorieAction;
 import org.example.charityproject1.model.Organisations;
 import org.example.charityproject1.model.SuperAdmin;
 import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.repository.SuperAdminRepository;
+import org.example.charityproject1.repository.UtilisateursRepository;
+import org.example.charityproject1.service.CategorieActionService;
 import org.example.charityproject1.service.SuperAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,10 +29,13 @@ public class SuperAdminController {
 
     @Autowired
     private SuperAdminRepository superAdminRepository;
-
+    @Autowired
+    private UtilisateursRepository utilisateursRepository;
     @Autowired
     private SuperAdminService superAdminService;
 
+    @Autowired
+    private CategorieActionService categorieActionService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -382,6 +388,198 @@ public class SuperAdminController {
         return "redirect:/superadmin/dashboard";
     }
 
+    /**
+     * Show confirmation page before deleting a user
+     */
+    /**
+     * Show confirmation page before deleting a user
+     */
+    @GetMapping("/utilisateurs/confirm-delete/{userId}")
+    public String showDeleteConfirmation(@PathVariable String userId, Model model) {
+        // Get the user to delete
+        Optional<Utilisateurs> userOpt = utilisateursRepository.findById(userId);
+
+        if (userOpt.isPresent()) {
+            model.addAttribute("user", userOpt.get());
+            return "superadmin/utilisateurs/confirmation-modal";
+        } else {
+            // User not found, redirect to dashboard
+            return "redirect:/superadmin/dashboard#users";
+        }
+    }
+
+    /**
+     * Process user deletion after confirmation
+     */
+    @PostMapping("/utilisateurs/delete")
+    public String deleteUser(@RequestParam String userId, RedirectAttributes redirectAttributes) {
+        try {
+            // Check if user exists
+            if (utilisateursRepository.existsById(userId)) {
+                // Delete the user
+                utilisateursRepository.deleteById(userId);
+                redirectAttributes.addFlashAttribute("successMessage", "Utilisateur supprimé avec succès");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur non trouvé");
+            }
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Error deleting user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue lors de la suppression");
+        }
+
+        return "redirect:/superadmin/dashboard#users";
+    }
+    /**
+     * Show confirmation page before deleting an organization
+     */
+    @GetMapping("/organisations/confirm-delete/{orgId}")
+    public String showDeleteOrganisationConfirmation(@PathVariable String orgId, Model model) {
+        // Get the organization to delete
+        Optional<Organisations> orgOpt = superAdminService.getOrganisationById(orgId);
+
+        if (orgOpt.isPresent()) {
+            model.addAttribute("organisation", orgOpt.get());
+            return "superadmin/organisations/confirmation-modal";
+        } else {
+            // Organization not found, redirect to dashboard
+            return "redirect:/superadmin/dashboard#organisations";
+        }
+    }
+
+    /**
+     * Process organization deletion after confirmation
+     */
+    @PostMapping("/organisations/delete")
+    public String deleteOrganisation(@RequestParam String orgId, RedirectAttributes redirectAttributes) {
+        try {
+            // Delete the organization
+            superAdminService.deleteOrganisation(orgId);
+            redirectAttributes.addFlashAttribute("successMessage", "Organisation supprimée avec succès");
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Error deleting organization: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue lors de la suppression de l'organisation");
+        }
+
+        return "redirect:/superadmin/dashboard#organisations";
+    }
+    // Add error handling to your categories-content method
+    @GetMapping("/categories-content")
+    public String getCategoriesContent(Model model) {
+        try {
+            List<CategorieAction> categories = categorieActionService.getAllCategories();
+            model.addAttribute("categories", categories);
+            return "superadmin/categories/categories :: categories-content";
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Une erreur est survenue lors du chargement des catégories: " + e.getMessage());
+            return "superadmin/error :: error-content";
+        }
+    }
+    // Add these methods to your SuperAdminController class
+
+    @GetMapping("/api/categories")
+    @ResponseBody
+    public List<CategorieAction> getAllCategories() {
+        return categorieActionService.getAllCategories();
+    }
+
+    @GetMapping("/api/categories/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") String id) {
+        try {
+            CategorieAction category = categorieActionService.getCategoryById(id);
+            return ResponseEntity.ok(category);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/categories")
+    @ResponseBody
+    public ResponseEntity<?> createCategory(@RequestBody CategorieAction category) {
+        try {
+            // Add debug logging
+            System.out.println("Received category: " + category.getNom());
+
+            // Validate category
+            if (category.getNom() == null || category.getNom().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "Le nom de la catégorie est obligatoire"));
+            }
+
+            CategorieAction createdCategory = categorieActionService.createCategory(category);
+            System.out.println("Created category with ID: " + createdCategory.getIdCategorie());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/api/categories/{id}")
+    @ResponseBody
+    public ResponseEntity<?> updateCategory(
+            @PathVariable("id") String id,
+            @RequestBody CategorieAction category) {
+        try {
+            CategorieAction updatedCategory = categorieActionService.updateCategory(id, category);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/api/categories/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") String id) {
+        try {
+            categorieActionService.deleteCategory(id);
+            return ResponseEntity.ok(Map.of("message", "Catégorie supprimée avec succès"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+    /**
+     * Show confirmation page before deleting a category
+     */
+    @GetMapping("/categories/confirm-delete/{categoryId}")
+    public String showDeleteCategoryConfirmation(@PathVariable String categoryId, Model model) {
+        try {
+            // Get the category to delete
+            CategorieAction category = categorieActionService.getCategoryById(categoryId);
+            model.addAttribute("category", category);
+            return "superadmin/categories/confirmation-modal";
+        } catch (Exception e) {
+            // Category not found, redirect to dashboard
+            return "redirect:/superadmin/dashboard#categories";
+        }
+    }
+
+    /**
+     * Process category deletion after confirmation
+     */
+    @PostMapping("/categories/delete")
+    public String deleteCategory(@RequestParam String categoryId, RedirectAttributes redirectAttributes) {
+        try {
+            // Delete the category
+            categorieActionService.deleteCategory(categoryId);
+            redirectAttributes.addFlashAttribute("successMessage", "Catégorie supprimée avec succès");
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Error deleting category: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue lors de la suppression de la catégorie");
+        }
+
+        return "redirect:/superadmin/dashboard#categories";
+    }
     // Change password
     @PostMapping("/change-password")
     public String changePassword(@RequestParam("currentPassword") String currentPassword,
