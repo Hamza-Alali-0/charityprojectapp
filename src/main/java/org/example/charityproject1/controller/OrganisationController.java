@@ -42,6 +42,7 @@ public class OrganisationController {
         return "organisation/dashboard";
     }
 
+
     @PostMapping("/update-profile")
     public String updateProfile(@RequestParam("nom") String nom,
                                 @RequestParam(value = "numeroIdentif", required = false) String newNumeroIdentif,

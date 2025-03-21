@@ -47,9 +47,26 @@ public class ActionChariteController {
         List<CategorieAction> categories = categorieActionService.getAllCategories();
         model.addAttribute("categories", categories);
 
+        // Add this section to load actions for the right panel
+        // Get active actions
+        List<ActionCharite> actions = actionChariteService.getActiveActionsByOrganisation(orgId);
+
+        // Load categories for each action
+        for (ActionCharite action : actions) {
+            if (action.getCategorieId() != null) {
+                try {
+                    CategorieAction categorie = categorieActionService.getCategoryById(action.getCategorieId());
+                    action.setCategorie(categorie);
+                } catch (Exception e) {
+                    // Category not found, continue with null categorie
+                }
+            }
+        }
+
+        model.addAttribute("actions", actions);
+
         return "organisation/actions/create-action";
     }
-
     @PostMapping("/create")
     public String createAction(
             @RequestParam("titre") String titre,
@@ -98,17 +115,29 @@ public class ActionChariteController {
     public String listActions(Model model, HttpSession session) {
         String orgId = (String) session.getAttribute("org_identifier");
         if (orgId == null) {
-            return "redirect:/auth/login/organisation";
+            return "redirect:/login";
         }
 
-        // Add organisation for navbar
+        // Load organisation for navbar
         Organisations organisation = organisationsService.findByNumeroIdentif(orgId);
         model.addAttribute("organisation", organisation);
 
-        // Get active actions for the organisation
-        List<ActionCharite> activeActions = actionChariteService.getActiveActionsByOrganisation(orgId);
-        model.addAttribute("actions", activeActions);
+        // Get active actions
+        List<ActionCharite> actions = actionChariteService.getActiveActionsByOrganisation(orgId);
 
+        // Load categories for each action
+        for (ActionCharite action : actions) {
+            if (action.getCategorieId() != null) {
+                try {
+                    CategorieAction categorie = categorieActionService.getCategoryById(action.getCategorieId());
+                    action.setCategorie(categorie);
+                } catch (Exception e) {
+                    // Category not found, continue with null categorie
+                }
+            }
+        }
+
+        model.addAttribute("actions", actions);
         return "organisation/actions/list-actions";
     }
 

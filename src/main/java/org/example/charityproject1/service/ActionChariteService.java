@@ -35,6 +35,7 @@ public class ActionChariteService {
         // Set initial values
         actionCharite.setMontantActuel(0);
         actionCharite.setNombreParticipants(0);
+        actionCharite.setDateCreation(new Date());
 
         // Process media files
         if (mediaFiles != null && !mediaFiles.isEmpty()) {
@@ -104,8 +105,9 @@ public class ActionChariteService {
             action.setListUsersContribue(new ArrayList<>());
         }
 
-        if (!action.getListUsersContribue().contains(user)) {
-            action.getListUsersContribue().add(user);
+        // FIX: Use userId (String) instead of user object
+        if (!action.getListUsersContribue().contains(user.getUserId())) {
+            action.getListUsersContribue().add(user.getUserId());
             action.setNombreParticipants(action.getNombreParticipants() + 1);
         }
 

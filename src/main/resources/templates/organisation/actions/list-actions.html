@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actions en cours</title>
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .media-slideshow {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%; /* Creates a square aspect ratio */
+            margin-bottom: 15px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .media-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .media-slide.active {
+            display: block;
+        }
+
+        .media-controls {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .media-control {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .media-control:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .media-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 2;
+        }
+
+        .media-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .media-dot.active {
+            background-color: white;
+        }
+
+        .no-media {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+        }
+        .actions-container {
+            margin: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .actions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .action-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .action-detail {
+            display: flex;
+            align-items: center;
+            font-size: 0.85em;
+        }
+
+        .action-detail i {
+            margin-right: 5px;
+            color: #4CAF50;
+        }
+
+        .action-category {
+            font-size: 0.8em;
+            background-color: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .action-progress {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            background-color: #eee;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-value {
+            background-color: #4CAF50;
+            height: 100%;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .action-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .edit-btn:hover {
+            color: #2196F3;
+        }
+
+        .view-btn:hover {
+            color: #4CAF50;
+        }
+
+        .no-actions {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+
+        .no-actions i {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<!-- Main Navigation Bar -->
+<div th:replace="~{organisation/dashboard :: navbar}"></div>
+
+<!-- Sub Navigation with Rectangles -->
+<div class="sub-navbar">
+    <a href="/organisation/dashboard" class="sub-nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Tableau de bord</span>
+    </a>
+    <a href="/organisation/actions/create" class="sub-nav-item">
+        <i class="fas fa-tasks"></i>
+        <span>Lancer des Actions</span>
+    </a>
+    <a href="/organisation/actions/list" class="sub-nav-item active">
+        <i class="fas fa-hand-holding-heart"></i>
+        <span>Actions en cours</span>
+    </a>
+    <a href="/organisation/actions/archived" class="sub-nav-item">
+        <i class="fas fa-archive"></i>
+        <span>Actions Archivees</span>
+    </a>
+</div>
+
+<div class="actions-container">
+    <div class="actions-header">
+        <h2>Actions en cours</h2>
+    </div>
+
+    <div th:if="${actions != null and !actions.isEmpty()}" class="action-cards">
+        <div th:each="action : ${actions}" class="action-card">
+            <div class="action-title" th:text="${action.titre}">Titre de l'action</div>
+            <!-- Add this after the action-title div -->
+            <div th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}" class="media-slideshow" th:attr="data-action-id=${action.idAction}">
+                <div th:each="mediaUrl, urlStat : ${action.mediaUrls}"
+                     class="media-slide"
+                     th:classappend="${urlStat.index == 0 ? 'active' : ''}"
+                     th:style="'background-image: url(data:image/png;base64,' + ${mediaUrl} + ');'">
+                </div>
+
+                <div class="media-controls" th:if="${action.mediaUrls.size() > 1}">
+                    <button class="media-control prev-slide">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="media-control next-slide">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="media-dots" th:if="${action.mediaUrls.size() > 1}">
+        <span th:each="dot, dotStat : ${action.mediaUrls}"
+              class="media-dot"
+              th:classappend="${dotStat.index == 0 ? 'active' : ''}"
+              th:attr="data-index=${dotStat.index}">
+        </span>
+                </div>
+            </div>
+
+            <div th:if="${action.mediaUrls == null or action.mediaUrls.isEmpty()}" class="media-slideshow no-media">
+                <i class="fas fa-image"></i>
+            </div>
+            <!-- Change this line: -->
+            <div class="action-category" th:text="${action.categorie != null ? action.categorie.nom : (action.categorieId != null ? action.categorieId : 'Catégorie inconnue')}">
+                Catégorie
+            </div>
+
+            <div class="action-details">
+                <span class="action-detail">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${action.lieu}">Lieu</span>
+                </span>
+
+                <span class="action-detail">
+                    <i class="fas fa-calendar"></i>
+                    <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span>
+                </span>
+
+                <span class="action-detail">
+                    <i class="fas fa-users"></i>
+                    <span th:text="${action.nombreParticipants} + ' participants'">0 participants</span>
+                </span>
+            </div>
+
+            <div class="action-progress">
+                <div class="progress-bar">
+                    <div class="progress-value"
+                         th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                </div>
+                <div class="progress-text">
+                    <span th:text="${action.montantActuel} + ' €'">0 €</span>
+                    <span th:text="${action.objectifCollecte} + ' €'">1000 €</span>
+                </div>
+            </div>
+
+            <div class="action-controls">
+                <a th:href="@{'/organisation/actions/edit/' + ${action.idAction}}" class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a th:href="@{'/organisation/actions/view/' + ${action.idAction}}" class="action-btn view-btn">
+                    <i class="fas fa-eye"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${actions == null or actions.isEmpty()}" class="no-actions">
+        <i class="fas fa-inbox"></i>
+        <p>Aucune action en cours. Créez votre première action caritative !</p>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize slideshows
+        document.querySelectorAll('.media-slideshow').forEach(function(slideshow) {
+            initSlideshow(slideshow);
+        });
+
+        function initSlideshow(slideshow) {
+            const slides = slideshow.querySelectorAll('.media-slide');
+            const dots = slideshow.querySelectorAll('.media-dot');
+            const prevBtn = slideshow.querySelector('.prev-slide');
+            const nextBtn = slideshow.querySelector('.next-slide');
+
+            if (slides.length <= 1) return; // No need for controls if only one image
+
+            // Set up next/prev buttons
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    let activeIndex = getActiveIndex(slides);
+                    let newIndex = (activeIndex - 1 + slides.length) % slides.length;
+                    setActiveSlide(slides, dots, newIndex);
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    let activeIndex = getActiveIndex(slides);
+                    let newIndex = (activeIndex + 1) % slides.length;
+                    setActiveSlide(slides, dots, newIndex);
+                });
+            }
+
+            // Set up dots
+            if (dots) {
+                dots.forEach(function(dot, index) {
+                    dot.addEventListener('click', function() {
+                        setActiveSlide(slides, dots, index);
+                    });
+                });
+            }
+        }
+
+        function getActiveIndex(slides) {
+            for (let i = 0; i < slides.length; i++) {
+                if (slides[i].classList.contains('active')) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        function setActiveSlide(slides, dots, index) {
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (dots) {
+                dots.forEach(dot => dot.classList.remove('active'));
+            }
+
+            // Add active class to the selected slide and dot
+            slides[index].classList.add('active');
+            if (dots && dots[index]) {
+                dots[index].classList.add('active');
+            }
+        }
+    });
+</script>
+</body>
+</html>

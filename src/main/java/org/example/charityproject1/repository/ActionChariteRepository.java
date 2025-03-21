@@ -12,12 +12,10 @@ public interface ActionChariteRepository extends MongoRepository<ActionCharite, 
     // Find actions by organization ID
     List<ActionCharite> findByOrganisationId(String OrganisationId);
 
-    // Find active actions (where date limite is in the future or date limite is null)
-    @Query("{ $and: [ { 'OrganisationId': ?1 }, { $or: [ { 'datelimite': { $gt: ?0 } }, { 'datelimite': null } ] } ] }")
+    @Query("{ $and: [ { 'organisationId': ?1 }, { $or: [ { 'datelimite': { $gt: ?0 } }, { 'datelimite': null } ] } ] }")
     List<ActionCharite> findActiveActionsByOrganisation(Date now, String organisationId);
 
-    // Find archived actions (where date limite is in the past)
-    @Query("{ 'datelimite' : { $lt: ?0 }, 'datelimite': { $ne: null }, 'OrganisationId': ?1 }")
+    @Query("{ 'datelimite' : { $lt: ?0 }, 'datelimite': { $ne: null }, 'organisationId': ?1 }")
     List<ActionCharite> findArchivedActionsByOrganisation(Date now, String organisationId);
 
     // Find actions by category

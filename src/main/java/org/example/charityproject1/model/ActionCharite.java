@@ -1,10 +1,10 @@
 package org.example.charityproject1.model;
 
-
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,42 +12,52 @@ import java.util.List;
 public class ActionCharite {
 
     @Id
-    private String idAction; // Utilisation de String pour la compatibilité avec MongoDB
+    private String idAction;
 
     @NotBlank(message = "Le titre est obligatoire")
-    @Size(max = 100, message = "Le titre ne doit pas dépasser 100 caractères")
     private String titre;
 
     @NotBlank(message = "La description est obligatoire")
-    @Size(max = 500, message = "La description ne doit pas dépasser 500 caractères")
     private String description;
 
     @NotNull(message = "La date est obligatoire")
     private Date date;
 
+    private Date datelimite;
+
     @NotBlank(message = "Le lieu est obligatoire")
-    @Size(max = 100, message = "Le lieu ne doit pas dépasser 100 caractères")
     private String lieu;
 
-    @Positive(message = "L'objectif de collecte doit être positif")
+    @Min(value = 1, message = "L'objectif de collecte doit être supérieur à 0")
     private float objectifCollecte;
 
-    @PositiveOrZero(message = "Le montant actuel ne peut pas être négatif")
-    private float montantActuel;
+    private float montantActuel = 0f;
 
-    private Date datelimite;
-    private int nombreParticipants; // Suivi du nombre de participants
+    @NotBlank(message = "L'ID de l'organisation est obligatoire")
+    private String organisationId;
 
-    private List<String> mediaUrls; // URLs des médias (images, vidéos)
+    @NotBlank(message = "La catégorie est obligatoire")
+    private String categorieId;
+    // Add this property to your class
+    private int nombreParticipants = 0;
 
-    @NotNull(message = "La catégorie est obligatoire")
-    private String categorieId; // Référence à la catégorie
-    private List<Utilisateurs> likedByUsers;
-
-    private List<Utilisateurs> listUsersContribue;
+    private List<String> mediaUrls;
+    private List<String> likedByUsers;
+    private List<String> listUsersContribue;
     private List<Don> listedons;
-    private String OrganisationId;
-    // Getters et setters
+    private boolean active = true;
+    private Date dateCreation;
+
+    private CategorieAction categorie;
+    private Organisations organisation;
+
+    public ActionCharite() {
+        this.likedByUsers = new ArrayList<>();
+        this.listUsersContribue = new ArrayList<>();
+        this.listedons = new ArrayList<>();
+        this.mediaUrls = new ArrayList<>();
+    }
+
     public String getIdAction() {
         return idAction;
     }
@@ -80,6 +90,14 @@ public class ActionCharite {
         this.date = date;
     }
 
+    public Date getDatelimite() {
+        return datelimite;
+    }
+
+    public void setDatelimite(Date datelimite) {
+        this.datelimite = datelimite;
+    }
+
     public String getLieu() {
         return lieu;
     }
@@ -104,24 +122,12 @@ public class ActionCharite {
         this.montantActuel = montantActuel;
     }
 
-    public Date getDatelimite() {return datelimite; }
-
-    public void setDatelimite(Date datelimite) {this.datelimite = datelimite; }
-
-    public int getNombreParticipants() {
-        return nombreParticipants;
+    public String getOrganisationId() {
+        return organisationId;
     }
 
-    public void setNombreParticipants(int nombreParticipants) {
-        this.nombreParticipants = nombreParticipants;
-    }
-
-    public List<String> getMediaUrls() {
-        return mediaUrls;
-    }
-
-    public void setMediaUrls(List<String> mediaUrls) {
-        this.mediaUrls = mediaUrls;
+    public void setOrganisationId(String organisationId) {
+        this.organisationId = organisationId;
     }
 
     public String getCategorieId() {
@@ -131,19 +137,35 @@ public class ActionCharite {
     public void setCategorieId(String categorieId) {
         this.categorieId = categorieId;
     }
-    public List<Utilisateurs> getLikedByUsers() {
+    // Add these getter and setter methods
+    public int getNombreParticipants() {
+        return nombreParticipants;
+    }
+
+    public void setNombreParticipants(int nombreParticipants) {
+        this.nombreParticipants = nombreParticipants;
+    }
+    public List<String> getMediaUrls() {
+        return mediaUrls;
+    }
+
+    public void setMediaUrls(List<String> mediaUrls) {
+        this.mediaUrls = mediaUrls;
+    }
+
+    public List<String> getLikedByUsers() {
         return likedByUsers;
     }
 
-    public void setLikedByUsers(List<Utilisateurs> likedByUsers) {
+    public void setLikedByUsers(List<String> likedByUsers) {
         this.likedByUsers = likedByUsers;
     }
 
-    public List<Utilisateurs> getListUsersContribue() {
+    public List<String> getListUsersContribue() {
         return listUsersContribue;
     }
 
-    public void setListUsersContribue(List<Utilisateurs> listUsersContribue) {
+    public void setListUsersContribue(List<String> listUsersContribue) {
         this.listUsersContribue = listUsersContribue;
     }
 
@@ -155,25 +177,92 @@ public class ActionCharite {
         this.listedons = listedons;
     }
 
-    public String getOrganisationId() {
-        return OrganisationId;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setOrganisationId(String organisationId) {
-        OrganisationId = organisationId;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
+    public Date getDateCreation() {
+        return dateCreation;
+    }
 
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
 
-    // Méthode pour ajouter un like
-    public void ajouterLike(Utilisateurs userId) {
-        if (!this.likedByUsers.contains(userId)) {
-            this.likedByUsers.add(userId);
+    public CategorieAction getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(CategorieAction categorie) {
+        this.categorie = categorie;
+    }
+
+    public Organisations getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisations organisation) {
+        this.organisation = organisation;
+    }
+
+    // Convenience methods for the view
+    public float getMontantCollecte() {
+        return montantActuel;
+    }
+
+    public void setMontantCollecte(float montantCollecte) {
+        this.montantActuel = montantCollecte;
+    }
+
+    public int getLikesCount() {
+        return likedByUsers != null ? likedByUsers.size() : 0;
+    }
+
+    public int getDonateursCount() {
+        return listUsersContribue != null ? listUsersContribue.size() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "ActionCharite{" +
+                "idAction='" + idAction + '\'' +
+                ", titre='" + titre + '\'' +
+                ", lieu='" + lieu + '\'' +
+                ", objectifCollecte=" + objectifCollecte +
+                ", montantActuel=" + montantActuel +
+                ", organisationId='" + organisationId + '\'' +
+                ", categorieId='" + categorieId + '\'' +
+                ", active=" + active +
+                '}';
+    }
+    // Add these methods to handle likes
+
+    /**
+     * Add a user like to this action
+     * @param user The user who likes the action
+     */
+    public void ajouterLike(Utilisateurs user) {
+        if (this.likedByUsers == null) {
+            this.likedByUsers = new ArrayList<>();
+        }
+
+        // Add the user ID if not already present
+        if (user != null && user.getUserId() != null && !this.likedByUsers.contains(user.getUserId())) {
+            this.likedByUsers.add(user.getUserId());
         }
     }
 
-    // Méthode pour supprimer un like
+    /**
+     * Remove a user like from this action
+     * @param userId The ID of the user to remove the like
+     */
     public void supprimerLike(String userId) {
-        this.likedByUsers.remove(userId);
+        if (this.likedByUsers != null && userId != null) {
+            this.likedByUsers.remove(userId);
+        }
     }
 }
