@@ -113,4 +113,61 @@ public class ActionChariteService {
 
         return actionChariteRepository.save(action);
     }
+    public ActionCharite updateActionCharite(ActionCharite action, List<MultipartFile> mediaFiles, boolean deleteExistingMedia) throws IOException {
+        // Validate date
+        Date today = new Date();
+        if (action.getDate().before(today)) {
+            throw new IllegalArgumentException("La date de l'action ne peut pas être antérieure à aujourd'hui");
+        }
+
+        // Optional: validate date limite if provided
+        if (action.getDatelimite() != null && action.getDatelimite().before(action.getDate())) {
+            throw new IllegalArgumentException("La date limite doit être postérieure à la date de début");
+        }
+
+        // Handle media files update
+        if (deleteExistingMedia) {
+            // Clear existing media if requested
+            action.setMediaUrls(new ArrayList<>());
+        }
+
+        // Process new media files if provided
+        if (mediaFiles != null && !mediaFiles.isEmpty()) {
+            // Initialize media list if null
+            if (action.getMediaUrls() == null) {
+                action.setMediaUrls(new ArrayList<>());
+            }
+
+            for (MultipartFile file : mediaFiles) {
+                if (!file.isEmpty()) {
+                    // Convert to Base64 and store
+                    byte[] fileContent = file.getBytes();
+                    String encodedString = Base64.getEncoder().encodeToString(fileContent);
+                    action.getMediaUrls().add(encodedString);
+                }
+            }
+        }
+
+        // Save and return updated action
+        return actionChariteRepository.save(action);
+    }
+
+    public ActionCharite updateActionStatus(ActionCharite action) {
+        // This method updates just the action status (active/archived)
+        // We get the existing action, update its fields, and save
+        ActionCharite existingAction = actionChariteRepository.findById(action.getIdAction())
+                .orElseThrow(() -> new RuntimeException("Action not found"));
+
+        existingAction.setActive(action.isActive());
+
+        return actionChariteRepository.save(existingAction);
+    }
+    public void deleteAction(String actionId) {
+        // Check if action exists before deleting
+        ActionCharite action = actionChariteRepository.findById(actionId)
+                .orElseThrow(() -> new RuntimeException("Action not found"));
+
+        // Delete the action
+        actionChariteRepository.deleteById(actionId);
+    }
 }

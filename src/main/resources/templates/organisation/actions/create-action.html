@@ -54,7 +54,8 @@
         }
 
         .back-button:hover {
-            background-color: #e0e0e0;
+            background-color: gold;
+            color: black;
         }
 
         .back-button i {
@@ -79,8 +80,9 @@
         }
 
         .btn-submit {
-            background-color: #4CAF50;
-            color: white;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             padding: 10px 15px;
             border: none;
             border-radius: 4px;
@@ -88,7 +90,10 @@
         }
 
         .btn-submit:hover {
-            background-color: #45a049;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
         }
 
         /* Action list styles */
@@ -156,7 +161,7 @@
             display: flex;
             align-items: center;
             font-size: 0.85em;
-            color: darkgrey; /* Change to dark grey color */
+            color: darkblue; /* Change to dark grey color */
         }
         .action-detail i {
             margin-right: 5px;
@@ -166,11 +171,13 @@
             position: absolute;
             top: 0;
             right: 0;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             padding: 3px 8px;
             border-radius: 12px;
             font-size: 0.7em;
-            color: gold; /* Change to gold color */
+            /* Change to gold color */
         }
 
         .action-progress {
@@ -186,12 +193,13 @@
 
         .progress-value {
             height: 100%;
-            background-color: #4CAF50;
+            background-color: gold;
         }
 
         .progress-text {
             display: flex;
             justify-content: space-between;
+            color: black;
             font-size: 0.8em;
             margin-top: 5px;
             overflow: visible; /* Ensure text doesn't get cut off */
@@ -219,17 +227,22 @@
         }
 
         .edit-btn {
-            background-color: #f0f0f0;
-            color: #333;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .edit-btn:hover {
-            background-color: #e0e0e0;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
         }
 
         .view-btn {
-            background-color: #2196F3;
-            color: white;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .view-btn:hover {
@@ -368,6 +381,18 @@
             justify-content: center;
             align-items: center;
             color: #999;
+        }
+        .delete-btn {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
         }
     </style>
 </head>
@@ -554,8 +579,11 @@
                             <a th:href="@{'/organisation/actions/edit/' + ${action.idAction}}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
-                            <a th:href="@{'/organisation/actions/details/' + ${action.idAction}}" class="action-btn view-btn">
+                            <a th:href="@{'/organisation/actions/view/' + ${action.idAction}}" class="action-btn view-btn">
                                 <i class="fas fa-eye"></i> Voir détails
+                            </a>
+                            <a href="#" class="action-btn delete-btn" th:attr="data-id=${action.idAction}, data-title=${action.titre}" onclick="showDeleteConfirmation(event, this)">
+                                <i class="fas fa-trash"></i> Supprimer
                             </a>
                         </div>
                     </div>
@@ -655,6 +683,20 @@
             }
         }
     });
+</script>
+<script>
+    function showDeleteConfirmation(event, element) {
+        event.preventDefault();
+        event.stopPropagation();
+        const actionId = element.getAttribute('data-id');
+        const actionTitle = element.getAttribute('data-title');
+
+        showConfirmModal(
+            "Supprimer l'action",
+            `Êtes-vous sûr de vouloir supprimer l'action "${actionTitle}" ? Cette action est irréversible.`,
+            `/organisation/actions/delete/${actionId}`
+        );
+    }
 </script>
 <!-- Add this before the closing </body> tag -->
 <script th:src="@{/js/dashboard.js}"></script>

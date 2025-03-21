@@ -311,6 +311,15 @@
     .archive-btn:hover {
       background-color: #e68a00;
     }
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
 <body>
@@ -488,6 +497,10 @@
       <a th:if="${!action.active}" th:href="@{'/organisation/actions/activate/' + ${action.idAction}}" class="control-btn edit-btn">
         <i class="fas fa-play"></i> Réactiver
       </a>
+      <a href="#" class="control-btn delete-btn" onclick="confirmDelete(event, this)"
+         th:data-url="@{'/organisation/actions/delete/' + ${action.idAction}}">
+        <i class="fas fa-trash"></i> Supprimer
+      </a>
     </div>
   </div>
 </div>
@@ -513,6 +526,17 @@
     }
   });
 </script>
+<script>
+  function confirmDelete(event, element) {
+    event.preventDefault();
+    const url = element.getAttribute('data-url');
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette action ? Cette action est irréversible.')) {
+      window.location.href = url;
+    }
+  }
+</script>
+
 <!-- Add this before the closing </body> tag -->
 <script th:src="@{/js/dashboard.js}"></script>
 </body>

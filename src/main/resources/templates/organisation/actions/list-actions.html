@@ -10,7 +10,7 @@
         .media-slideshow {
             position: relative;
             width: 100%;
-            padding-bottom: 100%; /* Creates a square aspect ratio */
+            height: 200px; /* Set a fixed height */
             margin-bottom: 15px;
             overflow: hidden;
             border-radius: 4px;
@@ -92,6 +92,7 @@
             justify-content: center;
             align-items: center;
             color: #999;
+            height: 200px; /* Match the fixed height */
         }
         .actions-container {
             margin: 20px;
@@ -120,6 +121,9 @@
             padding: 15px;
             position: relative;
             transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .action-card:hover {
@@ -154,10 +158,12 @@
 
         .action-category {
             font-size: 0.8em;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
             padding: 3px 8px;
             border-radius: 12px;
             display: inline-block;
+            text-align: center;
             margin-bottom: 10px;
         }
 
@@ -197,16 +203,23 @@
             border: none;
             cursor: pointer;
             font-size: 1em;
-            color: #666;
+
+            color: #d4af37;
             transition: color 0.2s;
         }
 
         .edit-btn:hover {
-            color: #2196F3;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
         }
 
         .view-btn:hover {
-            color: #4CAF50;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
         }
 
         .no-actions {

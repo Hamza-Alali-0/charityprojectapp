@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier une Action Caritative</title>
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .edit-container {
+            margin: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            color: #333;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: gold;
+            color: black;
+        }
+
+        .back-button i {
+            margin-right: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"], textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: green;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .preview-container {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .existing-media {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .existing-media-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .media-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .media-item {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .delete-media-checkbox {
+            margin-top: 10px;
+        }
+
+        .hint-text {
+            color: #666;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+<!-- Main Navigation Bar -->
+<div th:replace="~{organisation/dashboard :: navbar}"></div>
+
+<!-- Sub Navigation with Rectangles -->
+<div class="sub-navbar">
+    <a href="/organisation/dashboard" class="sub-nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Tableau de bord</span>
+    </a>
+    <a href="/organisation/actions/create" class="sub-nav-item">
+        <i class="fas fa-tasks"></i>
+        <span>Lancer des Actions</span>
+    </a>
+    <a href="/organisation/actions/list" class="sub-nav-item active">
+        <i class="fas fa-hand-holding-heart"></i>
+        <span>Actions en cours</span>
+    </a>
+    <a href="/organisation/actions/archived" class="sub-nav-item">
+        <i class="fas fa-archive"></i>
+        <span>Actions Archivees</span>
+    </a>
+</div>
+
+<div class="edit-container">
+    <div class="edit-header">
+        <h2>Modifier l'Action Caritative</h2>
+        <a th:href="@{'/organisation/actions/view/' + ${action.idAction}}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Retour aux détails
+        </a>
+    </div>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <div th:if="${success}" class="success-message" th:text="${success}"></div>
+
+    <form th:action="@{'/organisation/actions/edit/' + ${action.idAction}}" method="post" enctype="multipart/form-data">
+
+
+        <div class="form-group">
+            <label for="titre">Titre de l'action *</label>
+            <input type="text" id="titre" name="titre" th:value="${action.titre}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" rows="5" required th:text="${action.description}"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Date de début *</label>
+            <input type="date" id="date" name="date" th:value="${#dates.format(action.date, 'yyyy-MM-dd')}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="datelimite">Date limite (optionnel)</label>
+            <input type="date" id="datelimite" name="datelimite" th:value="${action.datelimite != null ? #dates.format(action.datelimite, 'yyyy-MM-dd') : ''}">
+            <div class="hint-text">Laissez vide pour une action caritative sans date de fin</div>
+        </div>
+
+        <div class="form-group">
+            <label for="lieu">Lieu *</label>
+            <input type="text" id="lieu" name="lieu" th:value="${action.lieu}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="objectifCollecte">Objectif de collecte (MAD) *</label>
+            <input type="number" id="objectifCollecte" name="objectifCollecte" min="0" step="0.01" th:value="${action.objectifCollecte}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="categorieId">Catégorie *</label>
+            <select id="categorieId" name="categorieId" required>
+                <option value="">-- Sélectionnez une catégorie --</option>
+                <option th:each="categorie : ${categories}"
+                        th:value="${categorie.idCategorie}"
+                        th:text="${categorie.nom}"
+                        th:selected="${categorie.idCategorie == action.categorieId}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Existing Media Files -->
+        <div class="existing-media" th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}">
+            <div class="existing-media-title">Images actuelles</div>
+            <div class="media-gallery">
+                <div th:each="mediaUrl : ${action.mediaUrls}" class="media-item">
+                    <img th:src="@{'data:image/png;base64,' + ${mediaUrl}}" alt="Image de l'action">
+                </div>
+            </div>
+            <div class="delete-media-checkbox">
+                <input type="checkbox" id="deleteExistingMedia" name="deleteExistingMedia">
+                <label for="deleteExistingMedia">Supprimer toutes les images existantes</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="mediaFiles">Nouvelles images (optionnel)</label>
+            <input type="file" id="mediaFiles" name="mediaFiles" multiple accept="image/*" onchange="previewImages(this)">
+            <div class="hint-text">Vous pouvez sélectionner plusieurs images. Les nouvelles images seront ajoutées aux images existantes sauf si vous cochez la case ci-dessus.</div>
+            <div id="imagePreviewContainer" class="preview-container"></div>
+        </div>
+
+        <button type="submit" class="btn-submit">Mettre à jour l'action</button>
+    </form>
+</div>
+<div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
+<script>
+    function previewImages(input) {
+        const container = document.getElementById('imagePreviewContainer');
+        container.innerHTML = '';
+
+        if (input.files && input.files.length > 0) {
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'image-preview';
+                    container.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        }
+    }
+</script>
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>
