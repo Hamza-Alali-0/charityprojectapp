@@ -158,4 +158,37 @@ public class ActionChariteController {
 
         return "organisation/actions/archived-actions";
     }
+    @GetMapping("/view/{id}")
+    public String viewAction(@PathVariable("id") String id, Model model, HttpSession session) {
+        String orgId = (String) session.getAttribute("org_identifier");
+        if (orgId == null) {
+            return "redirect:/auth/login/organisation";
+        }
+
+        // Load organisation for navbar
+        Organisations organisation = organisationsService.findByNumeroIdentif(orgId);
+        model.addAttribute("organisation", organisation);
+
+        // Get the action details
+        ActionCharite action = actionChariteService.getActionById(id);
+
+        // Make sure the action exists and belongs to this organisation
+        if (action == null || !action.getOrganisationId().equals(orgId)) {
+            return "redirect:/organisation/actions/list";
+        }
+
+        // Load category for the action
+        if (action.getCategorieId() != null) {
+            try {
+                CategorieAction categorie = categorieActionService.getCategoryById(action.getCategorieId());
+                action.setCategorie(categorie);
+            } catch (Exception e) {
+                // Category not found, continue with null categorie
+            }
+        }
+
+        model.addAttribute("action", action);
+
+        return "organisation/actions/view-action";
+    }
 }

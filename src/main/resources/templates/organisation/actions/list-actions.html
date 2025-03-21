@@ -30,7 +30,6 @@
         .media-slide.active {
             display: block;
         }
-
         .media-controls {
             position: absolute;
             top: 0;
@@ -40,11 +39,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
+            pointer-events: none; /* This prevents the container from blocking clicks */
         }
 
         .media-control {
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
             border: none;
             border-radius: 50%;
@@ -55,12 +54,15 @@
             align-items: center;
             cursor: pointer;
             z-index: 2;
+            margin: 0 10px;
+            pointer-events: auto; /* Re-enable pointer events for buttons */
+            transition: transform 0.2s, background-color 0.2s;
         }
 
         .media-control:hover {
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
         }
-
         .media-dots {
             position: absolute;
             bottom: 10px;
@@ -330,6 +332,7 @@
         <p>Aucune action en cours. Créez votre première action caritative !</p>
     </div>
 </div>
+<div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize slideshows
@@ -396,5 +399,7 @@
         }
     });
 </script>
+<!-- Add this before the closing </body> tag -->
+<script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>
