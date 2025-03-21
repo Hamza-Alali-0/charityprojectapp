@@ -1,9 +1,8 @@
-// Add these functions to match the new class names
-
+// Modal Functions
 function showAddCategoryModal() {
     const modal = document.getElementById('add-category-modal');
     if (!modal) {
-        console.error("Add category modal not found");
+        console.error('Add category modal not found');
         return;
     }
 
@@ -15,18 +14,15 @@ function showAddCategoryModal() {
         form.reset();
     }
 
-    const errorElement = document.getElementById('categoryName-error');
-    if (errorElement) {
-        errorElement.style.display = 'none';
-    }
-
-    const nameField = document.getElementById('categoryName');
-    if (nameField) {
-        nameField.classList.remove('is-invalid');
-    }
+    clearAddCategoryErrors();
 }
 
 function closeAddCategoryModal() {
+    clearAddCategoryErrors();
+    const form = document.getElementById('addCategoryForm');
+    if (form) {
+        form.reset();
+    }
     const modal = document.getElementById('add-category-modal');
     if (modal) {
         modal.style.display = 'none';
@@ -36,7 +32,7 @@ function closeAddCategoryModal() {
 function editCategory(id, name) {
     const modal = document.getElementById('edit-category-modal');
     if (!modal) {
-        console.error("Edit category modal not found");
+        console.error('Edit category modal not found');
         return;
     }
 
@@ -45,16 +41,14 @@ function editCategory(id, name) {
     document.getElementById('editCategoryName').value = name;
 
     // Clear any previous errors
-    const errorElement = document.getElementById('editCategoryName-error');
-    if (errorElement) {
-        errorElement.style.display = 'none';
-    }
+    clearEditCategoryErrors();
 
     // Show modal
     modal.style.display = 'block';
 }
 
 function closeEditCategoryModal() {
+    clearEditCategoryErrors();
     const modal = document.getElementById('edit-category-modal');
     if (modal) {
         modal.style.display = 'none';
@@ -64,7 +58,7 @@ function closeEditCategoryModal() {
 function confirmDeleteCategory(id, name) {
     const modal = document.getElementById('delete-category-modal');
     if (!modal) {
-        console.error("Delete category modal not found");
+        console.error('Delete category modal not found');
         return;
     }
 
@@ -74,17 +68,21 @@ function confirmDeleteCategory(id, name) {
         nameSpan.textContent = name;
     }
 
+    // Remove any previous error messages
+    const modalContent = document.querySelector('#delete-category-modal .cat-modal-content');
+    if (modalContent) {
+        const existingError = modalContent.querySelector('.cat-error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
     // Set up the confirm delete button
     const confirmBtn = document.getElementById('confirmDeleteBtn');
     if (confirmBtn) {
-        // Remove previous event listeners
-        const newBtn = confirmBtn.cloneNode(true);
-        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-
-        // Add new event listener
-        newBtn.addEventListener('click', function() {
+        confirmBtn.onclick = function() {
             deleteCategory(id);
-        });
+        };
     }
 
     // Show the modal
@@ -92,20 +90,84 @@ function confirmDeleteCategory(id, name) {
 }
 
 function closeDeleteCategoryModal() {
+    // Remove any error messages
+    const modalContent = document.querySelector('#delete-category-modal .cat-modal-content');
+    if (modalContent) {
+        const existingError = modalContent.querySelector('.cat-error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
     const modal = document.getElementById('delete-category-modal');
     if (modal) {
         modal.style.display = 'none';
     }
 }
-// Add missing category management functions
 
-/**
- * Add a new category
- * @param {HTMLFormElement} form - The form element containing category data
- */
-// Update the addCategory function
+// Error Handling Functions
+function showAddCategoryError(message) {
+    const errorElement = document.getElementById('categoryName-error');
+    const inputElement = document.getElementById('categoryName');
+
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+
+    if (inputElement) {
+        inputElement.classList.add('is-invalid');
+    }
+}
+
+function clearAddCategoryErrors() {
+    const errorElement = document.getElementById('categoryName-error');
+    const inputElement = document.getElementById('categoryName');
+
+    if (errorElement) {
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+    }
+
+    if (inputElement) {
+        inputElement.classList.remove('is-invalid');
+    }
+}
+
+function showEditCategoryError(message) {
+    const errorElement = document.getElementById('editCategoryName-error');
+    const inputElement = document.getElementById('editCategoryName');
+
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+
+    if (inputElement) {
+        inputElement.classList.add('is-invalid');
+    }
+}
+
+function clearEditCategoryErrors() {
+    const errorElement = document.getElementById('editCategoryName-error');
+    const inputElement = document.getElementById('editCategoryName');
+
+    if (errorElement) {
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+    }
+
+    if (inputElement) {
+        inputElement.classList.remove('is-invalid');
+    }
+}
+
+// CRUD Operations
 function addCategory(form) {
     console.log("addCategory function called");
+
+    // Clear previous errors
+    clearAddCategoryErrors();
 
     // Get form data
     const formData = new FormData(form);
@@ -115,12 +177,7 @@ function addCategory(form) {
 
     // Validate form data
     if (!categoryName || categoryName.trim() === '') {
-        const errorElement = document.getElementById('categoryName-error');
-        if (errorElement) {
-            errorElement.textContent = 'Le nom de la catégorie est obligatoire';
-            errorElement.style.display = 'block';
-        }
-        document.getElementById('categoryName').classList.add('is-invalid');
+        showAddCategoryError('Le nom de la catégorie est obligatoire');
         return;
     }
 
@@ -131,7 +188,7 @@ function addCategory(form) {
 
     console.log("Sending category data:", JSON.stringify(categoryData));
 
-    // Submit form data with error handling
+    // Submit form data with improved error handling
     fetch('/superadmin/api/categories', {
         method: 'POST',
         headers: {
@@ -141,50 +198,58 @@ function addCategory(form) {
     })
         .then(response => {
             console.log("Response status:", response.status);
-            return response.text().then(text => {
-                // Try to parse as JSON, but don't fail if it's not valid JSON
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    console.error("Response is not valid JSON:", text);
-                    throw new Error("Invalid response format: " + text);
-                }
-            });
+
+            // First check if the response is ok
+            if (!response.ok) {
+                return response.text().then(text => {
+                    try {
+                        // Extract just the message from the JSON
+                        const parsedError = JSON.parse(text);
+                        return parsedError.message || 'Error creating category';
+                    } catch (e) {
+                        // If not JSON or other parsing error
+                        return text;
+                    }
+                });
+            }
+
+            return response.json();
         })
         .then(data => {
+            // Check if this is an error message string
+            if (typeof data === 'string') {
+                throw data; // This will be caught by the catch block
+            }
+
             console.log("Category created successfully:", data);
             closeAddCategoryModal();
-            alert('Catégorie ajoutée avec succès');
             loadCategoriesContent();
         })
         .catch(error => {
             console.error('Error adding category:', error);
-            alert('Erreur: ' + error.message);
+            showAddCategoryError(error); // Now error is just the message string
         });
 }
-/**
- * Update an existing category
- * @param {HTMLFormElement} form - The form element containing updated category data
- */
+
 function updateCategory(form) {
+    // Clear previous errors
+    clearEditCategoryErrors();
+
     // Get form data
     const formData = new FormData(form);
     const categoryId = formData.get('idCategorie');
-    const categoryData = {
-        idCategorie: categoryId,
-        nom: formData.get('nom')
-    };
+    const categoryName = formData.get('nom');
 
     // Validate form data
-    if (!categoryData.nom || categoryData.nom.trim() === '') {
-        const errorElement = document.getElementById('editCategoryName-error');
-        if (errorElement) {
-            errorElement.textContent = 'Le nom de la catégorie est obligatoire';
-            errorElement.style.display = 'block';
-        }
-        document.getElementById('editCategoryName').classList.add('is-invalid');
+    if (!categoryName || categoryName.trim() === '') {
+        showEditCategoryError('Le nom de la catégorie est obligatoire');
         return;
     }
+
+    const categoryData = {
+        idCategorie: categoryId,
+        nom: categoryName
+    };
 
     // Submit form data
     fetch(`/superadmin/api/categories/${categoryId}`, {
@@ -196,32 +261,37 @@ function updateCategory(form) {
     })
         .then(response => {
             if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Erreur lors de la mise à jour de la catégorie');
+                return response.text().then(text => {
+                    try {
+                        // Extract just the message from the JSON
+                        const parsedError = JSON.parse(text);
+                        return parsedError.message || 'Error updating category';
+                    } catch (e) {
+                        // If not JSON or other parsing error
+                        return text;
+                    }
                 });
             }
             return response.json();
         })
         .then(data => {
+            // Check if this is an error message string
+            if (typeof data === 'string') {
+                throw data; // This will be caught by the catch block
+            }
+
             // Close modal
             closeEditCategoryModal();
-
-            // Show success message
-            alert('Catégorie mise à jour avec succès');
 
             // Reload categories
             loadCategoriesContent();
         })
         .catch(error => {
             console.error('Error updating category:', error);
-            alert('Erreur: ' + error.message);
+            showEditCategoryError(error); // Now error is just the message string
         });
 }
 
-/**
- * Delete a category
- * @param {string} id - The category ID to delete
- */
 function deleteCategory(id) {
     fetch(`/superadmin/api/categories/${id}`, {
         method: 'DELETE',
@@ -231,29 +301,58 @@ function deleteCategory(id) {
     })
         .then(response => {
             if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Erreur lors de la suppression');
+                return response.text().then(text => {
+                    try {
+                        // Extract just the message from the JSON
+                        const parsedError = JSON.parse(text);
+                        return parsedError.message || 'Error deleting category';
+                    } catch (e) {
+                        // If not JSON or other parsing error
+                        return text;
+                    }
                 });
             }
             return response.json();
         })
         .then(data => {
+            // Check if this is an error message string
+            if (typeof data === 'string') {
+                throw data; // This will be caught by the catch block
+            }
+
             // Close modal
             closeDeleteCategoryModal();
-
-            // Show success message
-            alert('Catégorie supprimée avec succès');
 
             // Reload categories
             loadCategoriesContent();
         })
         .catch(error => {
             console.error('Error deleting category:', error);
-            alert('Erreur: ' + error.message);
+
+            // Show error message in the delete modal
+            const modalContent = document.querySelector('#delete-category-modal .cat-modal-content');
+
+            // Remove existing error message if any
+            const existingError = modalContent.querySelector('.cat-error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+
+            // Add new error message
+            const errorMessage = document.createElement('p');
+            errorMessage.className = 'cat-error-message';
+            errorMessage.textContent = error; // Now error is just the message string
+            errorMessage.style.color = '#e74c3c';
+            errorMessage.style.fontWeight = 'bold';
+            errorMessage.style.marginTop = '10px';
+
+            // Insert before the action buttons
+            const actionButtons = modalContent.querySelector('.cat-form-actions');
+            modalContent.insertBefore(errorMessage, actionButtons);
         });
 }
 
-// Add loadCategoriesContent function if not already in admin-dashboard.js
+// Load Categories Content
 function loadCategoriesContent() {
     // Hide all content sections
     document.querySelectorAll('#content-container > div').forEach(function(section) {
@@ -280,6 +379,9 @@ function loadCategoriesContent() {
         .then(html => {
             if (categoriesSection) {
                 categoriesSection.innerHTML = html;
+
+                // IMPORTANT: Initialize form handlers after content is loaded
+                initializeCategoryForms();
             }
         })
         .catch(error => {
@@ -293,3 +395,57 @@ function loadCategoriesContent() {
             }
         });
 }
+
+// Initialize Form Handlers
+function initializeCategoryForms() {
+    console.log("Initializing category form handlers");
+
+    // Setup add category form submission
+    const addForm = document.getElementById('addCategoryForm');
+    if (addForm) {
+        console.log("Add category form found, setting up event listener");
+        addForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addCategory(this);
+        });
+    } else {
+        console.warn("Add category form not found");
+    }
+
+    // Setup edit category form submission
+    const editForm = document.getElementById('editCategoryForm');
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateCategory(this);
+        });
+    }
+
+    // Setup delete buttons
+    const deleteButtons = document.querySelectorAll('.cat-delete-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            confirmDeleteCategory(id, name);
+        });
+    });
+
+    // Setup edit buttons
+    const editButtons = document.querySelectorAll('.cat-edit-btn');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            editCategory(id, name);
+        });
+    });
+}
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on the categories tab via URL hash
+    if (window.location.hash === '#categories') {
+        loadCategoriesContent();
+    }
+});

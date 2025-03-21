@@ -497,25 +497,30 @@ public class SuperAdminController {
                     .body(Map.of("message", e.getMessage()));
         }
     }
-
+    // In SuperAdminController.java
     @PostMapping("/api/categories")
     @ResponseBody
     public ResponseEntity<?> createCategory(@RequestBody CategorieAction category) {
         try {
-            // Add debug logging
-            System.out.println("Received category: " + category.getNom());
+            // Enhanced debug logging
+            System.out.println("Received category creation request");
+            System.out.println("Category data: " + (category != null ? category.toString() : "null"));
+
+            if (category == null) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Category data is missing"));
+            }
 
             // Validate category
             if (category.getNom() == null || category.getNom().trim().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("message", "Le nom de la catégorie est obligatoire"));
+                return ResponseEntity.badRequest().body(Map.of("message", "Le nom de la catégorie est obligatoire"));
             }
 
+            System.out.println("Creating category with name: " + category.getNom());
             CategorieAction createdCategory = categorieActionService.createCategory(category);
             System.out.println("Created category with ID: " + createdCategory.getIdCategorie());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", e.getMessage()));
