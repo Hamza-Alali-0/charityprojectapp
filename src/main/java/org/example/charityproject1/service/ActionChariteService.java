@@ -2,6 +2,7 @@ package org.example.charityproject1.service;
 
 import org.example.charityproject1.model.ActionCharite;
 import org.example.charityproject1.model.Don;
+import org.example.charityproject1.model.Organisations;
 import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.repository.ActionChariteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class ActionChariteService {
 
     @Autowired
     private ActionChariteRepository actionChariteRepository;
+    @Autowired
+    private OrganisationsService organisationsService;
 
     public ActionCharite createActionCharite(ActionCharite actionCharite, List<MultipartFile> mediaFiles) throws IOException {
         // Initialize collections
@@ -169,5 +172,35 @@ public class ActionChariteService {
 
         // Delete the action
         actionChariteRepository.deleteById(actionId);
+    }
+    // ...existing code...
+
+    public List<ActionCharite> getAllActiveActions() {
+        Date now = new Date();
+        return actionChariteRepository.findActiveActions(now);
+    }
+    // ...existing code...
+
+
+
+    /**
+     * Load organization data for a list of actions
+     * @param actions List of actions to populate with organization data
+     */
+    public void populateOrganisationsForActions(List<ActionCharite> actions) {
+        if (actions == null || actions.isEmpty()) {
+            return;
+        }
+
+        for (ActionCharite action : actions) {
+            if (action.getOrganisationId() != null) {
+                try {
+                    Organisations organisation = organisationsService.findByNumeroIdentif(action.getOrganisationId());
+                    action.setOrganisation(organisation);
+                } catch (Exception e) {
+                    // Organisation not found, continue with null organization
+                }
+            }
+        }
     }
 }

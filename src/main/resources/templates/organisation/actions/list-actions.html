@@ -6,14 +6,285 @@
     <title>Actions en cours</title>
     <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .actions-container {
+            margin: 30px auto;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+        }
+
+        .actions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .actions-header h2 {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .action-card {
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .action-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .action-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .action-category {
+            font-size: 0.75em;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 500;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-date {
+            font-size: 0.8em;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .action-date i {
+            margin-right: 5px;
+            color: #d4af37;
+        }
+
+        .action-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-detail {
+            display: flex;
+            align-items: center;
+            font-size: 0.85em;
+            color: #555;
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        .action-detail i {
+            margin-right: 6px;
+            color: #d4af37;
+            font-size: 0.95em;
+        }
+
+        .action-progress {
+            margin-top: auto;
+            padding-top: 15px;
+        }
+
+        .progress-bar {
+            background-color: #eee;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-value {
+            background: linear-gradient(90deg, #d4af37 0%, #f2c94c 100%);
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .progress-text .collected {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .progress-text .goal {
+            color: #777;
+        }
+
+        .action-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .controls-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn i {
+            font-size: 1em;
+            margin-right: 6px;
+        }
+
+        .edit-btn {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .edit-btn:hover {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            color: #d4af37;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #f2c94c 100%);
+            color: #2c3e50;
+            box-shadow: 0 3px 8px rgba(242, 201, 76, 0.2);
+        }
+
+        .view-btn:hover {
+            background: linear-gradient(135deg, #f2c94c 0%, #d4af37 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(242, 201, 76, 0.3);
+        }
+
+        .participants {
+            display: flex;
+            align-items: center;
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        .participants i {
+            margin-right: 5px;
+            color: #d4af37;
+        }
+
+        .no-actions {
+            text-align: center;
+            padding: 60px 0;
+            color: #666;
+        }
+
+        .no-actions i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #d4af37;
+            opacity: 0.5;
+        }
+
+        .no-actions p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .no-actions .create-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #d4af37 0%, #f2c94c 100%);
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .no-actions .create-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(242, 201, 76, 0.3);
+        }
+
+        /* Media slideshow styles */
         .media-slideshow {
             position: relative;
             width: 100%;
-            height: 200px; /* Set a fixed height */
-            margin-bottom: 15px;
+            height: 200px;
             overflow: hidden;
-            border-radius: 4px;
+            border-radius: 0;
         }
 
         .media-slide {
@@ -25,11 +296,13 @@
             display: none;
             background-size: cover;
             background-position: center;
+            transition: opacity 0.4s ease;
         }
 
         .media-slide.active {
             display: block;
         }
+
         .media-controls {
             position: absolute;
             top: 0;
@@ -39,7 +312,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            pointer-events: none; /* This prevents the container from blocking clicks */
+            pointer-events: none;
+            padding: 0 10px;
         }
 
         .media-control {
@@ -47,30 +321,30 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             z-index: 2;
-            margin: 0 10px;
-            pointer-events: auto; /* Re-enable pointer events for buttons */
-            transition: transform 0.2s, background-color 0.2s;
+            pointer-events: auto;
+            transition: all 0.3s ease;
         }
 
         .media-control:hover {
             background-color: rgba(0, 0, 0, 0.7);
             transform: scale(1.1);
         }
+
         .media-dots {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
             left: 0;
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 6px;
             z-index: 2;
         }
 
@@ -80,158 +354,25 @@
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .media-dot.active {
-            background-color: white;
+            background-color: #fff;
+            transform: scale(1.2);
         }
 
         .no-media {
-            background-color: #f0f0f0;
+            background-color: #f0f2f5;
             display: flex;
             justify-content: center;
             align-items: center;
             color: #999;
-            height: 200px; /* Match the fixed height */
-        }
-        .actions-container {
-            margin: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
         }
 
-        .actions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .action-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .action-card {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            position: relative;
-            transition: transform 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .action-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-title {
-            font-size: 1.1em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .action-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .action-detail {
-            display: flex;
-            align-items: center;
-            font-size: 0.85em;
-        }
-
-        .action-detail i {
-            margin-right: 5px;
-            color: #4CAF50;
-        }
-
-        .action-category {
-            font-size: 0.8em;
-            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
-            color: #d4af37;
-            padding: 3px 8px;
-            border-radius: 12px;
-            display: inline-block;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .action-progress {
-            margin-top: 15px;
-        }
-
-        .progress-bar {
-            background-color: #eee;
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-
-        .progress-value {
-            background-color: #4CAF50;
-            height: 100%;
-        }
-
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8em;
-            color: #666;
-        }
-
-        .action-controls {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 15px;
-            gap: 10px;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-
-            color: #d4af37;
-            transition: color 0.2s;
-        }
-
-        .edit-btn:hover {
-            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            color: white;
-        }
-
-        .view-btn:hover {
-            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            color: white;
-        }
-
-        .no-actions {
-            text-align: center;
-            padding: 40px 0;
-            color: #666;
-        }
-
-        .no-actions i {
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: #ddd;
+        .no-media i {
+            font-size: 2em;
+            opacity: 0.5;
         }
     </style>
 </head>
@@ -262,12 +403,14 @@
 <div class="actions-container">
     <div class="actions-header">
         <h2>Actions en cours</h2>
+        <a href="/organisation/actions/create" class="action-btn view-btn">
+            <i class="fas fa-plus"></i> Nouvelle action
+        </a>
     </div>
 
     <div th:if="${actions != null and !actions.isEmpty()}" class="action-cards">
         <div th:each="action : ${actions}" class="action-card">
-            <div class="action-title" th:text="${action.titre}">Titre de l'action</div>
-            <!-- Add this after the action-title div -->
+            <!-- Media slideshow at top -->
             <div th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}" class="media-slideshow" th:attr="data-action-id=${action.idAction}">
                 <div th:each="mediaUrl, urlStat : ${action.mediaUrls}"
                      class="media-slide"
@@ -285,67 +428,87 @@
                 </div>
 
                 <div class="media-dots" th:if="${action.mediaUrls.size() > 1}">
-        <span th:each="dot, dotStat : ${action.mediaUrls}"
-              class="media-dot"
-              th:classappend="${dotStat.index == 0 ? 'active' : ''}"
-              th:attr="data-index=${dotStat.index}">
-        </span>
+                    <span th:each="dot, dotStat : ${action.mediaUrls}"
+                          class="media-dot"
+                          th:classappend="${dotStat.index == 0 ? 'active' : ''}"
+                          th:attr="data-index=${dotStat.index}">
+                    </span>
                 </div>
             </div>
 
             <div th:if="${action.mediaUrls == null or action.mediaUrls.isEmpty()}" class="media-slideshow no-media">
                 <i class="fas fa-image"></i>
             </div>
-            <!-- Change this line: -->
-            <div class="action-category" th:text="${action.categorie != null ? action.categorie.nom : (action.categorieId != null ? action.categorieId : 'Catégorie inconnue')}">
-                Catégorie
-            </div>
 
-            <div class="action-details">
-                <span class="action-detail">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span th:text="${action.lieu}">Lieu</span>
-                </span>
+            <!-- Card content below image -->
+            <div class="card-content">
+                <div class="action-title" th:text="${action.titre}">Titre de l'action</div>
 
-                <span class="action-detail">
-                    <i class="fas fa-calendar"></i>
-                    <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span>
-                </span>
-
-                <span class="action-detail">
-                    <i class="fas fa-users"></i>
-                    <span th:text="${action.nombreParticipants} + ' participants'">0 participants</span>
-                </span>
-            </div>
-
-            <div class="action-progress">
-                <div class="progress-bar">
-                    <div class="progress-value"
-                         th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                <div class="action-meta">
+                    <div class="action-category" th:text="${action.categorie != null ? action.categorie.nom : (action.categorieId != null ? action.categorieId : 'Catégorie inconnue')}">
+                        Catégorie
+                    </div>
+                    <div class="action-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span>
+                    </div>
                 </div>
-                <div class="progress-text">
-                    <span th:text="${action.montantActuel} + ' €'">0 €</span>
-                    <span th:text="${action.objectifCollecte} + ' €'">1000 €</span>
-                </div>
-            </div>
 
-            <div class="action-controls">
-                <a th:href="@{'/organisation/actions/edit/' + ${action.idAction}}" class="action-btn edit-btn">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a th:href="@{'/organisation/actions/view/' + ${action.idAction}}" class="action-btn view-btn">
-                    <i class="fas fa-eye"></i>
-                </a>
+                <div class="action-details">
+                    <span class="action-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${action.lieu}">Lieu</span>
+                    </span>
+
+                    <span class="action-detail" th:if="${action.datelimite != null}">
+                        <i class="fas fa-hourglass-end"></i>
+                        <span th:text="${#dates.format(action.datelimite, 'dd/MM/yyyy')}">Date limite</span>
+                    </span>
+                </div>
+
+                <div class="action-progress">
+                    <div class="progress-bar">
+                        <div class="progress-value"
+                             th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span class="collected" th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                        <span class="goal" th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                    </div>
+                </div>
+
+                <div class="action-controls">
+                    <div class="controls-left">
+                        <span class="participants">
+                            <i class="fas fa-users"></i>
+                            <span th:text="${action.nombreParticipants} + ' participants'">0 participants</span>
+                        </span>
+                    </div>
+                    <div class="controls-right">
+                        <a th:href="@{'/organisation/actions/edit/' + ${action.idAction}}" class="action-btn edit-btn">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a th:href="@{'/organisation/actions/view/' + ${action.idAction}}" class="action-btn view-btn">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div th:if="${actions == null or actions.isEmpty()}" class="no-actions">
-        <i class="fas fa-inbox"></i>
-        <p>Aucune action en cours. Créez votre première action caritative !</p>
+        <i class="fas fa-heart"></i>
+        <p>Aucune action en cours</p>
+        <p>C'est le moment parfait pour lancer votre première action caritative!</p>
+        <a href="/organisation/actions/create" class="create-link">
+            <i class="fas fa-plus"></i> Créer une action
+        </a>
     </div>
 </div>
+
 <div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize slideshows
@@ -363,7 +526,8 @@
 
             // Set up next/prev buttons
             if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
+                prevBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent event bubbling
                     let activeIndex = getActiveIndex(slides);
                     let newIndex = (activeIndex - 1 + slides.length) % slides.length;
                     setActiveSlide(slides, dots, newIndex);
@@ -371,7 +535,8 @@
             }
 
             if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
+                nextBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent event bubbling
                     let activeIndex = getActiveIndex(slides);
                     let newIndex = (activeIndex + 1) % slides.length;
                     setActiveSlide(slides, dots, newIndex);
@@ -381,7 +546,8 @@
             // Set up dots
             if (dots) {
                 dots.forEach(function(dot, index) {
-                    dot.addEventListener('click', function() {
+                    dot.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent event bubbling
                         setActiveSlide(slides, dots, index);
                     });
                 });
@@ -412,7 +578,6 @@
         }
     });
 </script>
-<!-- Add this before the closing </body> tag -->
 <script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>

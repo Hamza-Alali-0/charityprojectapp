@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${action.titre + ' - Détails'}">Détails de l'Action</title>
+
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/user/actions.css}">
+    <link rel="stylesheet" th:href="@{/styles/user/action-details.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<!-- Main Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-left">
+        <div class="logo-circle">
+            <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Logo utilisateur">
+            <img th:unless="${user.logoPath != null}" src="https://placehold.co/40" alt="Logo par défaut">
+        </div>
+        <div class="org-name" th:text="${user.nom}">Nom de l'Utilisateur</div>
+    </div>
+
+    <div class="navbar-right">
+        <span class="id-info" th:text="${user.email}">email@example.com</span>
+
+        <!-- Notification Bell -->
+        <div class="notification">
+            <a href="#" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </a>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Sub Navigation -->
+<div class="sub-navbar">
+    <a href="/user/dashboard" class="sub-nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Tableau de bord</span>
+    </a>
+    <a href="/user/actions" class="sub-nav-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span>Actions</span>
+    </a>
+    <a href="#section2" class="sub-nav-item">
+        <i class="fas fa-heart"></i>
+        <span>Actions Favorites</span>
+    </a>
+    <a href="#section3" class="sub-nav-item">
+        <i class="fas fa-history"></i>
+        <span>Historique des Dons</span>
+    </a>
+</div>
+
+<!-- Back button and page title -->
+<div class="page-header">
+    <a href="/user/actions" class="back-button">
+        <i class="fas fa-arrow-left"></i> Retour aux actions
+    </a>
+    <h1 th:text="${action.titre}">Titre de l'Action</h1>
+</div>
+
+<!-- Main Content - Action Details -->
+<div class="details-container">
+    <!-- Left column: Media gallery and basic info -->
+    <div class="details-left">
+        <!-- Media Gallery -->
+        <div class="media-gallery">
+            <!-- If has media images, show gallery -->
+            <div th:if="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}" class="gallery-container">
+                <div class="main-image">
+                    <img id="current-image" th:src="'data:image/png;base64,' + ${action.mediaUrls[0]}" alt="Image principale">
+                </div>
+                <div th:if="${action.mediaUrls.size() > 1}" class="thumbnails">
+                    <div th:each="media, stat : ${action.mediaUrls}" class="thumbnail"
+                         th:classappend="${stat.index == 0 ? 'active' : ''}"
+                         th:onclick="'changeImage(\'' + ${stat.index} + '\')'">
+                        <img th:src="'data:image/png;base64,' + ${media}" th:alt="'Image ' + ${stat.index + 1}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- If no media, show organization logo -->
+            <div th:if="${action.mediaUrls == null || action.mediaUrls.isEmpty()}" class="organization-logo-container">
+                <img th:if="${action.organisation != null && action.organisation.logo != null}"
+                     th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                     alt="Logo de l'organisation">
+                <div th:unless="${action.organisation != null && action.organisation.logo != null}" class="no-image">
+                    <i class="fas fa-image"></i>
+                    <p>Aucune image disponible</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organization Info -->
+        <div class="org-details" th:if="${action.organisation != null}">
+            <div class="org-header">
+                <img th:if="${action.organisation.logo != null}"
+                     th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                     alt="Logo organisation">
+                <img th:unless="${action.organisation.logo != null}"
+                     src="https://placehold.co/40"
+                     alt="Logo par défaut">
+                <h3 th:text="${action.organisation.nom}">Nom de l'Organisation</h3>
+            </div>
+            <p th:if="${action.organisation.description != null}"
+               th:text="${#strings.abbreviate(action.organisation.description, 200)}">
+                Description de l'organisation...
+            </p>
+            <a th:href="@{/organizations/{id}(id=${action.organisationId})}" class="org-profile-link">
+                Voir le profil <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Right column: Action details -->
+    <div class="details-right">
+        <!-- Category badge -->
+        <div class="category-badge" th:if="${action.categorie != null}">
+            <i class="fas fa-tag"></i>
+            <span th:text="${action.categorie.nom}">Catégorie</span>
+        </div>
+
+        <!-- Action Interaction Stats -->
+        <div class="action-interaction">
+            <button id="like-button" class="action-button" th:data-action-id="${action.idAction}"
+                    th:data-liked="${action.isLikedByUser(user.userId)}">
+                <i class="fas fa-heart" th:classappend="${action.isLikedByUser(user.userId) ? 'liked' : ''}"></i>
+                <span th:text="${action.getLikesCount() + ' likes'}">0 likes</span>
+            </button>
+
+            <div class="action-stat">
+                <i class="fas fa-users"></i>
+                <span th:text="${action.nombreParticipants + ' participants'}">0 participants</span>
+            </div>
+
+            <div class="action-stat">
+                <i class="fas fa-donate"></i>
+                <span th:text="${action.dons != null ? action.dons.size() : 0} + ' donateurs'">0 donateurs</span>
+            </div>
+        </div>
+
+        <!-- Action Details -->
+        <div class="action-details-card">
+            <h2>Détails de l'action</h2>
+            <div class="detail-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Lieu:</span>
+                <strong th:text="${action.lieu}">Lieu</strong>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-day"></i>
+                <span>Date:</span>
+                <strong th:text="${#dates.format(action.date, 'dd MMMM yyyy')}">01 Janvier 2023</strong>
+            </div>
+            <div class="detail-item" th:if="${action.datelimite != null}">
+                <i class="fas fa-hourglass-end"></i>
+                <span>Date limite:</span>
+                <strong th:text="${#dates.format(action.datelimite, 'dd MMMM yyyy')}">31 Décembre 2023</strong>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Statut:</span>
+                <strong th:text="${action.isActive() ? 'Active' : 'Inactive'}">Active</strong>
+            </div>
+        </div>
+
+        <!-- Progress Card -->
+        <div class="progress-card">
+            <h2>Progrès de la collecte</h2>
+            <div class="progress-stat">
+                <div class="stat-item">
+                    <span>Objectif</span>
+                    <strong th:text="${#numbers.formatDecimal(action.getObjectifCollecte(), 0, 'COMMA', 2, 'POINT')} + ' MAD'">10,000.00 MAD</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Collecté</span>
+                    <strong th:text="${#numbers.formatDecimal(action.getMontantActuel(), 0, 'COMMA', 2, 'POINT')} + ' MAD'">5,000.00 MAD</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Reste</span>
+                    <strong th:text="${#numbers.formatDecimal(action.getObjectifCollecte() - action.getMontantActuel() > 0 ? action.getObjectifCollecte() - action.getMontantActuel() : 0, 0, 'COMMA', 2, 'POINT')} + ' MAD'">5,000.00 MAD</strong>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" th:style="'width:' + ${action.getMontantActuel() * 100 / action.getObjectifCollecte() < 100 ? action.getMontantActuel() * 100 / action.getObjectifCollecte() : 100} + '%'"></div>
+                </div>
+                <div class="progress-percentage"
+                     th:text="${#numbers.formatDecimal(action.getMontantActuel() * 100 / action.getObjectifCollecte() < 100 ? action.getMontantActuel() * 100 / action.getObjectifCollecte() : 100, 0, 'COMMA', 1, 'POINT')} + '%'">
+                    50.0%
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="description-card">
+            <h2>Description</h2>
+            <p th:text="${action.description}">Description complète de l'action caritative...</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-card">
+            <button id="participate-button" class="action-button-large participate-btn"
+                    th:classappend="${action.listUsersContribue != null && action.listUsersContribue.contains(user.userId) ? 'participated' : ''}"
+                    th:data-action-id="${action.idAction}">
+                <i class="fas fa-handshake"></i>
+                <span th:text="${action.listUsersContribue != null && action.listUsersContribue.contains(user.userId) ? 'Vous participez à cette action' : 'Participer à cette action'}">
+                    Participer à cette action
+                </span>
+            </button>
+            <button id="donate-button" class="action-button-large donate-btn" th:data-action-id="${action.idAction}">
+                <i class="fas fa-donate"></i>
+                <span>Faire un don</span>
+            </button>
+        </div>
+
+        <!-- Recent Donations -->
+        <div class="recent-donations-card" th:if="${action.dons != null && !action.dons.isEmpty()}">
+            <h2>Derniers dons</h2>
+            <div class="donations-list">
+                <div class="donation-item" th:each="don, stat : ${action.dons}" th:if="${stat.index < 5}">
+                    <div class="donor-info">
+                        <span class="donor-name" th:text="${don.username}">Nom du donateur</span>
+                        <span class="donation-date" th:text="${#dates.format(don.date, 'dd MMM yyyy')}">01 Jan 2023</span>
+                    </div>
+                    <div class="donation-amount" th:text="${#numbers.formatDecimal(don.montant, 0, 'COMMA', 2, 'POINT')} + ' MAD'">
+                        100.00 MAD
+                    </div>
+                    <div class="donation-comment" th:if="${don.commentaire != null && !don.commentaire.isEmpty()}"
+                         th:text="${don.commentaire}">
+                        Commentaire du donateur...
+                    </div>
+                </div>
+            </div>
+            <div class="show-all-link" th:if="${action.dons.size() > 5}">
+                <a href="#donations-modal" id="show-donations">Voir tous les dons <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <!-- Participants -->
+        <div class="participants-card" th:if="${action.listUsersContribue != null && !action.listUsersContribue.isEmpty()}">
+            <h2>Participants</h2>
+            <div class="participants-count">
+                <i class="fas fa-users"></i>
+                <span th:text="${action.nombreParticipants} + ' personnes participent à cette action'">
+                    10 personnes participent à cette action
+                </span>
+            </div>
+            <!-- We would need to load actual participant data to show their names/profiles -->
+        </div>
+    </div>
+</div>
+
+<!-- Donation Modal -->
+<div id="donationModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Faire un don</h2>
+        <form id="donationForm" method="post" action="/user/actions/donate">
+            <input type="hidden" id="actionId" name="actionId" th:value="${action.idAction}">
+            <div class="form-group">
+                <label for="montant">Montant (MAD)</label>
+                <input type="number" id="montant" name="montant" min="1" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="commentaire">Message (optionnel)</label>
+                <textarea id="commentaire" name="commentaire" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Valider</button>
+        </form>
+    </div>
+</div>
+
+<!-- All Donations Modal -->
+<div id="donationsListModal" class="modal">
+    <div class="modal-content modal-large">
+        <span class="close">&times;</span>
+        <h2>Tous les dons</h2>
+        <div class="donations-full-list">
+            <div class="donation-item" th:each="don : ${action.dons}">
+                <div class="donor-info">
+                    <span class="donor-name" th:text="${don.username}">Nom du donateur</span>
+                    <span class="donation-date" th:text="${#dates.format(don.date, 'dd MMM yyyy')}">01 Jan 2023</span>
+                </div>
+                <div class="donation-amount" th:text="${#numbers.formatDecimal(don.montant, 0, 'COMMA', 2, 'POINT')} + ' MAD'">
+                    100.00 MAD
+                </div>
+                <div class="donation-comment" th:if="${don.commentaire != null && !don.commentaire.isEmpty()}"
+                     th:text="${don.commentaire}">
+                    Commentaire du donateur...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/user-dashboard.js}"></script>
+<script th:src="@{/js/user-actions.js}"></script>
+<script th:src="@{/js/action-details.js}"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actions Caritatives</title>
+
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/user/actions.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<!-- Main Navigation Bar - Same as dashboard -->
+<nav class="navbar">
+    <div class="navbar-left">
+        <div class="logo-circle">
+            <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Logo utilisateur">
+            <img th:unless="${user.logoPath != null}" src="https://placehold.co/400x300"  alt="Logo par défaut">
+        </div>
+        <div class="org-name" th:text="${user.nom}">Nom de l'Utilisateur</div>
+    </div>
+
+    <div class="navbar-right">
+        <span class="id-info" th:text="${user.email}">email@example.com</span>
+
+        <!-- Notification Bell -->
+        <div class="notification">
+            <a href="#" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </a>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Sub Navigation with Rectangles -->
+<div class="sub-navbar">
+    <a href="/user/dashboard" class="sub-nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Tableau de bord</span>
+    </a>
+    <a href="/user/actions" class="sub-nav-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span>Actions</span>
+    </a>
+    <a href="#section2" class="sub-nav-item">
+        <i class="fas fa-heart"></i>
+        <span>Actions Favorites</span>
+    </a>
+    <a href="#section3" class="sub-nav-item">
+        <i class="fas fa-history"></i>
+        <span>Historique des Dons</span>
+    </a>
+</div>
+
+<!-- Main Content - Actions Feed -->
+<div class="actions-container">
+    <div class="actions-grid">
+        <!-- Loop through each action -->
+        <div class="action-card" th:each="action : ${actions}">
+            <!-- Action Header with Organization Info -->
+            <div class="action-header">
+                <div class="org-info">
+                    <img th:if="${action.organisation != null && action.organisation.logo != null}"
+                         th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                         alt="Logo organisation">
+                    <img th:unless="${action.organisation != null && action.organisation.logo != null}"
+                         src="https://via.placeholder.com/40"
+                         alt="Logo par défaut">
+                    <span th:text="${action.organisation != null ? action.organisation.nom : 'Organisation'}">Nom Organisation</span>
+                </div>
+                <div class="action-category" th:if="${action.categorie != null}">
+                    <span th:text="${action.categorie.nom}">Catégorie</span>
+                </div>
+            </div>
+
+            <!-- Action Media -->
+            <div class="action-media">
+                <img th:if="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+                     th:src="'data:image/png;base64,' + ${action.mediaUrls[0]}"
+                     alt="Image de l'action">
+                <!-- Fixed the following line to use th:src instead of src and proper null checks -->
+                <img th:unless="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+                     th:if="${action.organisation != null && action.organisation.logo != null}"
+                     th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                     alt="Logo de l'organisation"
+                     class="org-logo-as-action-image">
+                <!-- Add fallback if neither action media nor organization logo exists -->
+                <div th:if="${(action.mediaUrls == null || action.mediaUrls.isEmpty()) && (action.organisation == null || action.organisation.logo == null)}"
+                     class="no-image-container">
+                    <i class="fas fa-image"></i>
+                    <span>Aucune image</span>
+                </div>
+            </div>
+            <!-- Action Stats -->
+            <div class="action-stats">
+                <button class="like-btn" th:data-action-id="${action.idAction}"
+                        th:data-liked="${action.isLikedByUser(user.userId)}">
+                    <i class="fas fa-heart" th:classappend="${action.isLikedByUser(user.userId) ? 'liked' : ''}"></i>
+                    <span class="like-count" th:text="${action.getLikesCount()}">0</span>
+                </button>
+
+                <div class="action-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" th:style="'width:' + ${action.getMontantActuel() * 100 / action.getObjectifCollecte() < 100 ? action.getMontantActuel() * 100 / action.getObjectifCollecte() : 100} + '%'"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span th:text="${#numbers.formatDecimal(action.getMontantActuel(), 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                        <span>sur</span>
+                        <span th:text="${#numbers.formatDecimal(action.getObjectifCollecte(), 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Title and Description -->
+            <div class="action-content">
+                <h3 th:text="${action.titre}">Titre de l'action</h3>
+                <p th:text="${#strings.abbreviate(action.description, 150)}">Description de l'action...</p>
+                <div class="action-details">
+                    <div class="detail"><i class="fas fa-map-marker-alt"></i> <span th:text="${action.lieu}">Lieu</span></div>
+                    <div class="detail"><i class="fas fa-calendar"></i> <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span></div>
+                    <div class="detail"><i class="fas fa-users"></i> <span th:text="${action.nombreParticipants}">0</span> participants</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="participate-btn" th:data-action-id="${action.idAction}"
+                        th:classappend="${action.listUsersContribue != null && action.listUsersContribue.contains(user.userId) ? 'participated' : ''}">
+                    <i class="fas fa-handshake"></i>
+                    <span th:text="${action.listUsersContribue != null && action.listUsersContribue.contains(user.userId) ? 'Participant' : 'Participer'}">Participer</span>
+                </button>
+                <button class="donate-btn" th:data-action-id="${action.idAction}">
+                    <i class="fas fa-donate"></i>
+                    <span>Faire un don</span>
+                </button>
+                <a th:href="@{/user/actions/details/{id}(id=${action.idAction})}" class="details-btn">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Détails</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Donation Modal -->
+<div id="donationModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Faire un don</h2>
+        <form id="donationForm" method="post" action="/user/actions/donate">
+            <input type="hidden" id="actionId" name="actionId">
+            <div class="form-group">
+                <label for="montant">Montant (MAD)</label>
+                <input type="number" id="montant" name="montant" min="1" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="commentaire">Message (optionnel)</label>
+                <textarea id="commentaire" name="commentaire" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Valider</button>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/user-dashboard.js}"></script>
+<script th:src="@{/js/user-actions.js}"></script>
+</body>
+</html>

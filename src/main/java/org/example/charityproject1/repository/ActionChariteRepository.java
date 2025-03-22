@@ -24,4 +24,8 @@ public interface ActionChariteRepository extends MongoRepository<ActionCharite, 
     // Find popular actions (by number of likes)
     @Query(value = "{ }", sort = "{ 'likedByUsers': -1 }")
     List<ActionCharite> findPopularActions();
+    // ...existing code...
+
+    @Query("{ $or: [ { 'datelimite': { $gt: ?0 } }, { 'datelimite': null } ] }")
+    List<ActionCharite> findActiveActions(Date now);
 }

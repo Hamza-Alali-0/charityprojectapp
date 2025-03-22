@@ -6,121 +6,204 @@
     <title>Modifier une Action Caritative</title>
     <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
         .edit-container {
-            margin: 20px;
+            margin: 30px auto;
+            max-width: 900px;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            transition: all 0.3s ease;
         }
 
         .edit-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
             border-bottom: 1px solid #eee;
+        }
+
+        .edit-header h2 {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.8rem;
         }
 
         .back-button {
             display: inline-flex;
             align-items: center;
-            padding: 8px 15px;
+            padding: 10px 18px;
             background-color: #f0f0f0;
             color: #333;
-            border-radius: 4px;
+            border-radius: 8px;
             text-decoration: none;
             font-size: 0.9em;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
         .back-button:hover {
-            background-color: gold;
-            color: black;
+            background-color: #d4af37;
+            color: #fff;
+            transform: translateY(-2px);
         }
 
         .back-button i {
-            margin-right: 5px;
+            margin-right: 8px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 25px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+            font-size: 0.95rem;
         }
 
-        input[type="text"], input[type="number"], input[type="date"], textarea, select {
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background-color: #f9fafb;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            background-color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
-            color: #d4af37;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            padding: 10px 15px;
+            grid-column: span 2;
+            background: linear-gradient(135deg, #d4af37 0%, #f2c94c 100%);
+            color: #2c3e50;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(242, 201, 76, 0.3);
+            padding: 14px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 15px;
         }
 
         .btn-submit:hover {
-            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(242, 201, 76, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        .error-message,
+        .success-message {
+            grid-column: span 2;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
         }
 
         .error-message {
-            color: red;
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            background-color: #fff2f2;
+            color: #e74c3c;
+            border-left: 4px solid #e74c3c;
         }
 
         .success-message {
-            color: green;
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            background-color: #f0fff4;
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
         }
 
-        .preview-container {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        .hint-text {
+            color: #888;
+            font-size: 0.8em;
+            margin-top: 6px;
+        }
+
+        /* Media Section Styling */
+        .media-section {
+            grid-column: span 2;
+            background-color: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.1rem;
         }
 
         .existing-media {
-            margin-top: 15px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
-
-        .existing-media-title {
-            font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 25px;
         }
 
         .media-gallery {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 15px;
+            margin-bottom: 15px;
         }
 
         .media-item {
             position: relative;
-            width: 120px;
-            height: 120px;
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
+            aspect-ratio: 1/1;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .media-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
 
         .media-item img {
@@ -129,21 +212,95 @@
             object-fit: cover;
         }
 
-        .image-preview {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
         .delete-media-checkbox {
-            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 6px;
+            border: 1px solid #e1e5eb;
         }
 
-        .hint-text {
-            color: #666;
-            font-size: 0.8em;
-            margin-top: 3px;
+        .delete-media-checkbox input {
+            margin-right: 10px;
+        }
+
+        .upload-container {
+            margin-top: 20px;
+            border: 2px dashed #d4af37;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-container:hover {
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+
+        .upload-container i {
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        #mediaFiles {
+            display: none;
+        }
+
+        .upload-label {
+            display: block;
+            cursor: pointer;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .image-preview:hover {
+            transform: scale(1.05);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width,
+            .btn-submit,
+            .error-message,
+            .success-message,
+            .media-section {
+                grid-column: span 1;
+            }
+
+            .edit-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .media-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
         }
     </style>
 </head>
@@ -184,13 +341,12 @@
 
     <form th:action="@{'/organisation/actions/edit/' + ${action.idAction}}" method="post" enctype="multipart/form-data">
 
-
-        <div class="form-group">
+        <div class="form-group full-width">
             <label for="titre">Titre de l'action *</label>
             <input type="text" id="titre" name="titre" th:value="${action.titre}" required>
         </div>
 
-        <div class="form-group">
+        <div class="form-group full-width">
             <label for="description">Description *</label>
             <textarea id="description" name="description" rows="5" required th:text="${action.description}"></textarea>
         </div>
@@ -212,11 +368,6 @@
         </div>
 
         <div class="form-group">
-            <label for="objectifCollecte">Objectif de collecte (MAD) *</label>
-            <input type="number" id="objectifCollecte" name="objectifCollecte" min="0" step="0.01" th:value="${action.objectifCollecte}" required>
-        </div>
-
-        <div class="form-group">
             <label for="categorieId">Catégorie *</label>
             <select id="categorieId" name="categorieId" required>
                 <option value="">-- Sélectionnez une catégorie --</option>
@@ -228,31 +379,46 @@
             </select>
         </div>
 
-        <!-- Existing Media Files -->
-        <div class="existing-media" th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}">
-            <div class="existing-media-title">Images actuelles</div>
-            <div class="media-gallery">
-                <div th:each="mediaUrl : ${action.mediaUrls}" class="media-item">
-                    <img th:src="@{'data:image/png;base64,' + ${mediaUrl}}" alt="Image de l'action">
-                </div>
-            </div>
-            <div class="delete-media-checkbox">
-                <input type="checkbox" id="deleteExistingMedia" name="deleteExistingMedia">
-                <label for="deleteExistingMedia">Supprimer toutes les images existantes</label>
-            </div>
-        </div>
-
         <div class="form-group">
-            <label for="mediaFiles">Nouvelles images (optionnel)</label>
-            <input type="file" id="mediaFiles" name="mediaFiles" multiple accept="image/*" onchange="previewImages(this)">
-            <div class="hint-text">Vous pouvez sélectionner plusieurs images. Les nouvelles images seront ajoutées aux images existantes sauf si vous cochez la case ci-dessus.</div>
-            <div id="imagePreviewContainer" class="preview-container"></div>
+            <label for="objectifCollecte">Objectif de collecte (MAD) *</label>
+            <input type="number" id="objectifCollecte" name="objectifCollecte" min="0" step="0.01" th:value="${action.objectifCollecte}" required>
         </div>
 
-        <button type="submit" class="btn-submit">Mettre à jour l'action</button>
+        <div class="form-group full-width">
+            <div class="media-section">
+                <div class="section-title">Médias de l'action</div>
+
+                <!-- Existing Media Files -->
+                <div class="existing-media" th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}">
+                    <div class="media-gallery">
+                        <div th:each="mediaUrl : ${action.mediaUrls}" class="media-item">
+                            <img th:src="@{'data:image/png;base64,' + ${mediaUrl}}" alt="Image de l'action">
+                        </div>
+                    </div>
+                    <div class="delete-media-checkbox">
+                        <input type="checkbox" id="deleteExistingMedia" name="deleteExistingMedia">
+                        <label for="deleteExistingMedia">Supprimer toutes les images existantes</label>
+                    </div>
+                </div>
+
+                <div class="upload-container" onclick="document.getElementById('mediaFiles').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <label class="upload-label">Ajouter de nouvelles images</label>
+                    <div class="hint-text">Cliquez ici ou déposez des images (formats JPG, PNG acceptés)</div>
+                    <input type="file" id="mediaFiles" name="mediaFiles" multiple accept="image/*" onchange="previewImages(this)">
+                </div>
+                <div id="imagePreviewContainer" class="preview-container"></div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-check-circle"></i> Mettre à jour l'action
+        </button>
     </form>
 </div>
+
 <div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
+
 <script>
     function previewImages(input) {
         const container = document.getElementById('imagePreviewContainer');
@@ -273,6 +439,47 @@
                 reader.readAsDataURL(file);
             }
         }
+    }
+
+    // Add drag and drop functionality
+    const uploadContainer = document.querySelector('.upload-container');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadContainer.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadContainer.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadContainer.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        uploadContainer.style.backgroundColor = 'rgba(212, 175, 55, 0.1)';
+        uploadContainer.style.borderColor = '#f2c94c';
+    }
+
+    function unhighlight() {
+        uploadContainer.style.backgroundColor = '';
+        uploadContainer.style.borderColor = '#d4af37';
+    }
+
+    uploadContainer.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        const fileInput = document.getElementById('mediaFiles');
+
+        fileInput.files = files;
+        previewImages(fileInput);
     }
 </script>
 <script th:src="@{/js/dashboard.js}"></script>

@@ -265,4 +265,7 @@ public class ActionCharite {
             this.likedByUsers.remove(userId);
         }
     }
+    public boolean isLikedByUser(String userId) {
+        return likedByUsers != null && likedByUsers.contains(userId);
+    }
 }

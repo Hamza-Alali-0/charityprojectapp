@@ -1,8 +1,13 @@
 package org.example.charityproject1.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.charityproject1.model.ActionCharite;
+import org.example.charityproject1.model.CategorieAction;
 import org.example.charityproject1.model.Utilisateurs;
+import org.example.charityproject1.repository.ActionChariteRepository;
 import org.example.charityproject1.repository.UtilisateursRepository;
+import org.example.charityproject1.service.ActionChariteService;
+import org.example.charityproject1.service.CategorieActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -13,7 +18,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
@@ -24,6 +31,14 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ActionChariteService actionChariteService;
+
+    @Autowired
+    private CategorieActionService categorieActionService;
+    @Autowired
+    private ActionChariteRepository actionChariteRepository;
+
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -204,4 +219,173 @@ public class UserController {
         redirectAttributes.addFlashAttribute("message", "Votre mot de passe a été modifié avec succès. Veuillez vous reconnecter.");
         return "redirect:/auth/login";
     }
+    // ...existing code...
+
+
+
+    @GetMapping("/actions")
+    public String showActions(HttpSession session, Model model) {
+        String userEmail = (String) session.getAttribute("user_email");
+        if (userEmail == null) {
+            return "redirect:/auth/login";
+        }
+
+        Optional<Utilisateurs> userOptional = utilisateursRepository.findByEmail(userEmail);
+        if (!userOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/auth/login";
+        }
+
+        Utilisateurs user = userOptional.get();
+        model.addAttribute("user", user);
+
+        // Fetch all active actions
+        List<ActionCharite> actions = actionChariteService.getAllActiveActions();
+
+        // Load categories for each action
+        for (ActionCharite action : actions) {
+            if (action.getCategorieId() != null) {
+                try {
+                    CategorieAction categorie = categorieActionService.getCategoryById(action.getCategorieId());
+                    action.setCategorie(categorie);
+                } catch (Exception e) {
+                    // Category not found, continue with null categorie
+                }
+            }
+        }
+        actionChariteService.populateOrganisationsForActions(actions);
+
+        model.addAttribute("actions", actions);
+
+        return "user/actions/actions-feed";
+    }
+    // ...existing code...
+
+
+
+    // Find this method:
+    @GetMapping("/actions/details/{id}")
+    public String showActionDetails(@PathVariable("id") String id, HttpSession session, Model model) {
+        String userEmail = (String) session.getAttribute("user_email");
+        if (userEmail == null) {
+            return "redirect:/auth/login";
+        }
+
+        Utilisateurs user = utilisateursRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        model.addAttribute("user", user);
+
+        ActionCharite action = actionChariteService.getActionById(id);
+
+        // Call populateOrganisationsForActions to set the organization object
+        if (action != null) {
+            List<ActionCharite> actions = new ArrayList<>();
+            actions.add(action);
+            actionChariteService.populateOrganisationsForActions(actions);
+
+            // If the action has a category, load it
+            if (action.getCategorieId() != null) {
+                try {
+                    CategorieAction categorie = categorieActionService.getCategoryById(action.getCategorieId());
+                    action.setCategorie(categorie);
+                } catch (Exception e) {
+                    // Category not found, continue with null categorie
+                }
+            }
+        }
+
+        model.addAttribute("action", action);
+
+        return "user/actions/action-details";  // Update this path to match the new template location
+    }
+
+    @PostMapping("/actions/like/{id}")
+    @ResponseBody
+    public Map<String, Object> likeAction(@PathVariable("id") String id, HttpSession session) {
+        String userEmail = (String) session.getAttribute("user_email");
+        if (userEmail == null) {
+            return Map.of("success", false, "message", "User not logged in");
+        }
+
+        try {
+            Utilisateurs user = utilisateursRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Add action to user's liked actions
+            if (user.getLikedActions() == null) {
+                user.setLikedActions(new ArrayList<>());
+            }
+            user.ajouterActionAimee(id);
+            utilisateursRepository.save(user);
+
+            // Add user to action's liked by users
+            ActionCharite action = actionChariteService.addLike(id, user);
+
+            return Map.of("success", true, "likesCount", action.getLikesCount());
+        } catch (Exception e) {
+            return Map.of("success", false, "message", e.getMessage());
+        }
+    }
+
+    @PostMapping("/actions/unlike/{id}")
+    @ResponseBody
+    public Map<String, Object> unlikeAction(@PathVariable("id") String id, HttpSession session) {
+        String userEmail = (String) session.getAttribute("user_email");
+        if (userEmail == null) {
+            return Map.of("success", false, "message", "User not logged in");
+        }
+
+        try {
+            Utilisateurs user = utilisateursRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Remove action from user's liked actions
+            if (user.getLikedActions() != null) {
+                user.supprimerActionAimee(id);
+                utilisateursRepository.save(user);
+            }
+
+            // Remove user from action's liked by users
+            ActionCharite action = actionChariteService.removeLike(id, user.getUserId());
+
+            return Map.of("success", true, "likesCount", action.getLikesCount());
+        } catch (Exception e) {
+            return Map.of("success", false, "message", e.getMessage());
+        }
+    }
+
+    @PostMapping("/actions/participate/{id}")
+    @ResponseBody
+    public Map<String, Object> participateInAction(@PathVariable("id") String id, HttpSession session) {
+        String userEmail = (String) session.getAttribute("user_email");
+        if (userEmail == null) {
+            return Map.of("success", false, "message", "User not logged in");
+        }
+
+        try {
+            Utilisateurs user = utilisateursRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            ActionCharite action = actionChariteService.getActionById(id);
+
+            // Check if user is already a participant
+            if (action.getListUsersContribue() == null) {
+                action.setListUsersContribue(new ArrayList<>());
+            }
+
+            if (!action.getListUsersContribue().contains(user.getUserId())) {
+                action.getListUsersContribue().add(user.getUserId());
+                action.setNombreParticipants(action.getNombreParticipants() + 1);
+                actionChariteRepository.save(action);
+
+                return Map.of("success", true, "participantsCount", action.getNombreParticipants());
+            } else {
+                return Map.of("success", false, "message", "Vous participez déjà à cette action");
+            }
+        } catch (Exception e) {
+            return Map.of("success", false, "message", e.getMessage());
+        }
+    }
+
+
 }
