@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.example.charityproject1.model.ActionCharite;
 import org.example.charityproject1.model.CategorieAction;
 import org.example.charityproject1.model.Organisations;
+import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.service.ActionChariteService;
 import org.example.charityproject1.service.CategorieActionService;
 import org.example.charityproject1.service.OrganisationsService;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -88,8 +90,33 @@ public class ActionChariteController {
 
         // Validate date
         Date today = new Date();
-        if (date.before(today)) {
-            model.addAttribute("error", "La date de début doit être supérieure à la date d'aujourd'hui.");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String todayStr = sdf.format(today);
+        String dateStr = sdf.format(date);
+
+        if (dateStr.compareTo(todayStr) < 0) {
+            model.addAttribute("error", "La date de début doit être aujourd'hui ou une date future.");
+            model.addAttribute("categories", categorieActionService.getAllCategories());
+            model.addAttribute("organisation", organisationsService.findByNumeroIdentif(orgId));
+
+            // Load actions for the right panel
+            List<ActionCharite> actions = actionChariteService.getActiveActionsByOrganisation(orgId);
+            for (ActionCharite action : actions) {
+                if (action.getCategorieId() != null) {
+                    try {
+                        CategorieAction categorie = categorieActionService.getCategoryById(action.getCategorieId());
+                        action.setCategorie(categorie);
+                    } catch (Exception e) {
+                        // Category not found, continue with null categorie
+                    }
+                }
+            }
+            model.addAttribute("actions", actions);
+
+            return "organisation/actions/create-action";
+        }
+        if (dateLimite != null && dateLimite.before(date)) {
+            model.addAttribute("error", "La date d'expiration doit être égale ou postérieure à la date de début.");
             model.addAttribute("categories", categorieActionService.getAllCategories());
             model.addAttribute("organisation", organisationsService.findByNumeroIdentif(orgId));
 
@@ -225,7 +252,8 @@ public class ActionChariteController {
                 // Category not found, continue with null categorie
             }
         }
-
+        List<Utilisateurs> likedUsers = actionChariteService.getUsersWhoLikedAction(id);
+        model.addAttribute("likedUsers", likedUsers);
         model.addAttribute("action", action);
 
         return "organisation/actions/view-action";
@@ -291,7 +319,20 @@ public class ActionChariteController {
         if (existingAction == null || !existingAction.getOrganisationId().equals(orgId)) {
             return "redirect:/organisation/actions/list";
         }
+        Date today = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String todayStr = sdf.format(today);
+        String dateStr = sdf.format(date);
 
+        if (dateStr.compareTo(todayStr) < 0) {
+            redirectAttributes.addFlashAttribute("error", "La date de début doit être aujourd'hui ou une date future.");
+            return "redirect:/organisation/actions/edit/" + id;
+        }
+
+        if (dateLimite != null && dateLimite.before(date)) {
+            redirectAttributes.addFlashAttribute("error", "La date d'expiration doit être égale ou postérieure à la date de début.");
+            return "redirect:/organisation/actions/edit/" + id;
+        }
         // Update action fields
         existingAction.setTitre(titre);
         existingAction.setDescription(description);

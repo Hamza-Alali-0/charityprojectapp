@@ -179,6 +179,16 @@
     .action-description {
       margin: 30px 0;
       line-height: 1.7;
+      max-height: 600px;
+      overflow-y: auto;
+      padding-right: 10px;
+
+      /* Add these properties to fix horizontal overflow issues */
+      overflow-x: hidden;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-wrap; /* Ensures text wraps and preserves whitespace */
+      word-break: break-word; /* Ensures long words break and wrap to the next line */
     }
 
     .description-title {
@@ -424,6 +434,51 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
     }
+    .liked-users {
+      margin-top: 30px;
+    }
+
+    .liked-users-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+      color: #2c3e50;
+    }
+
+    .liked-users ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .liked-users li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .liked-users img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .liked-users .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .liked-users .user-name {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .liked-users .user-email {
+      font-size: 0.9em;
+      color: #666;
+    }
+
   </style>
 </head>
 <body>
@@ -564,7 +619,19 @@
           <div class="stat-label">J'aime</div>
         </div>
       </div>
-
+      <div class="liked-users">
+        <div class="liked-users-title">Utilisateurs qui ont aimé cette action</div>
+        <ul>
+          <li th:each="user : ${likedUsers}">
+            <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Photo de profil">
+            <img th:unless="${user.logoPath != null}" src="https://via.placeholder.com/200" alt="Photo par défaut">
+            <div class="user-info">
+              <span class="user-name" th:text="${user.nom}">Nom de l'utilisateur</span>
+              <span class="user-email" th:text="${user.email}">Email de l'utilisateur</span>
+            </div>
+          </li>
+        </ul>
+      </div>
       <!-- Recent Donations -->
       <div class="donation-list">
         <div class="donation-title">Dernières contributions</div>
@@ -584,6 +651,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- Action Controls -->

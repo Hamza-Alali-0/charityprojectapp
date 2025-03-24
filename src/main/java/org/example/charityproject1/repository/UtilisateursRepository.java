@@ -20,4 +20,5 @@ public interface UtilisateursRepository extends MongoRepository<Utilisateurs, St
     // 🔹 Find users who made at least one donation
     @Query("{ 'historiqueDons' : { $exists: true, $not: { $size: 0 } } }")
     List<Utilisateurs> findUsersWithDonations();
+    List<Utilisateurs> findByLikedActionsContaining(String actionId);
 }

@@ -132,3 +132,29 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("Modal elements not found"); // Debug line
     }
 });
+function previewImages(input) {
+    const container = document.getElementById('imagePreviewContainer');
+    container.innerHTML = '';
+
+    if (input.files && input.files.length > 0) {
+        if (input.files.length > 7) {
+            alert('Vous ne pouvez télécharger que 7 images au maximum.');
+            input.value = ''; // Clear the input
+            return;
+        }
+
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'image-preview';
+                container.appendChild(img);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    }
+}

@@ -5,6 +5,7 @@ import org.example.charityproject1.model.Don;
 import org.example.charityproject1.model.Organisations;
 import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.repository.ActionChariteRepository;
+import org.example.charityproject1.repository.UtilisateursRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,8 @@ public class ActionChariteService {
 
     @Autowired
     private ActionChariteRepository actionChariteRepository;
+    @Autowired
+    private UtilisateursRepository utilisateursRepository;
     @Autowired
     private OrganisationsService organisationsService;
 
@@ -202,5 +205,8 @@ public class ActionChariteService {
                 }
             }
         }
+    }
+    public List<Utilisateurs> getUsersWhoLikedAction(String actionId) {
+        return utilisateursRepository.findByLikedActionsContaining(actionId);
     }
 }

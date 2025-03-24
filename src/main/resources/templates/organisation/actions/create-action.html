@@ -873,7 +873,26 @@
         );
     }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('startDate');
+        const expireDateInput = document.getElementById('expireDate');
+
+        // Set the min attribute for the start date to today's date
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.setAttribute('min', today);
+
+        // Update the min attribute for the expire date based on the start date
+        startDateInput.addEventListener('change', function() {
+            expireDateInput.setAttribute('min', this.value);
+        });
+
+        // Initialize the min attribute for the expire date
+        expireDateInput.setAttribute('min', startDateInput.value);
+    });
+</script>
 <!-- Add this before the closing </body> tag -->
 <script th:src="@{/js/dashboard.js}"></script>
+
 </body>
 </html>

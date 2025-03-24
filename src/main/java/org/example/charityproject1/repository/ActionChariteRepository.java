@@ -1,6 +1,7 @@
 package org.example.charityproject1.repository;
 
 import org.example.charityproject1.model.ActionCharite;
+import org.example.charityproject1.model.Utilisateurs;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -28,4 +29,5 @@ public interface ActionChariteRepository extends MongoRepository<ActionCharite, 
 
     @Query("{ $or: [ { 'datelimite': { $gt: ?0 } }, { 'datelimite': null } ] }")
     List<ActionCharite> findActiveActions(Date now);
+
 }
