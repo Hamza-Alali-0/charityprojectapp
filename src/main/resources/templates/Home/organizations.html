@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizations - UnitedHearts</title>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles/home/home.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="/styles/home/organizations.css">
+</head>
+<body>
+    <!-- Include Navbar fragment -->
+    <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+    
+    <!-- Organization Statistics Section -->
+    <section class="campaign-stats">
+        <div class="stats-container">
+            <div class="stats-content">
+                <span class="stats-badge">Partner Network</span>
+                <h2>Our <span class="accent-text">Trusted</span> Organizations</h2>
+                <p class="stats-intro">We partner with committed organizations worldwide to create sustainable impact and meaningful change in communities.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter" th:data-value="${orgCount}">0</h3>
+                            <p>Partner Organizations</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter" th:data-value="${campaignCount}">0</h3>
+                            <p>Active Campaigns</p>
+                        </div>
+                    </div>
+                    
+                  
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter money" th:data-value="${totalDonations}">0</h3>
+                            <p>MAD Raised</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-image-container">
+                <div class="stats-shape"></div>
+                <img src="/images/organisations.jpg" alt="Organization Impact" class="stats-image">
+                <div class="stats-floating-card">
+                    <div class="floating-card-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="floating-card-content">
+                        <h4>Trusted Partners</h4>
+                        <p>Collaborating with vetted organizations to maximize social impact</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 1. First, add an ID to the organizations section -->
+    <div class="all-campaigns">
+        <h2 class="apple-section-title">Our Partners</h2>
+        <p class="apple-section-subtitle">Organizations making a difference. Together.</p>
+        <!-- Search -->
+        <!-- Apple-style search -->
+        <div id="all-organizations"  class="apple-search-container">
+            <form method="get" class="apple-search-form" th:action="@{/organizations}">
+                <div class="apple-search-wrapper">
+                    <i class="fas fa-search apple-search-icon"></i>
+                    <input type="text" name="search" placeholder="Search organizations..." th:value="${search}" class="apple-search-input">
+                    <button type="submit" class="apple-search-button">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Organizations Grid - Apple-inspired design -->
+        <div class="actions-container">
+        
+            
+            <div class="apple-grid">
+                <!-- Card per organization -->
+                <div th:each="organization : ${organizations}" class="apple-card">
+                    <div class="apple-card-image">
+                        <img th:if="${organization.logo != null && !organization.logo.isEmpty()}"
+                             th:src="'data:image/png;base64,' + ${organization.logo}"
+                             alt="Organization logo" class="apple-logo-img">
+                        <div th:unless="${organization.logo != null && !organization.logo.isEmpty()}"
+                             class="apple-logo-placeholder">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="apple-card-content">
+                        <h3 class="apple-card-title" th:text="${organization.nom}">Organization Name</h3>
+                        <p class="apple-card-description"
+                           th:text="${organization.description != null && !organization.description.isEmpty() ?
+                                      (organization.description.length() > 120 ? organization.description.substring(0, 120) + '...' : organization.description) : 'No description available'}">
+                            Description of the organization...
+                        </p>
+                        
+                        <div class="apple-card-metadata">
+                            <div class="apple-metadata-item" th:if="${organization.adresseLegale != null && !organization.adresseLegale.isEmpty()}">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span th:text="${organization.adresseLegale}">Location</span>
+                            </div>
+                            <div class="apple-metadata-item" th:if="${organization.contactPrincipal != null && !organization.contactPrincipal.isEmpty()}">
+                                <i class="fas fa-user-tie"></i>
+                                <span th:text="${organization.contactPrincipal}">Contact</span>
+                            </div>
+                        </div>
+                        
+                        <div class="apple-card-actions">
+                            <a th:href="@{'/organization/' + ${organization.numeroIdentif}}" class="apple-button apple-button-primary">
+                                Learn more <i class="fas fa-chevron-right"></i>
+                            </a>
+                            <a th:href="@{'/campaigns?organization=' + ${organization.numeroIdentif}}" class="apple-button apple-button-secondary">
+                                View campaigns
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" th:if="${totalPages > 0}">
+            <div class="pagination">
+                <a th:href="@{|/organizations?page=${currentPage - 1}&search=${search != null ? search : ''}|}" 
+                   th:classappend="${currentPage == 0} ? 'disabled'" class="page-link">&laquo;</a>
+                <span class="page-info" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}"></span>
+                <a th:href="@{|/organizations?page=${currentPage + 1}&search=${search != null ? search : ''}|}" 
+                   th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'" class="page-link">&raquo;</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include Auth Modal fragment -->
+    <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+    
+    <!-- Include Footer fragment -->
+    <div th:replace="~{fragements/Footer :: footer}"></div>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup modal triggers
+            function setupModalTriggers() {
+                // Show Auth Modal for any button with the class show-auth-modal
+                const showAuthModalBtns = document.querySelectorAll('.show-auth-modal');
+                showAuthModalBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'block';
+                        }
+                    });
+                });
+                
+                // Close Auth Modal on X click
+                const closeAuthModalBtn = document.querySelector('.auth-close-btn');
+                if (closeAuthModalBtn) {
+                    closeAuthModalBtn.addEventListener('click', function() {
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Close Auth Modal when clicking outside the modal content
+                window.addEventListener('click', function(e) {
+                    const authModal = document.getElementById('authModal');
+                    if (authModal && e.target === authModal) {
+                        authModal.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Animation for stat cards
+            function setupStatAnimation() {
+                // Check if we have the necessary elements
+                const statSection = document.querySelector('.campaign-stats');
+                if (!statSection) return;
+                
+                const statCards = document.querySelectorAll('.stat-card');
+                const statCounters = document.querySelectorAll('.stat-counter');
+                
+                // Intersection Observer to detect when stats section is in view
+                const observerOptions = {
+                    threshold: 0.2 // Trigger when 20% of the section is visible
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Animate stat cards
+                            statCards.forEach((card, index) => {
+                                setTimeout(() => {
+                                    card.classList.add('animated');
+                                }, index * 100);
+                            });
+                            
+                            // Animate counters
+                            animateCounters();
+                            
+                            // Unobserve after animation
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                
+                observer.observe(statSection);
+                
+                // Counter animation function
+                function animateCounters() {
+                    statCounters.forEach(counter => {
+                        const targetValue = counter.getAttribute('data-value');
+                        if (!targetValue) return;
+                        
+                        const target = parseInt(targetValue);
+                        const isMoney = counter.classList.contains('money');
+                        const duration = 2000; // Animation duration in milliseconds
+                        const frameDuration = 1000 / 60; // 60fps
+                        const totalFrames = duration / frameDuration;
+                        const valueIncrement = target / totalFrames;
+                        
+                        let currentValue = 0;
+                        
+                        function updateCounter() {
+                            currentValue += valueIncrement;
+                            const displayValue = Math.min(Math.ceil(currentValue), target);
+                            
+                            if (isMoney) {
+                                counter.textContent = displayValue.toLocaleString() + ' MAD';
+                            } else {
+                                counter.textContent = displayValue.toLocaleString();
+                            }
+                            
+                            if (currentValue < target) {
+                                requestAnimationFrame(updateCounter);
+                            }
+                        }
+                        
+                        updateCounter();
+                    });
+                }
+            }
+            
+            // Add Apple-style animations
+            function setupAppleAnimations() {
+                const cards = document.querySelectorAll('.apple-card');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animated');
+                        }
+                    });
+                }, {
+                    threshold: 0.15,
+                    rootMargin: '0px 0px -100px 0px'
+                });
+                
+                cards.forEach(card => {
+                    observer.observe(card);
+                });
+            }
+            
+            // Add scroll functionality for search and filters
+            function setupFormNavigation() {
+                // Get the search form
+                const searchForm = document.querySelector('.apple-search-form');
+                
+                // Function to scroll to organizations section after page load
+                function scrollToOrganizations() {
+                    const orgsSection = document.getElementById('all-organizations');
+                    if (orgsSection) {
+                        // Check if the URL contains parameters (meaning search was applied)
+                        if (window.location.search) {
+                            setTimeout(() => {
+                                orgsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 100); // Small delay to ensure DOM is ready
+                        }
+                    }
+                }
+                
+                // Call the scroll function when page loads with query params
+                scrollToOrganizations();
+                
+                // Store scroll flag when form is submitted
+                if (searchForm) {
+                    searchForm.addEventListener('submit', function() {
+                        sessionStorage.setItem('scrollToOrganizations', 'true');
+                    });
+                }
+                
+                // Check if we need to scroll (set by previous page action)
+                if (sessionStorage.getItem('scrollToOrganizations') === 'true') {
+                    sessionStorage.removeItem('scrollToOrganizations');
+                    scrollToOrganizations();
+                }
+            }
+            
+            // Initialize all functionality
+            setupModalTriggers();
+            setupStatAnimation();
+            setupAppleAnimations();
+            setupFormNavigation();
+        });
+    </script>
+</body>
+</html>

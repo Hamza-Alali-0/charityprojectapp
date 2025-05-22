@@ -8,11 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-    }
+    
 
     .action-container {
       margin: 30px auto;
@@ -483,7 +479,8 @@
 </head>
 <body>
 <!-- Main Navigation Bar -->
-<div th:replace="~{organisation/dashboard :: navbar}"></div>
+<!-- Include the organization navbar fragment -->
+<div th:replace="~{fragements/Navbar :: organisationNavbar(${organisation})}"></div>
 
 <!-- Sub Navigation with Rectangles -->
 <div class="sub-navbar">
@@ -673,8 +670,9 @@
         <i class="fas fa-play"></i> Réactiver
       </a>
 
-      <a href="#" class="control-btn delete-btn" onclick="confirmDelete(event, this)"
-         th:data-url="@{'/organisation/actions/delete/' + ${action.idAction}}">
+      <a href="#" class="control-btn delete-btn" 
+         th:attr="data-id=${action.idAction}, data-title=${action.titre}" 
+         onclick="showDeleteConfirmation(event, this)">
         <i class="fas fa-trash"></i> Supprimer
       </a>
     </div>
@@ -704,16 +702,8 @@
     }
   });
 </script>
-<script>
-  function confirmDelete(event, element) {
-    event.preventDefault();
-    const url = element.getAttribute('data-url');
 
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette action ? Cette action est irréversible.')) {
-      window.location.href = url;
-    }
-  }
-</script>
+<div th:replace="~{organisation/actions/confirmation-modal :: confirmationModal}"></div>
 
 <!-- Add this before the closing </body> tag -->
 <script th:src="@{/js/dashboard.js}"></script>

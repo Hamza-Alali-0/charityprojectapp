@@ -8,6 +8,8 @@ import org.example.charityproject1.model.Utilisateurs;
 import org.example.charityproject1.repository.OrganisationsRepository;
 import org.example.charityproject1.repository.SuperAdminRepository;
 import org.example.charityproject1.repository.UtilisateursRepository;
+import org.example.charityproject1.repository.DonRepository;
+import org.example.charityproject1.repository.ActionChariteRepository;
 import org.example.charityproject1.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.Cookie;
@@ -51,16 +53,24 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private DonRepository donRepository;
+
+    @Autowired
+    private ActionChariteRepository actionChariteRepository;
+
     @GetMapping("/register/user")
     public String showUserRegistrationForm(Model model) {
-        model.addAttribute("parameterName", "value");
-        CsrfToken csrfToken = (CsrfToken) model.getAttribute("_csrf");
-        if (csrfToken != null) {
-            System.out.println("CSRF Token: " + csrfToken.getToken());
-        } else {
-            System.out.println("CSRF Token is missing!");
-        }
-        return "user/register_user"; // Path to Thymeleaf template
+        // Add organization statistics to the model
+        long organisationCount = organisationsRepository.count();
+        double totalDonations = donRepository.sumTotalDonations();
+        long campaignCount = actionChariteRepository.count();
+
+        model.addAttribute("organisationCount", organisationCount);
+        model.addAttribute("totalDonations", totalDonations);
+        model.addAttribute("campaignCount", campaignCount);
+        
+        return "user/register_user"; 
     }
 
     @PostMapping("/register/user")
@@ -217,6 +227,15 @@ public class AuthController {
     // Render organisation registration page
     @GetMapping("/register/organisation")
     public String showOrganisationRegistrationForm(Model model) {
+        // Add organization statistics to the model
+        long organisationCount = organisationsRepository.count();
+        double totalDonations = donRepository.sumTotalDonations();
+        long campaignCount = actionChariteRepository.count();
+
+        model.addAttribute("organisationCount", organisationCount);
+        model.addAttribute("totalDonations", totalDonations);
+        model.addAttribute("campaignCount", campaignCount);
+
         model.addAttribute("parameterName", "value");
         CsrfToken csrfToken = (CsrfToken) model.getAttribute("_csrf");
         if (csrfToken != null) {
@@ -268,9 +287,18 @@ public class AuthController {
             return "organisation/register_organisation";
         }
     }
-    // Render user login page
+ 
     @GetMapping("/login/user")
     public String showUserLoginPage(Model model) {
+        // Add organization statistics to the model
+        long organisationCount = organisationsRepository.count();
+        double totalDonations = donRepository.sumTotalDonations();
+        long campaignCount = actionChariteRepository.count();
+
+        model.addAttribute("organisationCount", organisationCount);
+        model.addAttribute("totalDonations", totalDonations);
+        model.addAttribute("campaignCount", campaignCount);
+        
         return "user/login_user"; // Path to Thymeleaf template
     }
 
@@ -320,6 +348,15 @@ public class AuthController {
     // Render organisation login page
     @GetMapping("/login/organisation")
     public String showOrganisationLoginPage(Model model) {
+        // Add organization statistics to the model
+        long organisationCount = organisationsRepository.count();
+        double totalDonations = donRepository.sumTotalDonations();
+        long campaignCount = actionChariteRepository.count();
+
+        model.addAttribute("organisationCount", organisationCount);
+        model.addAttribute("totalDonations", totalDonations);
+        model.addAttribute("campaignCount", campaignCount);
+        
         return "organisation/login_organisation"; // Path to Thymeleaf template
     }
 
@@ -392,4 +429,7 @@ public class AuthController {
             throw new RuntimeException("Failed to save file", e);
         }
     }
+
+
+
 }

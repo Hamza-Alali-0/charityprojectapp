@@ -1,10 +1,626 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actions Archivées</title>
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .archived-actions-container {
+            margin: 30px auto;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        
+        .action-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .action-image {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .action-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .action-image .no-image {
+            color: #ccc;
+            font-size: 3em;
+        }
+        
+        .action-archive-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 152, 0, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .action-archive-badge i {
+            margin-right: 5px;
+        }
+        
+        .action-content {
+            padding: 20px;
+        }
+        
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8em;
+        }
+        
+        .action-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .meta-item i {
+            margin-right: 5px;
+            color: #d4af37;
+        }
+        
+        .action-progress {
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            background-color: #eee;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-value {
+            background: linear-gradient(90deg, #d4af37 0%, #f2c94c 100%);
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .action-footer {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn i {
+            margin-right: 5px;
+        }
+        
+       
+        
+        .no-actions {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #f9fafb;
+            border-radius: 12px;
+            color: #666;
+        }
+        
+        .no-actions i {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+        
+        .no-actions p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        
+        .create-action-btn {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #d4af37 0%, #f2c94c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .create-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .create-action-btn i {
+            margin-right: 8px;
+        }
+
+        /* Stats dashboard styles */
+        .stats-dashboard {
+            margin-bottom: 30px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .stat-icon {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+
+        .stat-details {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .currency {
+            font-size: 0.7em;
+            margin-left: 5px;
+            color: #6c757d;
+        }
+
+        .stat-title {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* Filters section styles */
+        .filters-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-container input:focus {
+            border-color: #d4af37;
+            outline: none;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+        }
+
+        .filter-select:focus {
+            border-color: #d4af37;
+            outline: none;
+        }
+
+        /* Pagination styles */
+        .pagination-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .pagination {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover {
+            background-color: #e0e0e0;
+        }
+
+        .page-link.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .page-info {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
+    <!-- Main Navigation Bar -->
+    <div th:replace="~{fragements/Navbar :: organisationNavbar(${organisation})}"></div>
 
+    <!-- Sub Navigation with Rectangles -->
+    <div class="sub-navbar">
+        <a href="/organisation/dashboard" class="sub-nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Tableau de bord</span>
+        </a>
+        <a href="/organisation/actions/create" class="sub-nav-item">
+            <i class="fas fa-tasks"></i>
+            <span>Lancer des Actions</span>
+        </a>
+        <a href="/organisation/actions/list" class="sub-nav-item">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Actions en cours</span>
+        </a>
+        <a href="/organisation/actions/archived" class="sub-nav-item active">
+            <i class="fas fa-archive"></i>
+            <span>Actions Archivees</span>
+        </a>
+    </div>
+
+  
+    <div class="archived-actions-container">
+        <div class="stats-dashboard">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-value" th:text="${stats != null ? stats.totalActions : '0'}">0</div>
+                    <div class="stat-title">Vos Actions</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-value">
+                        <span th:text="${stats != null ? #numbers.formatDecimal(stats.totalCollected, 0, 'COMMA', 2, 'POINT') : '0.00'}">0.00</span>
+                        <span class="currency">MAD</span>
+                    </div>
+                  <div class="stat-title">Montant Collecté (Archivées)</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-value" th:text="${stats != null ? stats.totalParticipants : '0'}">0</div>
+                   <div class="stat-title">Participants (Actions Archivées)</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-archive"></i>
+                </div>
+                <div class="stat-details">
+                    <div class="stat-value" th:text="${archivedActions != null ? archivedActions.size() : '0'}">0</div>
+                  <div class="stat-title">Actions Archivées</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="page-header">
+            <h1 class="page-title">Actions Archivées</h1>
+        </div>
+
+        <!-- Add filters section -->
+        <div class="filters-section">
+            <form method="get" class="search-form" action="/organisation/actions/archived#actions-section">
+                <!-- Search input -->
+                <div class="filter-group search-container">
+                    <input type="text" name="search" placeholder="Rechercher des actions..." th:value="${searchParam}">
+                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <!-- Category filter -->
+                <div class="filter-group">
+                    <select name="category" class="filter-select" onchange="this.form.submit()">
+                        <option value="">Toutes les catégories</option>
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat.idCategorie}" 
+                                th:text="${cat.nom}"
+                                th:selected="${categoryParam == cat.idCategorie}">
+                            Category name
+                        </option>
+                    </select>
+                </div>
+                
+                <!-- Sort options -->
+                <div class="filter-group">
+                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                        <option value="newest" th:selected="${sortParam == 'newest'}">Plus récentes</option>
+                        <option value="ending-soon" th:selected="${sortParam == 'ending-soon'}">Se termine bientôt</option>
+                        <option value="most-funded" th:selected="${sortParam == 'most-funded'}">Plus financées</option>
+                        <option value="most-popular" th:selected="${sortParam == 'most-popular'}">Plus populaires</option>
+                    </select>
+                </div>
+                
+                <!-- Add hidden page parameter to preserve pagination -->
+                <input type="hidden" name="page" value="0">
+                <input type="hidden" name="size" th:value="${size}">
+            </form>
+        </div>
+
+        <div class="actions-grid" id="actions-section">
+            <!-- Check if there are any archived actions -->
+            <div th:if="${archivedActions == null || archivedActions.isEmpty()}" class="no-actions">
+                <i class="fas fa-archive"></i>
+                <p>Vous n'avez pas encore d'actions archivées.</p>
+                <a href="/organisation/actions/list" class="create-action-btn">
+                    <i class="fas fa-list"></i>
+                    Voir actions en cours
+                </a>
+            </div>
+
+            <!-- Loop through archived actions -->
+            <div th:each="action : ${archivedActions}" class="action-card" >
+                <div class="action-image">
+                    <img th:if="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}" 
+                         th:src="@{'data:image/png;base64,' + ${action.mediaUrls[0]}}" 
+                         alt="Image de l'action">
+                    <div th:if="${action.mediaUrls == null || action.mediaUrls.isEmpty()}" class="no-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="action-archive-badge">
+                        <i class="fas fa-archive"></i>
+                        <span>Archivée</span>
+                    </div>
+                </div>
+                <div class="action-content">
+                    <h3 class="action-title" th:text="${action.titre}">Titre de l'action</h3>
+                    <div class="action-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${action.lieu}">Lieu</span>
+                        </div>
+                        <div class="meta-item" th:if="${action.categorie != null}">
+                            <i class="fas fa-tag"></i>
+                            <span th:text="${action.categorie.nom}">Catégorie</span>
+                        </div>
+                    </div>
+
+                    <div class="action-progress">
+                        <div class="progress-bar">
+                            <div class="progress-value" 
+                                 th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                            <span th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                        </div>
+                    </div>
+
+                    <div class="action-footer">
+                        <div class="meta-item">
+                            <i class="fas fa-heart"></i>
+                            <span th:text="${action.getLikesCount()}">0 J'aime</span>
+                        </div>
+                        <div class="action-buttons">
+                            <a th:href="@{'/organisation/actions/view/' + ${action.idAction}}" class="action-btn view-btn">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                            <a th:href="@{'/organisation/actions/activate/' + ${action.idAction}}" class="action-btn activate-btn">
+                                <i class="fas fa-play"></i> Réactiver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" th:if="${archivedActions != null && !archivedActions.isEmpty()}">
+            <div class="pagination">
+                <a th:href="@{/organisation/actions/archived(page=${currentPage - 1}, size=${size}, search=${searchParam}, category=${categoryParam}, sort=${sortParam})} + '#actions-section'" 
+                   th:classappend="${currentPage == 0} ? 'disabled'" class="page-link">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <span class="page-info" th:text="'Page ' + (${currentPage} + 1) + ' sur ' + ${totalPages}">Page 1 sur 5</span>
+                <a th:href="@{/organisation/actions/archived(page=${currentPage + 1}, size=${size}, search=${searchParam}, category=${categoryParam}, sort=${sortParam})} + '#actions-section'" 
+                   th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'" class="page-link">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
+
+    <!-- Add this before the closing </body> tag -->
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handler to activation buttons
+            const activateButtons = document.querySelectorAll('.action-btn.activate-btn');
+            
+            activateButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Prevent the default navigation
+                    e.preventDefault();
+                    
+                    // Get the activation URL
+                    const url = this.getAttribute('href');
+                    
+                    // Navigate to the URL with cache-busting parameter
+                    window.location.href = url + '?t=' + new Date().getTime();
+                });
+            });
+        });
+    </script>
 </body>
 </html>

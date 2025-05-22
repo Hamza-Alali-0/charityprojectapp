@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - UnitedHearts</title>
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/home/home.css}">
+    <link rel="stylesheet" th:href="@{/styles/home/contact.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Include the public navbar fragment -->
+    <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+    
+    <!-- Hero Section -->
+    <section class="contact-hero" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/bannerview.jpg');">
+        <div class="hero-content">
+            <h1>Get in <span class="accent-text">Touch</span></h1>
+            <p>We're here to answer your questions and help you make a difference</p>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <!-- Success Message Alert -->
+            <div th:if="${successMessage}" class="success-alert">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}">Your message has been sent successfully!</span>
+            </div>
+            
+            <div class="contact-grid">
+                <!-- Contact Information -->
+                <div class="contact-info">
+                    <h2>Contact <span class="accent-text">Information</span></h2>
+                    <p class="contact-intro">Have questions about donations, volunteering, or starting a campaign? Our team is ready to help you make a meaningful impact.</p>
+                    
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <h3>Our Location</h3>
+                                <p>123 Charity Street<br>City, Country 12345</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <h3>Phone Number</h3>
+                                <p>+212 456 789 072</p>
+                                <p>Mon-Fri, 9AM-5PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="info-content">
+                                <h3>Email Address</h3>
+                                <p>info@unitedhearts.org</p>
+                                <p>support@unitedhearts.org</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="social-connect">
+                        <h3>Connect With Us</h3>
+                        <div class="social-icons">
+                            <a href="https://facebook.com" target="_blank" class="social-icon facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com" target="_blank" class="social-icon twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://instagram.com" target="_blank" class="social-icon instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://linkedin.com" target="_blank" class="social-icon linkedin">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h2>Send us a <span class="accent-text">Message</span></h2>
+                    <p class="form-intro">Fill out the form below and we'll get back to you as soon as possible.</p>
+                    
+                    <form class="contact-form" th:action="@{/contact/submit}" method="post">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" placeholder="What is this regarding?">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" placeholder="How can we help you?" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Find <span class="accent-text">Us</span></h2>
+                <p>Visit our headquarters to learn more about our work</p>
+            </div>
+            
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.846998528534!2d-7.531978525099824!3d33.604848373130204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cc9fa2a4b0f7%3A0x8edd5b2a8a9958d1!2sCasablanca%2C%20Morocco!5e0!3m2!1sen!2sus!4v1683540505697!5m2!1sen!2sus" 
+                        width="100%" 
+                        height="450" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Frequently Asked <span class="accent-text">Questions</span></h2>
+                <p>Find answers to common questions about our platform</p>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>How can I start a fundraising campaign?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>To start a fundraising campaign, you need to register as an organization. Once approved, you can create and manage campaigns through your organization dashboard.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>What payment methods do you accept?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We accept major credit cards, PayPal, and bank transfers. All transactions are secure and encrypted to protect your personal information.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>How do I know my donation reaches the intended recipients?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We have a strict verification process for all organizations, and each campaign includes detailed reporting. You can track the impact of your donation through campaign updates.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>Can I volunteer instead of making a financial contribution?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Absolutely! Many campaigns welcome volunteers. Check the campaign details for volunteer opportunities or contact the organization directly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <div th:replace="~{fragements/Footer :: mainFooter}"></div>
+    
+    <!-- Authentication Modal -->
+    <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Accordion functionality
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            const content = item.querySelector('.accordion-content');
+            
+            header.addEventListener('click', () => {
+                // Close all other open items
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        otherItem.querySelector('.fas').classList.remove('fa-chevron-up');
+                        otherItem.querySelector('.fas').classList.add('fa-chevron-down');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active');
+                const icon = header.querySelector('.fas');
+                
+                if (item.classList.contains('active')) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    content.style.maxHeight = null;
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        });
+        
+        // Form submission
+        const contactForm = document.querySelector('.contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real implementation, you would handle the form submission
+                // For now, show a success message
+                alert('Thank you! Your message has been sent successfully. We will get back to you soon.');
+                contactForm.reset();
+            });
+        }
+    });
+    </script>
+</body>
+</html>

@@ -14,35 +14,9 @@
 </head>
 <body th:data-password-error="${passwordError}" th:data-profile-error="${profileError}">
 <!-- Main Navigation Bar -->
-<nav class="navbar">
-    <div class="navbar-left">
-        <div class="logo-circle admin-logo">
-            <i class="fas fa-user-shield"></i>
-        </div>
-        <div class="org-name" th:text="${admin.nom}">Super Admin</div>
-    </div>
+<!-- Include the admin navbar fragment -->
+<div th:replace="~{fragements/Navbar :: adminNavbar(${admin})}"></div>
 
-    <div class="navbar-right">
-        <span class="id-info" th:text="${admin.email}">admin@example.com</span>
-
-        <!-- Notification Bell -->
-        <div class="notification">
-            <a href="#" class="notification-icon">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">5</span>
-            </a>
-        </div>
-
-        <div class="dropdown">
-            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
-            <div class="dropdown-content">
-                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
-                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
-                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-            </div>
-        </div>
-    </div>
-</nav>
 
 <div class="sub-navbar">
     <a href="#dashboard" class="sub-nav-item" id="dashboard-nav" onclick="loadDashboardContent()">

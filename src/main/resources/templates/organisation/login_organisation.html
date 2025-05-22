@@ -1,32 +1,223 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion Organisation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organisation Login | Charity Platform</title>
+
+    <link rel="stylesheet" th:href="@{/styles/auth/auth.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<h1>Connexion Organisation</h1>
-
-<!-- Display error message if any -->
-<div th:if="${message}" th:text="${message}" style="color: red;"></div>
-
-<form action="/auth/login/organisation" method="POST">
-
-  <div>
-    <label for="username">Numéro d'identification :</label>
-    <input type="text" id="username" name="username" required />
-  </div>
-  <div>
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" name="password" required />
-  </div>
-  <div>
-    <button type="submit">Se connecter</button>
-  </div>
-</form>
-
-<p>Vous n'avez pas de compte ? <a href="/auth/register/organisation">Inscrivez-vous ici</a>.</p>
-
+  <a href="/" class="back-arrow">
+    <i class="fas fa-arrow-left"></i>
+    <span>Retour à l'accueil</span>
+</a>
+    <div class="auth-container org-auth">
+        <!-- Left side - Image with overlay -->
+        <div class="auth-image-container">
+            <div class="slideshow">
+                <div class="slide active">
+                    <img src="/images/charityauth.jpg" alt="Charity Impact">
+                    
+                    <!-- Statistics bar with data attributes for animation -->
+                    <div class="stats-bar">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${organisationCount}" data-target="0">0</h3>
+                                <p>Organisations</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${totalDonations}" data-prefix="$" data-suffix="+">$0</h3>
+                                <p>Funds Raised</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${campaignCount}" data-suffix="+">0</h3>
+                                <p>Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="/images/charityauth4.jpg" alt="Making a Difference">
+                    
+                    <!-- Statistics bar with data attributes for animation -->
+                    <div class="stats-bar">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${organisationCount}" data-target="0">0</h3>
+                                <p>Organisations</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${totalDonations}" data-prefix="$" data-suffix="+">$0</h3>
+                                <p>Funds Raised</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${campaignCount}" data-suffix="+">0</h3>
+                                <p>Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="/images/charityauth5.jpg" alt="Community Support">
+                    
+                    <!-- Statistics bar with data attributes for animation -->
+                    <div class="stats-bar">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${organisationCount}" data-target="0">0</h3>
+                                <p>Organisations</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${totalDonations}" data-prefix="$" data-suffix="+">$0</h3>
+                                <p>Funds Raised</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${campaignCount}" data-suffix="+">0</h3>
+                                <p>Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation dots -->
+                <div class="slideshow-dots">
+                    <span class="dot active" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                    <span class="dot" data-index="2"></span>
+                </div>
+            </div>
+            
+            <div class="image-overlay">
+                <div class="overlay-content">
+                    <h2><span class="regular-text">CRÉER</span> <span class="highlight org-highlight">L'IMPACT</span></h2>
+                    <p>Empowering Organizations to Make a Difference</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right side - Form -->
+        <div class="auth-form-container">
+            <div class="logo-container">
+                <img src="/images/logocharity.png" alt="Charity Logo">
+            </div>
+            
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Sign in to manage your organization's impact</p>
+            
+            <!-- Display error message if any -->
+            <div th:if="${message}" class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${message}"></span>
+            </div>
+            
+            <form action="/auth/login/organisation" method="POST" class="auth-form">
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="username" name="username" placeholder="Numéro d'identification" required />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Mot de passe" required />
+                    </div>
+                </div>
+                
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="submit-btn org-submit">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/auth/register/organisation" class="signup-link">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add counter animation
+            function animateCounters() {
+                const counters = document.querySelectorAll('.stat-number');
+                const speed = 200; // The lower the faster
+                
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const prefix = counter.getAttribute('data-prefix') || '';
+                    const suffix = counter.getAttribute('data-suffix') || '';
+                    
+                    // Larger numbers should count faster
+                    const increment = Math.ceil(target / speed);
+                    
+                    function updateCount() {
+                        const currentValue = +counter.innerText.replace(/[^\d.-]/g, '');
+                        if (currentValue < target) {
+                            // Calculate next value, ensuring we don't exceed target
+                            const nextValue = Math.min(currentValue + increment, target);
+                            
+                            // Format with commas for thousands
+                            const formattedValue = nextValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            counter.innerText = `${prefix}${formattedValue}${suffix}`;
+                            
+                            // Continue animation
+                            if (nextValue < target) {
+                                setTimeout(updateCount, 30);
+                            }
+                        }
+                    }
+                    
+                    updateCount();
+                });
+            }
+            
+            // Slideshow functionality
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            
+            function showSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                // Show the selected slide
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                currentSlide = index;
+                
+                // Animate counters whenever a slide becomes active
+                animateCounters();
+            }
+            
+            // Initial animation when page loads
+            animateCounters();
+            
+            // Auto advance slides
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }, 5000); // Change slide every 5 seconds
+            
+            // Click on dots to change slides
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const slideIndex = parseInt(this.getAttribute('data-index'));
+                    showSlide(slideIndex);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

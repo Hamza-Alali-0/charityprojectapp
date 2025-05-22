@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrganisationsService {
 
@@ -54,4 +56,13 @@ public class OrganisationsService {
     public void updateOrganisation(Organisations organisation) {
         organisationsRepository.save(organisation);
     }
+
+    // Get all organizations
+    public List<Organisations> getAllOrganisations() {
+        return organisationsRepository.findAll();
+    }
+    public Long countOrganisations() {
+    return organisationsRepository.count();
+}
+
 }

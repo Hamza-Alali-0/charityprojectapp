@@ -7,40 +7,943 @@
     <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
     <!-- Adding Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Secondary navbar styles */
+.secondary-navbar {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
 
+.secondary-navbar .container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+        justify-content: center; /* Center items horizontally */
+}
+@media (max-width: 768px) {
+    .secondary-navbar .container {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .secondary-nav-item {
+        flex: 0 0 auto;
+        margin: 5px 10px;
+    }
+}
+
+.secondary-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #555;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.secondary-nav-item i {
+    margin-right: 8px;
+    font-size: 1em;
+}
+
+.secondary-nav-item:hover {
+    background-color: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
+}
+
+.secondary-nav-item.active {
+    color: #d4af37;
+    border-bottom: 3px solid #d4af37;
+    font-weight: 500;
+}
+
+/* Dashboard sections styling */
+.dashboard-sections {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.dashboard-section {
+    display: none;
+}
+
+.dashboard-section.active {
+    display: block;
+}
+/* Dashboard Organizations Section Styles */
+.dashboard-stats {
+    margin-bottom: 40px;
+}
+
+.dashboard-orgs .apple-search-container {
+    margin: 20px 0 30px;
+}
+
+.apple-search-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    background: #f5f5f7;
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.apple-search-wrapper:focus-within {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+}
+
+.apple-search-icon {
+    color: #86868b;
+    margin-right: 10px;
+}
+
+.apple-search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: #1d1d1f;
+    outline: none;
+    padding: 8px 0;
+}
+
+.apple-search-button {
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.apple-search-button:hover {
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+    transform: translateY(-2px);
+}
+
+.apple-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.apple-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.apple-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15), 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.apple-card-image {
+    height: 180px;
+    background: #f5f5f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.apple-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.apple-logo-placeholder {
+    font-size: 60px;
+    color: #d4af37;
+}
+
+.apple-card-content {
+    padding: 20px;
+}
+
+.apple-card-title {
+    font-size: 18px;
+    color: #1d1d1f;
+    margin-bottom: 10px;
+}
+
+.apple-card-description {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    min-height: 60px;
+}
+
+.apple-card-metadata {
+    margin-bottom: 20px;
+}
+
+.apple-metadata-item {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #6e6e73;
+    margin-bottom: 5px;
+}
+
+.apple-metadata-item i {
+    margin-right: 8px;
+    color: #d4af37;
+    width: 14px;
+}
+
+.apple-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.apple-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.apple-button i {
+    margin-left: 5px;
+    font-size: 10px;
+}
+
+.apple-button-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+    color: #333;
+}
+
+.apple-button-primary:hover {
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+    transform: translateY(-2px);
+}
+
+.apple-button-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.apple-button-secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Pagination styles */
+.pagination-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.page-link {
+    color: #333;
+    padding: 8px 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.page-link:hover {
+    color: #d4af37;
+}
+
+.page-link.disabled {
+    color: #ccc;
+    pointer-events: none;
+}
+
+.page-info {
+    margin: 0 10px;
+    color: #666;
+    font-size: 14px;
+}
+.stats-container {
+    margin: 20px 0 40px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(244, 227, 141, 0.15) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.stat-icon i {
+    font-size: 24px;
+    color: #d4af37;
+}
+
+.stat-details {
+    flex: 1;
+}
+
+.stat-counter {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 5px 0;
+    line-height: 1.2;
+}
+
+.stat-details p {
+    margin: 0;
+    color: #666;
+    font-size: 15px;
+}
+
+/* Organization Detail Modal Styles */
+.org-detail-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.org-detail-modal.show {
+    display: block;
+    opacity: 1;
+}
+
+.org-detail-modal-content {
+    background: white;
+    margin: 5% auto;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.org-detail-modal.show .org-detail-modal-content {
+    transform: translateY(0);
+}
+
+.org-detail-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.org-detail-modal-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 22px;
+}
+
+.org-detail-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.org-detail-close-btn:hover {
+    color: #d4af37;
+}
+
+.org-detail-modal-body {
+    padding: 25px;
+    overflow-y: auto;
+}
+
+.org-detail-loading {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+}
+
+.org-detail-loading i {
+    font-size: 40px;
+    color: #d4af37;
+    margin-bottom: 15px;
+}
+
+/* Organization Detail Content Styles */
+.org-detail-banner {
+    height: 200px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.7) 0%, rgba(244, 227, 141, 0.7) 100%);
+    border-radius: 8px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.org-detail-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.org-detail-logo img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.org-detail-info {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.org-detail-info h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.org-detail-info-item {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.org-detail-info-item i {
+    width: 25px;
+    color: #d4af37;
+    margin-right: 10px;
+}
+
+.org-detail-description {
+    line-height: 1.6;
+}
+
+.org-detail-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.org-detail-button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.org-detail-button-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+    color: #333;
+    border: none;
+}
+
+.org-detail-button-primary:hover {
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+    transform: translateY(-2px);
+}
+
+.org-detail-button-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: none;
+}
+
+.org-detail-button-secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Campaign Explorer - Renamed from campaigns-filters */
+.campaign-explorer {
+    background-color: white;
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    margin-bottom: 35px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.explorer-heading {
+    margin-bottom: 15px;
+}
+
+.explorer-heading h3 {
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.explorer-heading h3 i {
+    color: #d4af37;
+}
+
+.explorer-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.explorer-search {
+    flex: 1;
+    min-width: 280px;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f8f8f8;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.search-wrapper:focus-within {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    border-color: #d4af37;
+}
+
+.search-icon {
+    color: #999;
+    padding: 0 12px;
+}
+
+.explorer-search input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 5px 12px 0;
+    font-size: 15px;
+    outline: none;
+    color: #333;
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #e0bd4c 0%, #f4e38d 100%);
+}
+
+.explorer-filters {
+    display: flex;
+    gap: 15px;
+}
+
+.filter-form {
+    display: flex;
+    gap: 15px;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-item label {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.filter-item select {
+    min-width: 180px;
+    padding: 11px 35px 11px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+}
+
+.filter-item select:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    outline: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .explorer-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .explorer-search {
+        width: 100%;
+    }
+    
+    .explorer-filters {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .filter-form {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .filter-item select {
+        width: 100%;
+    }
+}
+
+/* Actions Grid Fix */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.action-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(250, 250, 250, 0.9);
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.org-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.org-info img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.org-info span {
+    font-size: 0.85em;
+    font-weight: 500;
+    color: #444;
+}
+
+.action-category {
+    background: rgba(212, 175, 55, 0.15);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    color: #d4af37;
+}
+
+.action-media {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f9f9f9;
+}
+
+.action-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ccc;
+}
+
+.no-image-container i {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.action-stats {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.like-count-display {
+    color: #777;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.like-count-display i.fa-heart {
+    color: #d4af37;
+}
+
+.action-progress {
+    flex: 1;
+    margin-left: 15px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #d4af37, #f4e38d);
+    border-radius: 4px;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.action-content {
+    padding: 15px;
+}
+
+.action-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.action-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.detail {
+    font-size: 0.85em;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-buttons {
+    display: flex;
+    padding: 15px;
+    gap: 10px;
+}
+
+.details-btn, .edit-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.details-btn {
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+    color: #333;
+}
+
+.details-btn:hover {
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+    transform: translateY(-2px);
+}
+
+.edit-btn {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.edit-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.no-actions {
+    text-align: center;
+    padding: 40px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.no-actions i {
+    font-size: 3em;
+    color: #d4af37;
+    margin-bottom: 15px;
+}
+
+.no-actions p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.create-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.create-action-btn:hover {
+    background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+    transform: translateY(-2px);
+}
+</style>
 </head>
 <body th:data-password-error="${passwordError}" th:data-profile-error="${profileError}">
 <!-- Main Navigation Bar -->
-<nav class="navbar" th:fragment="navbar">
-    <div class="navbar-left">
-        <div class="logo-circle">
-            <img th:if="${organisation != null and organisation.logo != null}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo de l'organisation">
-            <img th:unless="${organisation != null and organisation.logo != null}" src="https://via.placeholder.com/40" alt="Logo par défaut">
-        </div>
-        <div class="org-name" th:text="${organisation != null} ? ${organisation.nom} : 'Organisation'">Nom de l'Organisation</div>
-    </div>
-
-    <div class="navbar-right">
-        <span class="id-info" th:text="${organisation != null} ? 'ID: ' + ${organisation.numeroIdentif} : 'ID: -'">ID: 123456</span>
-
-        <!-- Notification Bell -->
-        <div class="notification">
-            <a href="#" class="notification-icon">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </a>
-        </div>
-
-        <div class="dropdown">
-            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
-            <div class="dropdown-content">
-                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
-                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
-                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-            </div>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragements/Navbar :: organisationNavbar(${organisation})}"></div>
 
 <!-- Sub Navigation with Rectangles -->
 <div class="sub-navbar">
@@ -62,9 +965,752 @@
     </a>
 </div>
 
+<!-- Secondary navigation bar - only shown when Tableau de bord is active -->
+<div class="secondary-navbar" id="dashboardNavbar">
+    <div class="container">
+        <a href="#" class="secondary-nav-item active" data-target="overview">
+            <i class="fas fa-home"></i>
+            <span>Vue générale</span>
+        </a>
+        <a href="#" class="secondary-nav-item" data-target="statistics">
+            <i class="fas fa-chart-bar"></i>
+            <span>Statistiques</span>
+        </a>
+        <a href="#" class="secondary-nav-item" data-target="donations">
+            <i class="fas fa-building"></i>
+            <span>Organisations</span>
+        </a>
+        <a href="#" class="secondary-nav-item" data-target="participants">
+            <i class="fas fa-users"></i>
+            <span>Campaigns</span>
+        </a>
+    </div>
+</div>
+
+<!-- Dashboard content sections -->
+<div class="dashboard-sections">
+    <div class="dashboard-section active" id="overview">
+        <!-- Content for overview section -->
+        <h2>Vue générale du tableau de bord</h2>
+        <!-- Your existing dashboard content goes here -->
+    </div>
+    
+    <div class="dashboard-section" id="statistics">
+        <!-- Content for statistics section -->
+        <h2>Statistiques détaillées</h2>
+        <!-- Statistics content here -->
+    </div>
+    
+    <div class="dashboard-section" id="donations">
+     
+        
+        <!-- Organizations Statistics Card Row -->
+        <div class="stats-container dashboard-stats">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 class="stat-counter" th:data-value="${orgCount}">0</h3>
+                        <p>Organisations Partenaires</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 class="stat-counter" th:data-value="${campaignCount}">0</h3>
+                        <p>Campagnes Actives</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 class="stat-counter money" th:data-value="${totalDonations}">0</h3>
+                        <p>MAD Collectés</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Organizations Search & Grid -->
+        <div class="all-campaigns dashboard-orgs">
+            <div class="apple-search-container">
+                <form method="get" class="apple-search-form" th:action="@{/organisation/dashboard}">
+                    <input type="hidden" name="page" value="0">
+                    <input type="hidden" name="size" th:value="${size}">
+                    <div class="apple-search-wrapper">
+                        <i class="fas fa-search apple-search-icon"></i>
+                        <input type="text" name="search" th:value="${searchParam}" 
+                               placeholder="Rechercher une organisation..." class="apple-search-input">
+                        <button type="submit" class="apple-search-button">Rechercher</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Organizations Grid -->
+            <div class="actions-container">
+                <div class="apple-grid">
+                    <!-- Card per organization -->
+                    <div th:each="organization : ${organizations}" class="apple-card">
+                        <div class="apple-card-image">
+                            <img th:if="${organization.logo != null && !organization.logo.isEmpty()}"
+                                 th:src="'data:image/png;base64,' + ${organization.logo}"
+                                 alt="Logo organisation" class="apple-logo-img">
+                            <div th:unless="${organization.logo != null && !organization.logo.isEmpty()}"
+                                 class="apple-logo-placeholder">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="apple-card-content">
+                            <h3 class="apple-card-title" th:text="${organization.nom}">Nom de l'organisation</h3>
+                            <p class="apple-card-description"
+                               th:text="${organization.description != null && !organization.description.isEmpty() ?
+                                          (organization.description.length() > 120 ? organization.description.substring(0, 120) + '...' : organization.description) : 'Aucune description disponible'}">
+                                Description de l'organisation...
+                            </p>
+                            
+                            <div class="apple-card-metadata">
+                                <div class="apple-metadata-item" th:if="${organization.adresseLegale != null && !organization.adresseLegale.isEmpty()}">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span th:text="${organization.adresseLegale}">Emplacement</span>
+                                </div>
+                                <div class="apple-metadata-item" th:if="${organization.contactPrincipal != null && !organization.contactPrincipal.isEmpty()}">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span th:text="${organization.contactPrincipal}">Contact</span>
+                                </div>
+                            </div>
+                            
+                            <div class="apple-card-actions">
+                                <a th:href="@{'/organization/' + ${organization.numeroIdentif}}" class="apple-button apple-button-primary">
+                                    En savoir plus <i class="fas fa-chevron-right"></i>
+                                </a>
+                                <a th:href="@{'/campaigns?organization=' + ${organization.numeroIdentif}}" class="apple-button apple-button-secondary">
+                                    Voir les campagnes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container" th:if="${totalPages > 0}">
+                <div class="pagination">
+                    <a th:href="@{/organisation/dashboard(page=${currentPage > 0 ? currentPage - 1 : 0}, size=${size}, search=${searchParam})}" 
+                       th:classappend="${currentPage == 0} ? 'disabled'" class="page-link">&laquo;</a>
+                    <span class="page-info" th:text="'Page ' + (${currentPage} + 1) + ' sur ' + ${totalPages}">Page 1 sur 5</span>
+                    <a th:href="@{/organisation/dashboard(page=${currentPage + 1}, size=${size}, search=${searchParam})}" 
+                       th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'" class="page-link">&raquo;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-section" id="participants">
+      
+        
+        <!-- Campaign Statistics Card Row -->
+        <div class="stats-container dashboard-stats">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 class="stat-counter" th:data-value="${campaignCount}">0</h3>
+                        <p>Campagnes Actives</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 class="stat-counter" th:data-value="${totalParticipants}">0</h3>
+                        <p>Participants</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 class="stat-counter money" th:data-value="${totalDonations}">0</h3>
+                        <p>MAD Collectés</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="campaign-explorer">
+  <div class="explorer-heading">
+ 
+  </div>
+  <div class="explorer-controls">
+    <form method="get" class="explorer-search" th:action="@{/organisation/dashboard}">
+      <input type="hidden" name="campaignPage" value="0">
+      <input type="hidden" name="campaignSize" th:value="${campaignSize}">
+      <input type="hidden" name="campaignCategory" th:value="${campaignCategoryParam}">
+      <input type="hidden" name="campaignSort" th:value="${campaignSortParam}">
+      <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" name="campaignSearch" placeholder="Rechercher des campagnes..." th:value="${campaignSearchParam}">
+        <button type="submit" class="search-btn">Rechercher</button>
+      </div>
+    </form>
+    
+    <div class="explorer-filters">
+      <form method="get" class="filter-form" th:action="@{/organisation/dashboard}">
+        <input type="hidden" name="campaignPage" value="0">
+        <input type="hidden" name="campaignSize" th:value="${campaignSize}">
+        <input type="hidden" name="campaignSearch" th:value="${campaignSearchParam}">
+        
+        <div class="filter-item">
+          <label for="category-filter">Catégorie</label>
+          <select id="category-filter" name="campaignCategory" onchange="this.form.submit()">
+            <option value="">Toutes les catégories</option>
+            <th:block th:each="cat : ${categories}">
+              <option th:value="${cat.idCategorie}" th:text="${cat.nom}" 
+                      th:selected="${cat.idCategorie == campaignCategoryParam}"></option>
+            </th:block>
+          </select>
+        </div>
+        
+        <div class="filter-item">
+          <label for="sort-filter">Trier par</label>
+          <select id="sort-filter" name="campaignSort" onchange="this.form.submit()">
+            <option value="newest" th:selected="${campaignSortParam == 'newest'}">Plus récentes</option>
+            <option value="ending-soon" th:selected="${campaignSortParam == 'ending-soon'}">Se termine bientôt</option>
+            <option value="most-funded" th:selected="${campaignSortParam == 'most-funded'}">Plus financées</option>
+            <option value="most-popular" th:selected="${campaignSortParam == 'most-popular'}">Plus populaires</option>
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+        <!-- Campaigns Grid -->
+        <div class="actions-container">
+            <div class="actions-grid">
+                <!-- Loop through campaigns -->
+                <div th:each="action : ${campaigns}" class="action-card">
+           <div class="action-header">
+    <div class="org-info">
+        <img th:if="${action.organisation != null && action.organisation.logo != null}"
+             th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+             alt="Logo organisation">
+        <img th:unless="${action.organisation != null && action.organisation.logo != null}"
+             src="/images/logocharity.png"
+             alt="Logo par défaut">
+        <span th:text="${action.organisation != null ? action.organisation.nom : 'Organisation'}">Nom Organisation</span>
+    </div>
+    <div class="action-category" th:if="${action.categorie != null}">
+        <span th:text="${action.categorie.nom}">Catégorie</span>
+    </div>
+</div>
+            <div class="action-media">
+    <img th:if="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+         th:src="'data:image/png;base64,' + ${action.mediaUrls[0]}"
+         alt="Image de l'action">
+    <img th:unless="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+         th:if="${action.organisation != null && action.organisation.logo != null}"
+         th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+         alt="Logo de l'organisation"
+         class="org-logo-as-action-image">
+    <div th:if="${(action.mediaUrls == null || action.mediaUrls.isEmpty()) && (action.organisation == null || action.organisation.logo == null)}"
+         class="no-image-container">
+        <i class="fas fa-image"></i>
+        <span>Aucune image disponible</span>
+    </div>
+</div>
+                    <div class="action-stats">
+                        <div class="like-count-display">
+                            <i class="fas fa-heart"></i>
+                            <span th:text="${action.getLikesCount()}">0</span> J'aimes
+                        </div>
+                        <div class="action-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                                <span>sur</span>
+                                <span th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-content">
+                        <h3 th:text="${action.titre}">Titre de l'action</h3>
+                        <div class="action-details">
+                            <div class="detail"><i class="fas fa-map-marker-alt"></i> <span th:text="${action.lieu}">Lieu</span></div>
+                            <div class="detail"><i class="fas fa-calendar"></i> <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span></div>
+                            <div class="detail"><i class="fas fa-users"></i> <span th:text="${action.nombreParticipants}">0</span> participants</div>
+                        </div>
+                    </div>
+                    <!-- Replace the existing action-buttons div with this updated version -->
+                    <div class="action-buttons">
+                        <a th:href="@{'/organisation/actions/dashboard-view/' + ${action.idAction}}" class="details-btn">
+                            <i class="fas fa-eye"></i>
+                            <span>Voir</span>
+                        </a>
+                        
+                        <!-- Only show Edit button if this campaign belongs to the current organization -->
+                        <a th:if="${action.organisationId == session.org_identifier}" 
+                           th:href="@{'/organisation/actions/edit/' + ${action.idAction}}" 
+                           class="edit-btn">
+                            <i class="fas fa-edit"></i>
+                            <span>Modifier</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No campaigns message -->
+        <div th:if="${campaigns == null || campaigns.isEmpty()}" class="no-actions">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Aucune campagne active n'est disponible pour le moment.</p>
+            <a href="/organisation/actions/create" class="create-action-btn">
+                <i class="fas fa-plus"></i>
+                Créer une nouvelle campagne
+            </a>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" th:if="${campaigns != null && !campaigns.isEmpty()}">
+    <div class="pagination">
+        <a th:href="@{/organisation/dashboard(campaignPage=${campaignCurrentPage > 0 ? campaignCurrentPage - 1 : 0}, campaignSize=${campaignSize}, campaignSearch=${campaignSearchParam}, campaignCategory=${campaignCategoryParam}, campaignSort=${campaignSortParam})}" 
+           th:classappend="${campaignCurrentPage == 0} ? 'disabled'" class="page-link">&laquo;</a>
+        <span class="page-info" th:text="'Page ' + (${campaignCurrentPage} + 1) + ' sur ' + ${campaignTotalPages}">Page 1 sur 5</span>
+        <a th:href="@{/organisation/dashboard(campaignPage=${campaignCurrentPage + 1}, campaignSize=${campaignSize}, campaignSearch=${campaignSearchParam}, campaignCategory=${campaignCategoryParam}, campaignSort=${campaignSortParam})}" 
+           th:classappend="${campaignCurrentPage + 1 >= campaignTotalPages} ? 'disabled'" class="page-link">&raquo;</a>
+    </div>
+</div>
+    </div>
+</div>
+
 <!-- Include the profile modal fragment -->
 <div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
 
 <script th:src="@{/js/dashboard.js}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all secondary nav items
+    const navItems = document.querySelectorAll('.secondary-nav-item');
+    
+    // Add click event to each nav item
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all nav items
+            navItems.forEach(nav => nav.classList.remove('active'));
+            
+            // Add active class to clicked item
+            this.classList.add('active');
+            
+            // Get the target section
+            const targetId = this.getAttribute('data-target');
+            
+            // Hide all sections
+            const sections = document.querySelectorAll('.dashboard-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show the target section
+            const targetSection = document.getElementById(targetId);
+            targetSection.classList.add('active');
+            
+            // Add this part - retrigger stats animation for the newly visible section
+            const statCounters = targetSection.querySelectorAll('.stat-counter');
+            if (statCounters.length > 0) {
+                animateStatCounters();
+            }
+        });
+    });
+    
+    // Check if we're on the dashboard page and show/hide the secondary navbar accordingly
+    const currentPath = window.location.pathname;
+    const dashboardNavbar = document.getElementById('dashboardNavbar');
+    
+    if (currentPath.includes('/organisation/dashboard')) {
+        dashboardNavbar.style.display = 'block';
+    } else {
+        dashboardNavbar.style.display = 'none';
+    }
+    
+    // Add counter animation for stats
+    function animateStatCounters() {
+        const statCounters = document.querySelectorAll('.stat-counter');
+        
+        statCounters.forEach(counter => {
+            const targetValue = parseFloat(counter.getAttribute('data-value') || '0');
+            if (isNaN(targetValue)) return;
+            
+            const isMoney = counter.classList.contains('money');
+            const duration = 2000; // Animation duration in milliseconds
+            const steps = 50;
+            const stepValue = targetValue / steps;
+            
+            let currentValue = 0;
+            let step = 0;
+            
+            const interval = setInterval(() => {
+                step++;
+                currentValue += stepValue;
+                
+                if (step >= steps) {
+                    clearInterval(interval);
+                    currentValue = targetValue;
+                }
+                
+                // Format the display
+                if (isMoney) {
+                    counter.textContent = Math.round(currentValue).toLocaleString() + ' MAD';
+                } else {
+                    counter.textContent = Math.round(currentValue).toLocaleString();
+                }
+            }, duration / steps);
+        });
+    }
+    
+    // Add this after the animateStatCounters function
+    function setupStatsObservers() {
+        // Get all sections with stats
+        const statSections = [
+            document.getElementById('donations'),
+            document.getElementById('participants'),
+            document.getElementById('statistics'),
+            document.getElementById('overview')
+        ];
+        
+        // Create observer with options
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Look for stat counters within this section only
+                    const sectionCounters = entry.target.querySelectorAll('.stat-counter');
+                    if (sectionCounters.length > 0) {
+                        animateStatCounters();
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Observe each stats section
+        statSections.forEach(section => {
+            if (section) {
+                observer.observe(section);
+            }
+        });
+    }
+    
+    // Call this function to setup observers for all stat sections
+    setupStatsObservers();
+    
+    // Add this code after the setupStatsObservers() call
+
+    // Check URL parameters for direct tab navigation
+    function checkTabParameter() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('tab')) {
+            const tabTarget = urlParams.get('tab');
+            const navItem = document.querySelector(`.secondary-nav-item[data-target="${tabTarget}"]`);
+            if (navItem) {
+                navItem.click();
+            }
+        }
+    }
+    checkTabParameter();
+    
+    // Function to scroll to organizations section
+    function scrollToOrganizationsSection() {
+        // Get the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Check if we have a search parameter, which means a search was performed
+        if (urlParams.has('search')) {
+            // First, show the donations section (which contains organizations)
+            const navItem = document.querySelector('.secondary-nav-item[data-target="donations"]');
+            
+            if (navItem) {
+                // Simulate click to activate the section
+                navItem.click();
+                
+                // Get the organizations container
+                const organizationsSection = document.querySelector('.dashboard-orgs');
+                
+                if (organizationsSection) {
+                    // Scroll to it with a slight delay to ensure the section is visible
+                    setTimeout(() => {
+                        organizationsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+    }
+     scrollToOrganizationsSection();
+      // Add submit event to the search form
+    const searchForm = document.querySelector('.apple-search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function() {
+            // Set a flag in sessionStorage to indicate we should scroll on page load
+            sessionStorage.setItem('scrollToOrganizations', 'true');
+        });
+    }
+    
+    // Check if we need to scroll (set by previous page action)
+    if (sessionStorage.getItem('scrollToOrganizations') === 'true') {
+        // Clear the flag
+        sessionStorage.removeItem('scrollToOrganizations');
+        // Scroll to organizations section
+        scrollToOrganizationsSection();
+    }
+    
+    // Call animation when section becomes visible
+    const statSection = document.getElementById('donations');
+    if (statSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateStatCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        observer.observe(statSection);
+    }
+
+    // Organization detail modal functionality
+    const orgDetailModal = document.getElementById('orgDetailModal');
+    const orgDetailContent = document.querySelector('.org-detail-content');
+    const orgDetailLoading = document.querySelector('.org-detail-loading');
+    const modalOrgTitle = document.getElementById('modalOrgTitle');
+    const closeOrgDetailBtn = document.querySelector('.org-detail-close-btn');
+
+    // Change the "En savoir plus" buttons to open the modal
+    document.querySelectorAll('.apple-card-actions .apple-button-primary').forEach(button => {
+        // Get the original URL
+        const originalUrl = button.getAttribute('href');
+        // Extract org ID from URL
+        const orgId = originalUrl.split('/').pop();
+        
+        // Change the button behavior
+        button.setAttribute('data-org-id', orgId);
+        button.setAttribute('href', 'javascript:void(0)');
+        button.addEventListener('click', function() {
+            openOrgDetailModal(orgId);
+        });
+    });
+
+    // Function to open the modal with organization details
+    function openOrgDetailModal(orgId) {
+        // Show loading indicator
+        orgDetailLoading.style.display = 'block';
+        orgDetailContent.style.display = 'none';
+        
+        // Open the modal
+        orgDetailModal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        
+        // Fetch organization details
+        fetch(`/api/organization/${orgId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(org => {
+                // Update modal title
+                modalOrgTitle.textContent = org.nom;
+                
+                // Populate content
+                orgDetailContent.innerHTML = `
+                    <div class="org-detail-banner">
+                        <div class="org-detail-logo">
+                            ${org.logo ? 
+                                `<img src="data:image/png;base64,${org.logo}" alt="${org.nom} logo">` : 
+                                `<i class="fas fa-building" style="font-size: 50px; color: #d4af37;"></i>`
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="org-detail-info">
+                        <h3>À propos de ${org.nom}</h3>
+                        <div class="org-detail-description">${org.description || 'Aucune description disponible'}</div>
+                    </div>
+                    
+                    <div class="org-detail-info">
+                        <h3>Coordonnées</h3>
+                        ${org.adresseLegale ? 
+                            `<div class="org-detail-info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${org.adresseLegale}</span>
+                            </div>` : ''
+                        }
+                        ${org.contactPrincipal ? 
+                            `<div class="org-detail-info-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span>${org.contactPrincipal}</span>
+                            </div>` : ''
+                        }
+                        ${org.email ? 
+                            `<div class="org-detail-info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${org.email}</span>
+                            </div>` : ''
+                        }
+                        ${org.telephone ? 
+                            `<div class="org-detail-info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${org.telephone}</span>
+                            </div>` : ''
+                        }
+                    </div>
+                    
+                    <div class="org-detail-actions">
+                        <button class="org-detail-button org-detail-button-secondary org-detail-close-btn">
+                            Fermer
+                        </button>
+                        <a href="/campaigns?organization=${org.numeroIdentif}" class="org-detail-button org-detail-button-primary">
+                            Voir les campagnes <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                `;
+                
+                // Hide loading, show content
+                orgDetailLoading.style.display = 'none';
+                orgDetailContent.style.display = 'block';
+                
+                // Add click handler to the close button inside the modal content
+                document.querySelector('.org-detail-content .org-detail-close-btn').addEventListener('click', closeOrgDetailModal);
+            })
+            .catch(error => {
+                console.error('Error fetching organization details:', error);
+                orgDetailContent.innerHTML = `
+                    <div style="text-align: center; padding: 30px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: #e74c3c; margin-bottom: 15px;"></i>
+                        <p>Une erreur est survenue lors du chargement des détails de l'organisation.</p>
+                        <button class="org-detail-button org-detail-button-secondary org-detail-close-btn">
+                            Fermer
+                        </button>
+                    </div>
+                `;
+                orgDetailLoading.style.display = 'none';
+                orgDetailContent.style.display = 'block';
+                
+                // Add click handler to the close button inside error message
+                document.querySelector('.org-detail-content .org-detail-close-btn').addEventListener('click', closeOrgDetailModal);
+            });
+    }
+
+    // Function to close the modal
+    function closeOrgDetailModal() {
+        orgDetailModal.classList.remove('show');
+        document.body.style.overflow = ''; // Restore scrolling
+        
+        // Clear content after animation
+        setTimeout(() => {
+            if (!orgDetailModal.classList.contains('show')) {
+                orgDetailContent.innerHTML = '';
+            }
+        }, 300);
+    }
+
+    // Close modal when clicking X button
+    if (closeOrgDetailBtn) {
+        closeOrgDetailBtn.addEventListener('click', closeOrgDetailModal);
+    }
+
+    // Close modal when clicking outside the content
+    orgDetailModal.addEventListener('click', function(e) {
+        if (e.target === orgDetailModal) {
+            closeOrgDetailModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && orgDetailModal.classList.contains('show')) {
+            closeOrgDetailModal();
+        }
+    });
+
+    // Function to scroll to campaigns section
+    function scrollToCampaignsSection() {
+        // Get the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Check if we have campaign search parameters
+        if (urlParams.has('campaignSearch') || urlParams.has('campaignCategory') || urlParams.has('campaignSort')) {
+            // Show the campaigns section
+            const navItem = document.querySelector('.secondary-nav-item[data-target="participants"]');
+            
+            if (navItem) {
+                // Simulate click to activate the section
+                navItem.click();
+                
+                // Scroll to campaigns section
+                setTimeout(() => {
+                    const campaignsSection = document.getElementById('participants');
+                    if (campaignsSection) {
+                        campaignsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            }
+        }
+    }
+
+    // Add form event listeners for campaigns search
+    const campaignSearchForm = document.querySelector('.campaigns-filters .search-container');
+    if (campaignSearchForm) {
+        campaignSearchForm.addEventListener('submit', function() {
+            sessionStorage.setItem('scrollToCampaigns', 'true');
+        });
+    }
+
+    // Check if we need to scroll to campaigns
+    if (sessionStorage.getItem('scrollToCampaigns') === 'true') {
+        sessionStorage.removeItem('scrollToCampaigns');
+        scrollToCampaignsSection();
+    }
+
+    // Call this after page load
+    scrollToCampaignsSection();
+});
+</script>
+
+<!-- Organization Detail Modal -->
+<div class="org-detail-modal" id="orgDetailModal">
+    <div class="org-detail-modal-content">
+        <div class="org-detail-modal-header">
+            <h2 id="modalOrgTitle">Détails de l'organisation</h2>
+            <button class="org-detail-close-btn">&times;</button>
+        </div>
+        <div class="org-detail-modal-body">
+            <!-- Organization details will be loaded here dynamically -->
+            <div class="org-detail-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Chargement des détails...</p>
+            </div>
+            <div class="org-detail-content" style="display: none;">
+                <!-- Content will be populated via JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

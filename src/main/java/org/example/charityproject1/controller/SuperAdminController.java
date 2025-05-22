@@ -63,7 +63,7 @@ public class SuperAdminController {
 
         return "superadmin/dashboard";
     }
-    // REST API endpoints for future implementation
+
 
     @PostMapping("/api/organisations/{id}/validate")
     @ResponseBody
@@ -643,4 +643,5 @@ public class SuperAdminController {
         redirectAttributes.addFlashAttribute("message", "Votre mot de passe a été modifié avec succès. Veuillez vous reconnecter.");
         return "redirect:/auth/login/superadmin";
     }
+    
 }

@@ -3,29 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion Super Admin</title>
+    <title>Super Admin Login | Charity Platform</title>
+
+    <link rel="stylesheet" th:href="@{/styles/auth/auth.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .auth-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        .auth-image-container,
+        .auth-form-container {
+            flex: 1;
+            width: 50%;
+        }
+        
+        .slide img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .slideshow {
+            height: 100%;
+            position: relative;
+        }
+        
+        .slide {
+            height: 100%;
+            display: none;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        
+        .admin-highlight {
+            color: #4a90e2;
+        }
+    </style>
 </head>
 <body>
-<h1>Connexion Super Admin</h1>
-
-<div th:if="${message}" th:text="${message}" style="color: red;"></div>
-
-<form action="/auth/login/superadmin" method="POST">
-    <div>
-        <label for="username">Email :</label>
-        <input type="email" id="username" name="username" required />
+    <a href="/" class="back-arrow">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour à l'accueil</span>
+    </a>
+    <div class="auth-container admin-auth">
+        <!-- Left side - Image with overlay -->
+        <div class="auth-image-container">
+            <div class="slideshow">
+                <div class="slide active">
+                    <img src="/images/charityauth.jpg" alt="Charity Impact">
+                </div>
+                <div class="slide">
+                    <img src="/images/charityauth4.jpg" alt="Admin Dashboard">
+                </div>
+                
+                <!-- Navigation dots -->
+                <div class="slideshow-dots">
+                    <span class="dot active" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                </div>
+            </div>
+            
+            <div class="image-overlay">
+                <div class="overlay-content">
+                    <h2><span class="regular-text">ADMIN</span> <span class="highlight admin-highlight">PORTAL</span></h2>
+                    <p>Platform Management & Administration</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right side - Form -->
+        <div class="auth-form-container">
+            <div class="logo-container">
+                <img src="/images/logocharity.png" alt="Charity Logo">
+            </div>
+            
+            <h1>Super Admin Login</h1>
+            <p class="subtitle">Sign in to manage the platform</p>
+            
+            <!-- Display error message if any -->
+            <div th:if="${message}" class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${message}"></span>
+            </div>
+            
+            <form action="/auth/login/superadmin" method="POST" class="auth-form">
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="username" name="username" placeholder="Email" required />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Mot de passe" required />
+                    </div>
+                </div>
+                
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="submit-btn admin-submit">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Vous n'avez pas de compte? <a th:href="@{/auth/register/superadmin}" class="signup-link">Inscrivez-vous ici</a></p>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="password" required />
-    </div>
-    <div>
-        <button type="submit">Se connecter</button>
-    </div>
-</form>
-
-<p>
-    Vous n'avez pas de compte ? <a th:href="@{/auth/register/superadmin}">Inscrivez-vous ici</a>.
-</p>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slideshow functionality
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                currentSlide = index;
+            }
+            
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }, 5000);
+            
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const slideIndex = parseInt(this.getAttribute('data-index'));
+                    showSlide(slideIndex);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

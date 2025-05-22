@@ -1,0 +1,565 @@
+/* Stat section entrance animations */
+/* Remove old .stat-item animation if it exists, new one is below for .stat-card */
+
+/* Organization hero entrance animation */
+.organization-hero {
+    height: 180px; /* Reduced height */
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hero back button */
+.hero-back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 5;
+}
+
+.hero-back-button:hover {
+    background-color: #d4af37;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hero-back-button i {
+    font-size: 0.8rem;
+}
+
+/* Organization profile section with bookmark effect */
+.section-intro {
+    background-color: white;
+     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4af37' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: 15px 15px 0 0;
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px 40px;
+    max-width: 900px;
+    margin: -90px auto 0; /* Negative top margin creates overlap */
+    position: relative;
+    z-index: 10;
+    text-align: center;
+}
+
+/* Gold accent for the bookmark */
+.organization-profile-badge {
+    background-color: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
+    padding: 8px 20px;
+    border-radius: 50px;
+    display: inline-block;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+/* Styling for organization name */
+.section-intro h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.section-intro h1 span {
+    color: #d4af37;
+}
+
+/* Bottom border to complete the bookmark effect */
+.section-intro::after {
+    content: "";
+    display: block;
+    height: 4px;
+    background-color: #d4af37;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Additional content section below the bookmark */
+.org-detail-section {
+    padding-top: 60px;
+    background-color: white;
+    
+}
+
+/* Fix spacing issues */
+.organization-page-stats {
+    padding: 0;
+    margin: 0;
+    display: none; /* Hide it if it's empty or causing problems */
+}
+
+/* Adjust organization detail section to be closer to the top */
+.org-detail-section {
+    padding: 20px 40px 60px; /* Further reduced top padding */
+    margin-top: -125px; /* Negative margin to create overlap */
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    position: relative;
+    overflow: visible; /* Changed from hidden to allow content to overlap */
+    margin-bottom: 60px;
+    z-index: 2; /* Ensure it sits above the hero banner */
+}
+
+/* Section Intro Styling */
+.section-intro {
+    text-align: center;
+    margin-bottom: 0; /* Remove margin to connect with org-profile */
+}
+
+.section-intro .stats-badge {
+    display: inline-block;
+    background: rgba(212, 175, 55, 0.1); /* Changed to gold theme */
+    color: #d4af37; /* Changed to match gold theme */
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.section-intro h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.section-intro .accent-text {
+    color: #d4af37; /* Changed to gold from green */
+}
+
+/* Organization Profile */
+.org-profile {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.8s ease forwards;
+    border-top: none; /* Remove the green border accent */
+    margin-top: -4px; /* Connect with the section-intro's bottom line */
+}
+
+/* Organization Main Info */
+.org-main-info {
+    display: flex;
+    padding: 40px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.org-image-container {
+    position: relative;
+    margin-right: 40px;
+    flex-shrink: 0;
+    width: 180px;
+    height: 180px;
+}
+
+.org-image-shape {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.2)); /* Changed to gold theme */
+    border-radius: 20px;
+    transform: rotate(5deg);
+    z-index: 0;
+}
+
+.org-logo {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 15px;
+    z-index: 1;
+    padding: 10px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.no-logo {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa, #eef2f7);
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.no-logo i {
+    font-size: 4rem;
+    color: #bbb;
+}
+
+/* Organization Info Box */
+.org-info-box {
+    flex-grow: 1;
+}
+
+.org-info-box h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* Information Detail Grid */
+.info-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.info-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.1)); /* Changed to gold theme */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.info-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.info-icon i {
+    font-size: 1.4rem;
+    color: #d4af37; /* Changed to gold */
+}
+
+.info-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.info-content p {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Organization Description */
+.org-description-container {
+    padding: 40px;
+}
+
+.org-description-container h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 25px;
+    position: relative;
+    display: inline-block;
+}
+
+.org-description-container h3:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #d4af37; /* Changed to gold */
+    border-radius: 2px;
+}
+
+.org-description-content {
+    position: relative;
+    background: linear-gradient(135deg, #f9f9f9, #ffffff);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+    border-left: 4px solid #d4af37; /* Changed to gold */
+}
+
+.quote-icon {
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.quote-icon i {
+    font-size: 1.2rem;
+    color: #d4af37; /* Changed to gold */
+}
+
+.org-description-content p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #555;
+}
+
+/* Organization Actions */
+.org-actions {
+    display: flex;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.view-campaigns-btn, .browse-orgs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.view-campaigns-btn {
+    background: #d4af37; /* Changed to gold */
+    color: white;
+}
+
+.browse-orgs-btn {
+    background: white;
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.view-campaigns-btn:hover {
+    background: #c5a030; /* Darker gold */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); /* Gold shadow */
+}
+
+.browse-orgs-btn:hover {
+    background: #f5f5f5;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.view-campaigns-btn i, .browse-orgs-btn i {
+    margin-right: 8px;
+}
+
+/* Ensure no extra space from empty elements */
+.stats-container:empty,
+.stats-grid:empty,
+.stat-card:empty {
+    display: none;
+    margin: 0;
+    padding: 0;
+    height: 0;
+}
+
+/* Campaign filters */
+.campaigns-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding: 0 15px;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+}
+
+.search-container {
+    display: flex;
+    flex: 1;
+    max-width: 500px;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px 0 0 8px;
+    font-size: 1rem;
+}
+
+.search-btn {
+    background-color: #d4af37; /* Gold theme */
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-btn:hover {
+    background-color: #c5a030; /* Darker gold */
+}
+
+.filter-container {
+    display: flex;
+    gap: 15px;
+}
+
+.filter-container select {
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    min-width: 180px;
+}
+
+/* Pagination styling */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.page-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #333;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+}
+
+.page-link.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.page-info {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Organization Campaigns Section */
+.org-campaigns-section {
+    padding-top: 20px;
+}
+
+.org-campaigns-section h2 {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.org-campaigns-section h2 span {
+    color: #d4af37;
+}
+
+/* Adjust campaign filters to be closer to the heading */
+.campaigns-filters {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .org-main-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .org-image-container {
+        margin-right: 0;
+        margin-bottom: 30px;
+    }
+    
+    .info-detail-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .org-detail-section {
+        padding: 60px 20px;
+    }
+    
+    .section-intro h2 {
+        font-size: 2.2rem;
+    }
+    
+    .org-actions {
+        flex-direction: column;
+    }
+    
+    .campaigns-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .filter-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .filter-container select {
+        min-width: 0;
+        flex: 1;
+    }
+}

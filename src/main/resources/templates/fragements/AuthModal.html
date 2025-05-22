@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Auth Modal Fragment</title>
+</head>
+<body>
+    <!-- Authentication Modal Fragment -->
+    <div th:fragment="authModal">
+        <!-- Authentication Modal -->
+        <div id="authModal" class="modern-modal">
+            <div class="modal-container">
+                <!-- Left side - Image with overlay title -->
+                <div class="modal-image">
+                    <img src="/images/charityauth.jpg" alt="Charity Impact">
+                    <div class="modal-image-title">
+                        <h2><span class="regular-text">DÉCOUVRIR</span> <span class="highlight">L'IMPACT</span></h2>
+                        <p>Divided by Distance, United by Care</p>
+                    </div>
+                </div>
+                
+                <!-- Right side -->
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    
+                    <!-- Logo -->
+                    <div class="modal-logo">
+                        <img src="/images/logocharity.png" alt="Charity Platform Logo">
+                    </div>
+                    
+                    <!-- Welcome text -->
+                    <div class="modal-welcome">
+                        <p>Join our community to make a difference. Choose how you want to participate.</p>
+                    </div>
+                    
+                    <!-- Auth options -->
+                    <div class="auth-options">
+                        <!-- User option -->
+                        <div class="auth-option user">
+                            <div class="auth-option-icon">
+                                <i class="fas fa-heart"></i> 
+                            </div>
+                            <div class="auth-option-text">
+                                <h4>As a User</h4>
+                                <p>Donate, volunteer, and support causes</p>
+                                <div class="auth-buttons-container">
+                                    <a href="/auth/login/user" class="auth-modal-btn signin-btn">
+                                        <i class="fas fa-sign-in-alt"></i> Sign in
+                                    </a>
+                                    <a href="/auth/register/user" class="auth-modal-btn signup-btn">
+                                        <i class="fas fa-user-plus"></i> Sign up
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Organization option -->
+                        <div class="auth-option org">
+                            <div class="auth-option-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <div class="auth-option-text">
+                                <h4>As an Organization</h4>
+                                <p>Create campaigns and manage donations</p>
+                                <div class="auth-buttons-container">
+                                    <a href="/auth/login/organisation" class="auth-modal-btn signin-btn">
+                                        <i class="fas fa-sign-in-alt"></i> Sign in
+                                    </a>
+                                    <a href="/auth/register/organisation" class="auth-modal-btn signup-btn">
+                                        <i class="fas fa-user-plus"></i> Sign up
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Modal JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Auth Modal functionality
+                const authModal = document.getElementById('authModal');
+                const showAuthModalBtns = document.querySelectorAll('.show-auth-modal');
+                const closeAuthModalBtn = authModal ? authModal.querySelector('.close') : null;
+
+                // Show modal when clicking any auth button with the appropriate class
+                if (showAuthModalBtns.length > 0 && authModal) {
+                    showAuthModalBtns.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            authModal.style.display = 'block';
+                        });
+                    });
+                }
+
+                // Close modal when clicking on X
+                if (closeAuthModalBtn && authModal) {
+                    closeAuthModalBtn.addEventListener('click', function() {
+                        authModal.style.display = 'none';
+                    });
+                }
+
+                // Close modal when clicking outside
+                window.addEventListener('click', function(e) {
+                    if (e.target == authModal) {
+                        authModal.style.display = 'none';
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

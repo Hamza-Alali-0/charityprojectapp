@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Campaigns - UnitedHearts</title>
+    
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles/home/home.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="/styles/home/campaign.css">
+   
+</head>
+<body>
+    <!-- Include Navbar fragment -->
+    <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+    
+   
+    <!-- Campaign Statistics Section -->
+    <section class="campaign-stats">
+        <div class="stats-container">
+            <div class="stats-content">
+                <span class="stats-badge">Impact Dashboard</span>
+                <h2>Our <span class="accent-text">Collective</span> Impact</h2>
+                <p class="stats-intro">Together we're making a measurable difference in communities worldwide. Every donation creates ripples of positive change.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter" th:data-value="${donorCount}">0</h3>
+                            <p>Generous Donors</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter" th:data-value="${campaignCount}">0</h3>
+                            <p>Active Campaigns</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-globe-africa"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter" th:data-value="${orgCount}">0</h3>
+                            <p>Partner Organizations</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-counter money" th:data-value="${totalDonations}">0</h3>
+                            <p>MAD Raised</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-image-container">
+                <div class="stats-shape"></div>
+                <img src="/images/charityapropos1.png" alt="Campaign Impact" class="stats-image">
+                <div class="stats-floating-card">
+                    <div class="floating-card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="floating-card-content">
+                        <h4>Growing Impact</h4>
+                        <p>Your support is creating measurable change every day</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div id="all-campaigns" class="all-campaigns">
+        <!-- Filters -->
+        <div class="campaigns-filters">
+            <form method="get" class="search-container" th:action="@{/campaigns}">
+                <input type="text" name="search" placeholder="Search campaigns..." th:value="${param.search}">
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+            </form>
+            <div class="filter-container">
+                <form method="get" th:action="@{/campaigns}">
+                    <select name="category" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        <th:block th:each="cat : ${categories}">
+                            <option th:value="${cat.idCategorie}" th:text="${cat.nom}" th:selected="${cat.idCategorie == selectedCategory}"></option>
+                        </th:block>
+                    </select>
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="">Sort By</option>
+                        <option value="newest" th:selected="${selectedSort == 'newest'}">Newest</option>
+                        <option value="ending-soon" th:selected="${selectedSort == 'ending-soon'}">Ending Soon</option>
+                        <option value="most-funded" th:selected="${selectedSort == 'most-funded'}">Most Funded</option>
+                        <option value="most-popular" th:selected="${selectedSort == 'most-popular'}">Most Popular</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <!-- Campaigns Grid (copied from accueil.html, adapted for campaigns) -->
+        <div class="actions-container">
+            <div class="actions-grid">
+                <div th:each="action : ${campaigns}" class="action-card">
+                    <div class="action-header">
+                        <div class="org-info">
+                            <img th:if="${action.organisation != null && action.organisation.logo != null}"
+                                 th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                                 alt="Logo organisation">
+                            <img th:unless="${action.organisation != null && action.organisation.logo != null}"
+                                 src="https://via.placeholder.com/40"
+                                 alt="Logo par défaut">
+                            <span th:text="${action.organisation != null ? action.organisation.nom : 'Organisation'}">Nom Organisation</span>
+                        </div>
+                        <div class="action-category" th:if="${action.categorie != null}">
+                            <span th:text="${action.categorie.nom}">Catégorie</span>
+                        </div>
+                    </div>
+                    <div class="action-media">
+                        <img th:if="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+                             th:src="'data:image/png;base64,' + ${action.mediaUrls[0]}"
+                             alt="Image de l'action">
+                        <img th:unless="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+                             th:if="${action.organisation != null && action.organisation.logo != null}"
+                             th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                             alt="Logo de l'organisation"
+                             class="org-logo-as-action-image">
+                        <div th:if="${(action.mediaUrls == null || action.mediaUrls.isEmpty()) && (action.organisation == null || action.organisation.logo == null)}"
+                             class="no-image-container">
+                            <i class="fas fa-image"></i>
+                            <span>No image available</span>
+                        </div>
+                    </div>
+                    <div class="action-stats">
+                        <button class="like-btn"
+                                th:data-action-id="${action.idAction}"
+                                th:data-liked="${#ctx.containsVariable('user') && user != null ? action.isLikedByUser(user.userId) : false}"
+                                th:data-authenticated="${#ctx.containsVariable('user') && user != null}">
+                            <i class="fas fa-heart" th:classappend="${#ctx.containsVariable('user') && user != null && action.isLikedByUser(user.userId) ? 'liked' : ''}"></i>
+                            <span class="like-count" th:text="${action.getLikesCount()}">0</span>
+                        </button>
+                        <div class="action-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                                <span>on</span>
+                                <span th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-content">
+                        <h3 th:text="${action.titre}">Titre de l'action</h3>
+                        <div class="action-details">
+                            <div class="detail"><i class="fas fa-map-marker-alt"></i> <span th:text="${action.lieu}">Lieu</span></div>
+                            <div class="detail"><i class="fas fa-calendar"></i> <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span></div>
+                            <div class="detail"><i class="fas fa-users"></i> <span th:text="${action.nombreParticipants}">0</span> participants</div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="/auth/login/user"  class="donate-btn">
+                            <i class="fas fa-donate"></i>
+                            <span>Donate Now</span>
+                        </a>
+                        <a th:href="@{'/campaigns/view/' + ${action.idAction}}" class="details-btn">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Details</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <div class="pagination">
+                <a th:href="@{|/campaigns?page=${currentPage - 1}|}" th:classappend="${currentPage == 0} ? 'disabled'" class="page-link">&laquo;</a>
+                <span class="page-info" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}"></span>
+                <a th:href="@{|/campaigns?page=${currentPage + 1}|}" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'" class="page-link">&raquo;</a>
+            </div>
+        </div>
+    </div>
+  
+    
+    <!-- Include Auth Modal fragment -->
+    <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+    
+    <!-- Include Footer fragment -->
+    <div th:replace="~{fragements/Footer :: footer}"></div>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup modal triggers
+            function setupModalTriggers() {
+                // Show Auth Modal for any button with the class show-auth-modal
+                const showAuthModalBtns = document.querySelectorAll('.show-auth-modal');
+                showAuthModalBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'block';
+                        }
+                    });
+                });
+                
+                // Close Auth Modal on X click
+                const closeAuthModalBtn = document.querySelector('.auth-close-btn');
+                if (closeAuthModalBtn) {
+                    closeAuthModalBtn.addEventListener('click', function() {
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Close Auth Modal when clicking outside the modal content
+                window.addEventListener('click', function(e) {
+                    const authModal = document.getElementById('authModal');
+                    if (authModal && e.target === authModal) {
+                        authModal.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Animation for stat cards
+            function setupStatAnimation() {
+                // Check if we have the necessary elements
+                const statSection = document.querySelector('.campaign-stats');
+                if (!statSection) return;
+                
+                const statCards = document.querySelectorAll('.stat-card');
+                const statCounters = document.querySelectorAll('.stat-counter');
+                
+                // Intersection Observer to detect when stats section is in view
+                const observerOptions = {
+                    threshold: 0.2 // Trigger when 20% of the section is visible
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Animate stat cards
+                            statCards.forEach((card, index) => {
+                                setTimeout(() => {
+                                    card.classList.add('animated');
+                            }, index * 100);
+                        });
+                        
+                        // Animate counters
+                        animateCounters();
+                        
+                        // Unobserve after animation
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            observer.observe(statSection);
+            
+            // Counter animation function
+            function animateCounters() {
+                statCounters.forEach(counter => {
+                    const targetValue = counter.getAttribute('data-value');
+                    if (!targetValue) return;
+                    
+                    const target = parseInt(targetValue);
+                    const isMoney = counter.classList.contains('money');
+                    const duration = 2000; // Animation duration in milliseconds
+                    const frameDuration = 1000 / 60; // 60fps
+                    const totalFrames = duration / frameDuration;
+                    const valueIncrement = target / totalFrames;
+                    
+                    let currentValue = 0;
+                    
+                    function updateCounter() {
+                        currentValue += valueIncrement;
+                        const displayValue = Math.min(Math.ceil(currentValue), target);
+                        
+                        if (isMoney) {
+                            counter.textContent = displayValue.toLocaleString() + ' MAD';
+                        } else {
+                            counter.textContent = displayValue.toLocaleString();
+                        }
+                        
+                        if (currentValue < target) {
+                            requestAnimationFrame(updateCounter);
+                        }
+                    }
+                    
+                    updateCounter();
+                });
+            }
+        }
+        function setupCampaignAnimations() {
+            // Get all campaign cards
+            const campaignCards = document.querySelectorAll('.action-card');
+            
+            // Create observer with options
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        // Once animated, no need to observe anymore
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -100px 0px'
+            });
+            
+            // Observe each campaign card
+            campaignCards.forEach(card => {
+                observer.observe(card);
+            });
+        }
+        // New function to handle filter and search form submissions
+        function setupFormNavigation() {
+            // Get all filter and search forms
+            const searchForm = document.querySelector('.search-container');
+            const filterForms = document.querySelectorAll('.filter-container form');
+            
+            // Function to scroll to campaigns section after page load
+            function scrollToCampaigns() {
+                const campaignsSection = document.getElementById('all-campaigns');
+                if (campaignsSection) {
+                    // Check if the URL contains parameters (meaning filters were applied)
+                    if (window.location.search) {
+                        setTimeout(() => {
+                            campaignsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100); // Small delay to ensure DOM is ready
+                    }
+                }
+            }
+            
+            // Call the scroll function when page loads with query params
+            scrollToCampaigns();
+            
+            // Add "all-campaigns" to URL hash when forms are submitted
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    // Store the original action
+                    const originalAction = this.action;
+                    // Set the form action to include the hash
+                    sessionStorage.setItem('scrollToCampaigns', 'true');
+                });
+            }
+            
+            // Do the same for filter forms
+            filterForms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    sessionStorage.setItem('scrollToCampaigns', 'true');
+                });
+            });
+            
+            // Select dropdowns with onchange="this.form.submit()"
+            const autoSubmitSelects = document.querySelectorAll('select[onchange="this.form.submit()"]');
+            autoSubmitSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    sessionStorage.setItem('scrollToCampaigns', 'true');
+                });
+            });
+            
+            // Check if we need to scroll (set by previous page action)
+            if (sessionStorage.getItem('scrollToCampaigns') === 'true') {
+                sessionStorage.removeItem('scrollToCampaigns');
+                scrollToCampaigns();
+            }
+        }
+        // Initialize all functionality
+        setupFormNavigation();
+        setupModalTriggers();
+        setupStatAnimation();
+        setupCampaignAnimations();
+    });
+    </script>
+    <!-- Update the JavaScript to handle the like button clicks -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add this new function to setup like buttons
+        function setupLikeButtons() {
+            const likeButtons = document.querySelectorAll('.like-btn');
+            
+            likeButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // Get authentication status from data attribute
+                    const isAuthenticated = btn.getAttribute('data-authenticated') === 'true';
+                    
+                    if (!isAuthenticated) {
+                        // Redirect to auth login for unauthenticated users
+                        window.location.href = '/auth/login/user';
+                        return;
+                    }
+                    
+                    // Handle like functionality for authenticated users
+                    const actionId = btn.getAttribute('data-action-id');
+                    const isLiked = btn.getAttribute('data-liked') === 'true';
+                    
+                    // Toggle like status - you can implement this functionality
+                    // or keep any existing implementation
+                    // toggleLike(actionId, isLiked, btn);
+                });
+            });
+        }
+        
+        // Add this function call to your initialization
+        setupLikeButtons();
+        
+        // Rest of your existing code (setupModalTriggers, setupStatAnimation, etc.)
+    });
+    </script>
+</body>
+</html>

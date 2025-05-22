@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar</title>
+</head>
+<body>
+<!--  Navbar organisation-->
+<nav class="navbar sticky-navbar" th:fragment="organisationNavbar(organisation)">
+    <div class="navbar-left">
+        <div class="logo-circle">
+            <img th:if="${organisation != null and organisation.logo != null}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo de l'organisation">
+            <img th:unless="${organisation != null and organisation.logo != null}" src="https://via.placeholder.com/40" alt="Logo par défaut">
+        </div>
+        <div class="org-name" th:text="${organisation != null} ? ${organisation.nom} : 'Organisation'">Nom de l'Organisation</div>
+    </div>
+
+    <div class="navbar-right">
+        <span class="id-info" th:text="${organisation != null} ? 'ID: ' + ${organisation.numeroIdentif} : 'ID: -'">ID: 123456</span>
+
+        <!-- Notification  -->
+        <div class="notification">
+            <a href="#" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </a>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!--  Navbar user  -->
+<nav class="navbar sticky-navbar" th:fragment="userNavbar(user)">
+    <div class="navbar-left">
+        <div class="logo-circle">
+            <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Logo utilisateur">
+            <img th:unless="${user.logoPath != null}" src="https://placehold.co/40" alt="Logo par défaut">
+        </div>
+        <div class="org-name" th:text="${user.nom}">Nom de l'Utilisateur</div>
+    </div>
+
+    <div class="navbar-right">
+        <span class="id-info" th:text="${user.email}">email@example.com</span>
+
+        <!-- Notification  -->
+        <div class="notification">
+            <a href="#" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </a>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!--  Navbar  de admin -->
+<nav class="navbar sticky-navbar" th:fragment="adminNavbar(admin)">
+    <div class="navbar-left">
+        <div class="logo-circle admin-logo">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="org-name" th:text="${admin.nom}">Super Admin</div>
+    </div>
+
+    <div class="navbar-right">
+        <span class="id-info" th:text="${admin.email}">admin@example.com</span>
+
+        <!-- Notification  -->
+        <div class="notification">
+            <a href="#" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </a>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Public Navbar for non-signed-in users -->
+<nav class="navbar sticky-navbar" th:fragment="publicNavbar">
+    <div class="navbar-left" style="display: flex; align-items: center;">
+        <img src="/images/logocharity.png" alt="UnitedHearts Logo"
+             style="height:60px; max-height:60px; width:auto; object-fit:contain; margin-right:18px; margin-top:-60px; margin-bottom:-60px; z-index:3; position:relative; display:block;">
+        <div class="org-name" style="font-size:1.25rem; line-height:1;">UnitedHearts</div>
+    </div>
+
+    <div class="navbar-right">
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="/accueil" class="nav-link">Accueil</a>
+            <a href="/campaigns" class="nav-link">Campaigns</a>
+            <a href="/about" class="nav-link">À propos</a>
+            <a href="/organizations" class="nav-link">Organisations</a>
+            <a href="/contact" class="nav-link">Contact</a>
+        </div>
+
+        <!-- Authentication Buttons -->
+        <div class="auth-buttons">
+            <a href="#" class="auth-btn login-btn show-auth-modal" id="showAuthModal">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Connexion / Inscription</span>
+            </a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

@@ -306,7 +306,8 @@
 </head>
 <body>
 <!-- Main Navigation Bar -->
-<div th:replace="~{organisation/dashboard :: navbar}"></div>
+<!-- Include the organization navbar fragment -->
+<div th:replace="~{fragements/Navbar :: organisationNavbar(${organisation})}"></div>
 
 <!-- Sub Navigation with Rectangles -->
 <div class="sub-navbar">

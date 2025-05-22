@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${action.titre + ' - Campaign Details'}">Campaign Details</title>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/styles/home/home.css">
+  <link rel="stylesheet" href="/styles/dashboard.css">
+  <link rel="stylesheet" href="/styles/home/campaign.css">
+  <link rel="stylesheet" href="/styles/home/view-campaign.css">
+   <style>
+    /* Organization Detail Modal Styles */
+    .org-detail-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .org-detail-modal.show {
+      display: block;
+      opacity: 1;
+    }
+
+    .org-detail-modal-content {
+      background: white;
+      margin: 5% auto;
+      width: 90%;
+      max-width: 800px;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .org-detail-modal.show .org-detail-modal-content {
+      transform: translateY(0);
+    }
+
+    .org-detail-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 25px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .org-detail-modal-header h2 {
+      margin: 0;
+      color: #333;
+      font-size: 22px;
+    }
+
+    .org-detail-close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      transition: color 0.2s;
+    }
+
+    .org-detail-close-btn:hover {
+      color: #d4af37;
+    }
+
+    .org-detail-modal-body {
+      padding: 25px;
+      overflow-y: auto;
+    }
+
+    .org-detail-loading {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+
+    .org-detail-loading i {
+      font-size: 40px;
+      color: #d4af37;
+      margin-bottom: 15px;
+    }
+
+    /* Organization Detail Content Styles */
+    .org-detail-banner {
+      height: 200px;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.7) 0%, rgba(244, 227, 141, 0.7) 100%);
+      border-radius: 8px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .org-detail-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 60px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .org-detail-logo img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .org-detail-info {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .org-detail-info h3 {
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .org-detail-info-item {
+      display: flex;
+      margin-bottom: 12px;
+    }
+
+    .org-detail-info-item i {
+      width: 25px;
+      color: #d4af37;
+      margin-right: 10px;
+    }
+
+    .org-detail-description {
+      line-height: 1.6;
+    }
+
+    .org-detail-actions {
+      margin-top: 25px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .org-detail-button {
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .org-detail-button-primary {
+      background: linear-gradient(135deg, #d4af37 0%, #f4e38d 100%);
+      color: #333;
+      border: none;
+    }
+
+    .org-detail-button-primary:hover {
+      background: linear-gradient(135deg, #f4e38d 0%, #d4af37 100%);
+      transform: translateY(-2px);
+    }
+
+    .org-detail-button-secondary {
+      background: rgba(0, 0, 0, 0.05);
+      color: #333;
+      border: none;
+    }
+
+    .org-detail-button-secondary:hover {
+      background: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Include Navbar fragment -->
+  <div th:replace="~{fragements/Navbar :: organisationNavbar(${organisation})}"></div>
+  
+<div class="sub-navbar">
+    <a href="/organisation/dashboard" class="sub-nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Tableau de bord</span>
+    </a>
+    <a href="/organisation/actions/create" class="sub-nav-item">
+        <i class="fas fa-tasks"></i>
+        <span>Lancer des Actions</span>
+    </a>
+    <a href="/organisation/actions/list" class="sub-nav-item">
+        <i class="fas fa-hand-holding-heart"></i>
+        <span>Actions en cours</span>
+    </a>
+    <a href="/organisation/actions/archived" class="sub-nav-item">
+        <i class="fas fa-archive"></i>
+        <span>Actions Archivees</span>
+    </a>
+</div>
+  
+  <div class="campaign-view">
+    <!-- Campaign Hero Section with Static Image -->
+    <div class="campaign-hero" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/bannerview.jpg'); position: relative;">
+      <div class="hero-content">
+        <h1 class="hero-title" th:text="${action.titre}" 
+            style="position: relative; 
+                   z-index: 10; 
+                   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                   font-weight: 700;
+                   color: #ffffff;
+                   font-size: 2.5rem;
+                   letter-spacing: 0.5px;
+                   text-shadow: 2px 2px 4px rgba(0,0,0,0.7), 0 0 10px rgba(0,0,0,0.4);
+                   margin-bottom: 1.2rem;">
+          Campaign Title
+        </h1>
+      </div>
+    </div>
+
+    <div class="campaign-container" style="position: relative;">
+      <!-- Back Button repositioned to left edge -->
+      <!-- Dynamic Back Button -->
+      <a href="/organisation/dashboard?tab=participants#participants" id="dynamicBackBtn" class="back-btn" 
+         style="position: absolute; 
+                top: -20px; 
+                left: 20px; 
+                padding: 8px 15px; 
+                border-radius: 20px; 
+                font-weight: bold; 
+                font-size: 0.85rem; 
+                text-transform: uppercase; 
+                text-decoration: none; 
+                background-color: #f8f9fa;
+                color: #333;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                z-index: 100;">
+        <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> 
+        <span>Back to Campaigns</span>
+      </a>
+
+      <!-- Status badge on right edge (unchanged) -->
+      <div class="campaign-status-badge" 
+           th:class="${action.active ? 'campaign-status-badge active' : 'campaign-status-badge inactive'}"
+           style="position: absolute; top: -20px; right: 20px; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"
+           th:style="${action.active ? 
+                    'position: absolute; top: -20px; right: 20px; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; z-index: 100; background-color: #4CAF50; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);' : 
+                    'position: absolute; top: -20px; right: 20px; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; z-index: 100; background-color: #F44336; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);'}">
+      <span th:text="${action.active ? 'Active Campaign' : 'Inactive Campaign'}">Active Campaign</span>
+      </div>
+
+      <!-- Progress Banner -->
+      <div class="progress-banner">
+        <div class="progress-stats">
+          <div class="progress-stat">
+            <div class="stat-number" th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 0, 'POINT')} + ' MAD'">0 MAD</div>
+            <div class="stat-label">Raised</div>
+          </div>
+          
+          <div class="progress-stat">
+            <div class="stat-number" th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 0, 'POINT')} + ' MAD'">1000 MAD</div>
+            <div class="stat-label">Goal</div>
+          </div>
+          
+          <div class="progress-stat">
+            <div class="stat-number" 
+                 th:text="${action.objectifCollecte > 0 ? #numbers.formatDecimal(action.montantActuel / action.objectifCollecte * 100, 0, 0) : 0} + '%'">0%</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          
+          <div class="progress-stat">
+            <div class="stat-number" th:text="${action.getDonateursCount()}">0</div>
+            <div class="stat-label">Donors</div>
+          </div>
+        </div>
+        
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+          </div>
+        </div>
+        
+        <div class="cta-container">
+          <div class="campaign-top-info">
+            <div class="top-info-item">
+              <i class="fas fa-tag"></i>
+              <div class="top-info-content">
+                <span class="top-info-label">Category</span>
+                <span class="top-info-value" th:text="${action.categorie != null ? action.categorie.nom : 'Not specified'}">Category</span>
+              </div>
+            </div>
+            
+            <div class="top-info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <div class="top-info-content">
+                <span class="top-info-label">Location</span>
+                <span class="top-info-value" th:text="${action.lieu}">Location</span>
+              </div>
+            </div>
+            
+            <div class="top-info-item">
+              <i class="fas fa-calendar"></i>
+              <div class="top-info-content">
+                <span class="top-info-label">Date</span>
+                <span class="top-info-value" th:text="${#dates.format(action.date, 'dd MMM yyyy')}">Date</span>
+              </div>
+            </div>
+          </div>
+          
+          
+        </div>
+      </div>
+      
+      <div class="campaign-content">
+        <div class="campaign-main">
+          <!-- Media Gallery -->
+          <div th:if="${action.mediaUrls == null or action.mediaUrls.isEmpty()}" class="no-media">
+            <i class="fas fa-image"></i>
+            <span>No images available for this campaign</span>
+          </div>
+          
+          <div th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}" class="media-gallery">
+            <div class="gallery-main">
+              <img th:src="@{'data:image/png;base64,' + ${action.mediaUrls[0]}}" alt="Main image">
+            </div>
+
+            <div th:if="${action.mediaUrls.size() > 1}" class="gallery-thumbnails">
+              <div th:each="mediaUrl, urlStat : ${action.mediaUrls}"
+                   class="gallery-thumbnail"
+                   th:classappend="${urlStat.index == 0 ? 'active' : ''}"
+                   th:data-index="${urlStat.index}">
+                <img th:src="@{'data:image/png;base64,' + ${mediaUrl}}" alt="Thumbnail">
+              </div>
+            </div>
+          </div>
+
+        
+          
+          <!-- Campaign Tabs -->
+          <div class="campaign-tabs">
+            <button class="tab-button active" data-tab="about">About</button>
+            <button class="tab-button" data-tab="updates">Updates</button>
+            <button class="tab-button" data-tab="donors">Donors</button>
+          </div>
+          
+          <div class="tab-content">
+            <!-- About Tab -->
+            <div id="about" class="tab-pane active">
+              <h2 class="section-title">About This Campaign</h2>
+              <div class="campaign-description formatted-text">
+                <p th:utext="${action.description}">Campaign description goes here...</p>
+              </div>
+              
+              <!-- Action buttons for donate and like -->
+              
+              <!-- Existing meta cards and other content -->
+              <div class="campaign-meta-cards">
+                <!-- Meta cards content -->
+              </div>
+            </div>
+            
+            <!-- Updates Tab -->
+            <div id="updates" class="tab-pane">
+              <h2 class="section-title">Campaign Updates</h2>
+              <div class="updates-empty">
+                <i class="fas fa-newspaper"></i>
+                <p>No updates have been posted for this campaign yet.</p>
+              </div>
+            </div>
+            
+            <!-- Donors Tab -->
+            <div id="donors" class="tab-pane">
+              <h2 class="section-title">Recent Donors</h2>
+              <div th:if="${action.listedons != null and !action.listedons.isEmpty()}" class="donors-list">
+                <div th:each="don : ${action.listedons}" class="donor-card">
+                  <div class="donor-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="donor-info">
+                    <div class="donor-name" th:text="${don.utilisateurNom ?: 'Anonymous'}">User</div>
+                    <div class="donor-date" th:text="${#dates.format(don.date, 'dd MMM yyyy')}">Donation date</div>
+                  </div>
+                  <div class="donation-amount" th:text="${#numbers.formatDecimal(don.montant, 0, 'COMMA', 2, 'POINT')} + ' MAD'">100 MAD</div>
+                </div>
+              </div>
+              
+              <div th:if="${action.listedons == null or action.listedons.isEmpty()}" class="donors-empty">
+                <i class="fas fa-heart"></i>
+                <p>Be the first one to donate to this campaign!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="campaign-sidebar">
+          <!-- Organization Card -->
+          <div class="sidebar-card org-card" th:if="${action.organisation != null}">
+            <h3 class="card-title">Organization</h3>
+            <div class="org-info">
+              <div class="org-logo">
+                <img th:if="${action.organisation.logo != null && !action.organisation.logo.isEmpty()}" 
+                     th:src="'data:image/png;base64,' + ${action.organisation.logo}" 
+                     alt="Organization logo">
+                <img th:unless="${action.organisation.logo != null && !action.organisation.logo.isEmpty()}" 
+                     src="https://via.placeholder.com/60" 
+                     alt="Default logo">
+              </div>
+              <div class="org-details">
+  <div class="org-name" th:text="${action.organisation.nom}">Organization Name</div>
+  <a href="javascript:void(0);" 
+     th:data-org-id="${action.organisation.numeroIdentif}" 
+     class="org-link view-org-profile">View Profile</a>
+</div>
+            </div>
+            <p class="org-description" th:if="${action.organisation.description != null && !action.organisation.description.isEmpty()}" 
+               th:text="${action.organisation.description.length() > 150 ? action.organisation.description.substring(0, 150) + '...' : action.organisation.description}">
+               Organization description...
+            </p>
+          </div>
+          
+          
+          
+          <!-- Campaign Stats Card -->
+          <div class="sidebar-card stats-card">
+            <h3 class="card-title">Campaign Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:text="${action.nombreParticipants}">0</div>
+                  <div class="stat-name">Participants</div>
+                </div>
+              </div>
+              
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:text="${action.getDonateursCount()}">0</div>
+                  <div class="stat-name">Donors</div>
+                </div>
+              </div>
+              
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:text="${action.getLikesCount()}">0</div>
+                  <div class="stat-name">Likes</div>
+                </div>
+              </div>
+              
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:if="${action.datelimite != null}" 
+                       th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), action.datelimite.toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate())}">
+                       30
+                  </div>
+                  <div class="stat-number" th:unless="${action.datelimite != null}">--</div>
+                  <div class="stat-name">Days Left</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+     
+      
+    </div> 
+    
+   
+<!-- Include the profile modal fragment -->
+<div th:replace="~{organisation/profile/profileModal :: profileModal}"></div>
+<!-- Organization Detail Modal -->
+<div class="org-detail-modal" id="orgDetailModal">
+  <div class="org-detail-modal-content">
+    <div class="org-detail-modal-header">
+      <h2 id="modalOrgTitle">Détails de l'organisation</h2>
+      <button class="org-detail-close-btn">&times;</button>
+    </div>
+    <div class="org-detail-modal-body">
+      <!-- Organization details will be loaded here dynamically -->
+      <div class="org-detail-loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Chargement des détails...</p>
+      </div>
+      <div class="org-detail-content" style="display: none;">
+        <!-- Content will be populated via JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/dashboard.js}"></script>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Gallery thumbnail functionality
+          const thumbnails = document.querySelectorAll('.gallery-thumbnail');
+          const mainImage = document.querySelector('.gallery-main img');
+
+          if (thumbnails.length > 0 && mainImage) {
+            thumbnails.forEach(function(thumbnail) {
+              thumbnail.addEventListener('click', function() {
+                // Update main image
+                const imgSrc = this.querySelector('img').src;
+                mainImage.src = imgSrc;
+
+                // Update active thumbnail
+                thumbnails.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+              });
+            });
+          }
+          
+          // Tab functionality
+          const tabButtons = document.querySelectorAll('.tab-button');
+          const tabPanes = document.querySelectorAll('.tab-pane');
+          
+          tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              // Deactivate all tabs
+              tabButtons.forEach(btn => btn.classList.remove('active'));
+              tabPanes.forEach(pane => pane.classList.remove('active'));
+              
+              // Activate current tab
+              this.classList.add('active');
+              const tabId = this.getAttribute('data-tab');
+              document.getElementById(tabId).classList.add('active');
+            });
+          });
+          
+          // Setup auth modal triggers
+          const showAuthModalBtns = document.querySelectorAll('.show-auth-modal');
+          showAuthModalBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              const authModal = document.getElementById('authModal');
+              if (authModal) {
+                authModal.style.display = 'block';
+                
+                // If donation amount is specified, set it in the form
+                const amount = this.getAttribute('data-amount');
+                const amountInput = authModal.querySelector('#donationAmount');
+                if (amount && amountInput) {
+                  amountInput.value = amount;
+                } else if (this.classList.contains('custom-donation-btn')) {
+                  const customAmount = document.getElementById('customAmount').value;
+                  if (customAmount && amountInput) {
+                    amountInput.value = customAmount;
+                  }
+                }
+              }
+            });
+          });
+          
+          // Close Auth Modal on X click
+          const closeAuthModalBtn = document.querySelector('.auth-close-btn');
+          if (closeAuthModalBtn) {
+            closeAuthModalBtn.addEventListener('click', function() {
+              const authModal = document.getElementById('authModal');
+              if (authModal) {
+                authModal.style.display = 'none';
+              }
+            });
+          }
+          
+          // Close Auth Modal when clicking outside the modal content
+          window.addEventListener('click', function(e) {
+            const authModal = document.getElementById('authModal');
+            if (authModal && e.target === authModal) {
+              authModal.style.display = 'none';
+            }
+          });
+          
+          // Share functionality 
+          const shareButtons = document.querySelectorAll('.share-btn');
+          shareButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              const url = window.location.href;
+              const title = document.querySelector('.hero-title').textContent;
+              
+              if (this.classList.contains('facebook')) {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+              } else if (this.classList.contains('twitter')) {
+                window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+              } else if (this.classList.contains('whatsapp')) {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
+              } else if (this.classList.contains('linkedin')) {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+              }
+            });
+          });
+          
+          // Handle dynamic back button
+      const setupBackButton = () => {
+  const backBtn = document.getElementById('dynamicBackBtn');
+  
+  // Set default destination with correct parameter name
+  backBtn.href = '/organisation/dashboard?tab=participants#actions-grid';
+  
+  // Add click handler with precise navigation
+  backBtn.addEventListener('click', function(e) {
+    // Set up storage values to ensure the right section is activated
+    sessionStorage.setItem('activeSecondaryNavItem', 'participants');
+    sessionStorage.setItem('activeDashboardSection', 'participants');
+    sessionStorage.setItem('scrollToElement', 'actions-grid');
+    localStorage.setItem('dashboardRefresh', Date.now().toString());
+  });
+};
+          
+          // Call the setup function
+          setupBackButton();
+
+          // Organization detail modal functionality
+          const orgDetailModal = document.getElementById('orgDetailModal');
+          const orgDetailContent = document.querySelector('.org-detail-content');
+          const orgDetailLoading = document.querySelector('.org-detail-loading');
+          const modalOrgTitle = document.getElementById('modalOrgTitle');
+          const closeOrgDetailBtn = document.querySelector('.org-detail-close-btn');
+          
+          // Add click handler to the "View Profile" link
+          const viewOrgProfileBtn = document.querySelector('.view-org-profile');
+          if (viewOrgProfileBtn) {
+            viewOrgProfileBtn.addEventListener('click', function() {
+              const orgId = this.getAttribute('data-org-id');
+              if (orgId) {
+                openOrgDetailModal(orgId);
+              }
+            });
+          }
+          
+          // Function to open the modal with organization details
+          function openOrgDetailModal(orgId) {
+            // Show loading indicator
+            orgDetailLoading.style.display = 'block';
+            orgDetailContent.style.display = 'none';
+            
+            // Open the modal
+            orgDetailModal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            
+            // Fetch organization details
+            fetch(`/api/organization/${orgId}`)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(org => {
+                // Update modal title
+                modalOrgTitle.textContent = org.nom;
+                
+                // Populate content
+                orgDetailContent.innerHTML = `
+                  <div class="org-detail-banner">
+                    <div class="org-detail-logo">
+                      ${org.logo ? 
+                        `<img src="data:image/png;base64,${org.logo}" alt="${org.nom} logo">` : 
+                        `<i class="fas fa-building" style="font-size: 50px; color: #d4af37;"></i>`
+                      }
+                    </div>
+                  </div>
+                  
+                  <div class="org-detail-info">
+                    <h3>À propos de ${org.nom}</h3>
+                    <div class="org-detail-description">${org.description || 'Aucune description disponible'}</div>
+                  </div>
+                  
+                  <div class="org-detail-info">
+                    <h3>Coordonnées</h3>
+                    ${org.adresseLegale ? 
+                      `<div class="org-detail-info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${org.adresseLegale}</span>
+                      </div>` : ''
+                    }
+                    ${org.contactPrincipal ? 
+                      `<div class="org-detail-info-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>${org.contactPrincipal}</span>
+                      </div>` : ''
+                    }
+                    ${org.email ? 
+                      `<div class="org-detail-info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>${org.email}</span>
+                      </div>` : ''
+                    }
+                    ${org.telephone ? 
+                      `<div class="org-detail-info-item">
+                        <i class="fas fa-phone"></i>
+                        <span>${org.telephone}</span>
+                      </div>` : ''
+                    }
+                  </div>
+                  
+                  <div class="org-detail-actions">
+                    <button class="org-detail-button org-detail-button-secondary org-detail-close-btn">
+                      Fermer
+                    </button>
+                    <a href="/campaigns?organization=${org.numeroIdentif}" class="org-detail-button org-detail-button-primary">
+                      Voir les campagnes <i class="fas fa-chevron-right"></i>
+                    </a>
+                  </div>
+                `;
+                
+                // Hide loading, show content
+                orgDetailLoading.style.display = 'none';
+                orgDetailContent.style.display = 'block';
+                
+                // Add click handler to the close button inside the modal content
+                document.querySelector('.org-detail-content .org-detail-close-btn').addEventListener('click', closeOrgDetailModal);
+              })
+              .catch(error => {
+                console.error('Error fetching organization details:', error);
+                orgDetailContent.innerHTML = `
+                  <div style="text-align: center; padding: 30px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: #e74c3c; margin-bottom: 15px;"></i>
+                    <p>Une erreur est survenue lors du chargement des détails de l'organisation.</p>
+                    <button class="org-detail-button org-detail-button-secondary org-detail-close-btn">
+                      Fermer
+                    </button>
+                  </div>
+                `;
+                orgDetailLoading.style.display = 'none';
+                orgDetailContent.style.display = 'block';
+                
+                // Add click handler to the close button inside error message
+                document.querySelector('.org-detail-content .org-detail-close-btn').addEventListener('click', closeOrgDetailModal);
+              });
+          }
+      
+          // Function to close the modal
+          function closeOrgDetailModal() {
+            orgDetailModal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+            
+            // Clear content after animation
+            setTimeout(() => {
+              if (!orgDetailModal.classList.contains('show')) {
+                orgDetailContent.innerHTML = '';
+              }
+            }, 300);
+          }
+      
+          // Close modal when clicking X button
+          if (closeOrgDetailBtn) {
+            closeOrgDetailBtn.addEventListener('click', closeOrgDetailModal);
+          }
+      
+          // Close modal when clicking outside the content
+          if (orgDetailModal) {
+            orgDetailModal.addEventListener('click', function(e) {
+              if (e.target === orgDetailModal) {
+                closeOrgDetailModal();
+              }
+            });
+          }
+      
+          // Close modal with Escape key
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && orgDetailModal && orgDetailModal.classList.contains('show')) {
+              closeOrgDetailModal();
+            }
+          });
+        });
+      </script>
+    </body>
+    </html>

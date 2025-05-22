@@ -158,3 +158,10 @@ function previewImages(input) {
         }
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const formSection = document.querySelector('.form-section .action-form');
+    const actionsContainer = document.querySelector('.list-section .actions-container');
+    if (formSection && actionsContainer) {
+        actionsContainer.style.minHeight = formSection.offsetHeight + 'px';
+    }
+});

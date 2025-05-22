@@ -38,7 +38,7 @@ public class ActionCharite {
 
     @NotBlank(message = "La catégorie est obligatoire")
     private String categorieId;
-    // Add this property to your class
+   
     private int nombreParticipants = 0;
 
     private List<String> mediaUrls;
@@ -209,7 +209,7 @@ public class ActionCharite {
         this.organisation = organisation;
     }
 
-    // Convenience methods for the view
+  
     public float getMontantCollecte() {
         return montantActuel;
     }

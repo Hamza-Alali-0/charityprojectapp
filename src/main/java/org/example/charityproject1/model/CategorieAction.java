@@ -9,8 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class CategorieAction {
 
     @Id
-    private String idCategorie; // Utilisation de String pour la compatibilité avec MongoDB
-
+    private String idCategorie; 
     @NotBlank(message = "Le nom de la catégorie est obligatoire")
     @Size(max = 50, message = "Le nom de la catégorie ne doit pas dépasser 50 caractères")
     private String nom;

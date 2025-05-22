@@ -41,6 +41,8 @@ public class UtilisateursService {
         // Update the user in the database
         utilisateursRepository.save(utilisateur);
     }
-
+public Long countUsers() {
+    return utilisateursRepository.count();
+}
 
 }

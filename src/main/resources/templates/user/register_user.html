@@ -3,39 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription Utilisateur</title>
+    <title>User Registration | Charity Platform</title>
+
+    <link rel="stylesheet" th:href="@{/styles/auth/auth.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<h1>Inscription Utilisateur</h1>
-
-<form th:action="@{/auth/register/user}" method="post" enctype="multipart/form-data">
-    <!-- Remove any line using parameterName -->
-
-    <label for="nom">Nom :</label>
-    <input type="text" id="nom" name="nom" required><br><br>
-
-    <label for="email">Email :</label>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <label for="telephone">Téléphone :</label>
-    <input type="text" id="telephone" name="telephone" required><br><br>
-
-    <label for="localisation">Localisation :</label>
-    <input type="text" id="localisation" name="localisation" required><br><br>
-
-    <label for="logo">Logo :</label>
-    <input type="file" id="logo" name="logo" required><br><br>
-
-    <button type="submit">S'inscrire</button>
-</form>
-
-<p th:if="${message != null}" th:text="${message}" style="color: red;"></p>
-
-<p>
-    Vous avez déjà un compte ? <a th:href="@{/auth/login/user}">Connectez-vous ici</a>.
-</p>
+    <a href="/" class="back-arrow">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour à l'accueil</span>
+    </a>
+    
+    <div class="auth-container">
+        <!-- Left side - Image with overlay (same as login) -->
+        <div class="auth-image-container">
+            <div class="slideshow">
+                <div class="slide active">
+                    <img src="/images/charityauth.jpg" alt="Charity Impact">
+                    
+                    <!-- Statistics bar with data attributes for animation -->
+                    <div class="stats-bar">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${organisationCount}" data-target="0">0</h3>
+                                <p>Organisations</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${totalDonations}" data-prefix="$" data-suffix="+">$0</h3>
+                                <p>Funds Raised</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${campaignCount}" data-suffix="+">0</h3>
+                                <p>Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dual-testimonial-container">
+                        <div class="testimonial-card">
+                            <div class="testimonial-header">
+                                <div class="testimonial-logo">
+                                    <img src="/images/avatars/user1.jpg" alt="User Avatar">
+                                </div>
+                                <div class="testimonial-identity">
+                                    <h3>Monthly Donor</h3>
+                                    <span>Supporting since 2020</span>
+                                </div>
+                            </div>
+                            <div class="testimonial-body">
+                                <p>"This platform made giving back so simple. I can support multiple causes that matter to me in one place."</p>
+                            </div>
+                            <div class="testimonial-footer">
+                                <span class="author-name">Thomas Laurent</span>
+                                <span class="author-role">Software Engineer</span>
+                            </div>
+                        </div>
+                        
+                        <div class="testimonial-card">
+                            <div class="testimonial-header">
+                                <div class="testimonial-logo">
+                                    <img src="/images/avatars/user2.jpg" alt="User Avatar">
+                                </div>
+                                <div class="testimonial-identity">
+                                    <h3>Community Volunteer</h3>
+                                    <span>Member since 2021</span>
+                                </div>
+                            </div>
+                            <div class="testimonial-body">
+                                <p>"I've been able to track my impact and connect with causes I'm passionate about. Truly life-changing."</p>
+                            </div>
+                            <div class="testimonial-footer">
+                                <span class="author-name">Sophie Renaud</span>
+                                <span class="author-role">Teacher</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="/images/charityauth6.jpg" alt="Making a Difference">
+                    
+                    <!-- Statistics bar with data attributes for animation -->
+                    <div class="stats-bar">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${organisationCount}" data-target="0">0</h3>
+                                <p>Organisations</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${totalDonations}" data-prefix="$" data-suffix="+">$0</h3>
+                                <p>Funds Raised</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${campaignCount}" data-suffix="+">0</h3>
+                                <p>Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dual-testimonial-container">
+                        <div class="testimonial-card">
+                            <div class="testimonial-header">
+                                <div class="testimonial-logo">
+                                    <img src="/images/avatars/user3.jpg" alt="User Avatar">
+                                </div>
+                                <div class="testimonial-identity">
+                                    <h3>Regular Contributor</h3>
+                                    <span>Donated to 12+ campaigns</span>
+                                </div>
+                            </div>
+                            <div class="testimonial-body">
+                                <p>"The transparency on this platform gives me confidence that my donations are making a real difference."</p>
+                            </div>
+                            <div class="testimonial-footer">
+                                <span class="author-name">Jean Martin</span>
+                                <span class="author-role">Business Owner</span>
+                            </div>
+                        </div>
+                        
+                        <div class="testimonial-card">
+                            <div class="testimonial-header">
+                                <div class="testimonial-logo">
+                                    <img src="/images/avatars/user4.jpg" alt="User Avatar">
+                                </div>
+                                <div class="testimonial-identity">
+                                    <h3>First-time Donor</h3>
+                                    <span>New member</span>
+                                </div>
+                            </div>
+                            <div class="testimonial-body">
+                                <p>"The platform made it so easy to find causes I care about. Already planning my next donation!"</p>
+                            </div>
+                            <div class="testimonial-footer">
+                                <span class="author-name">Marie Dupont</span>
+                                <span class="author-role">Student</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="/images/charityauth7.jpg" alt="Community Support">
+                    
+                    <!-- Statistics bar with data attributes for animation -->
+                    <div class="stats-bar">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${organisationCount}" data-target="0">0</h3>
+                                <p>Organisations</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${totalDonations}" data-prefix="$" data-suffix="+">$0</h3>
+                                <p>Funds Raised</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 class="stat-number" th:data-target="${campaignCount}" data-suffix="+">0</h3>
+                                <p>Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dual-testimonial-container">
+                        <div class="testimonial-card">
+                            <div class="testimonial-header">
+                                <div class="testimonial-logo">
+                                    <img src="/images/avatars/user5.jpg" alt="User Avatar">
+                                </div>
+                                <div class="testimonial-identity">
+                                    <h3>Family Donor</h3>
+                                    <span>Giving monthly since 2019</span>
+                                </div>
+                            </div>
+                            <div class="testimonial-body">
+                                <p>"We've made charity a family tradition. This platform helps us show our children the importance of giving back."</p>
+                            </div>
+                            <div class="testimonial-footer">
+                                <span class="author-name">Philippe Dubois</span>
+                                <span class="author-role">Doctor</span>
+                            </div>
+                        </div>
+                        
+                        <div class="testimonial-card">
+                            <div class="testimonial-header">
+                                <div class="testimonial-logo">
+                                    <img src="/images/avatars/user6.jpg" alt="User Avatar">
+                                </div>
+                                <div class="testimonial-identity">
+                                    <h3>Impact Investor</h3>
+                                    <span>Major donor</span>
+                                </div>
+                            </div>
+                            <div class="testimonial-body">
+                                <p>"The detailed impact reports help me see exactly how my contributions are changing lives. Incredibly meaningful."</p>
+                            </div>
+                            <div class="testimonial-footer">
+                                <span class="author-name">Claire Moreau</span>
+                                <span class="author-role">Financial Advisor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation dots -->
+                <div class="slideshow-dots">
+                    <span class="dot active" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                    <span class="dot" data-index="2"></span>
+                </div>
+            </div>
+            
+            <div class="image-overlay">
+                <div class="overlay-content">
+                    <h2><span class="regular-text">DÉCOUVRIR</span> <span class="highlight">L'IMPACT</span></h2>
+                    <p>Divided by Distance, United by Care</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right side - Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-container signup-form-container">
+            <div class="logo-container">
+                <img src="/images/logocharity.png" alt="Charity Logo">
+            </div>
+            
+            <h1>Join Our Community</h1>
+            <p class="subtitle">Create an account to start making a difference</p>
+            
+            <!-- Display error message if any -->
+            <div th:if="${message}" class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${message}"></span>
+            </div>
+            
+            <form th:action="@{/auth/register/user}" method="post" enctype="multipart/form-data" class="auth-form">
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="nom" name="nom" placeholder="Full Name" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="Email Address" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="telephone" name="telephone" placeholder="Phone Number" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="localisation" name="localisation" placeholder="Location" required>
+                    </div>
+                </div>
+                
+                <div class="form-group file-upload">
+                    <label for="logo" class="file-label">
+                        <i class="fas fa-image"></i>
+                        <span>Choose Profile Picture</span>
+                    </label>
+                    <input type="file" id="logo" name="logo" class="file-input" required>
+                    <div class="file-name">No file chosen</div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="/auth/login/user" class="signin-link">Sign In</a></p>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <script>
+        // Script to update file name display when file is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('logo');
+            const fileName = document.querySelector('.file-name');
+            
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    fileName.textContent = fileInput.files[0].name;
+                } else {
+                    fileName.textContent = 'No file chosen';
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // File input handler (for registration page)
+            const fileInput = document.getElementById('logo');
+            if (fileInput) {
+                const fileName = document.querySelector('.file-name');
+                fileInput.addEventListener('change', function() {
+                    if (fileInput.files.length > 0) {
+                        fileName.textContent = fileInput.files[0].name;
+                    } else {
+                        fileName.textContent = 'No file chosen';
+                    }
+                });
+            }
+            
+            // Slideshow functionality
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            
+            // Add counter animation
+            function animateCounters() {
+                const counters = document.querySelectorAll('.stat-number');
+                const speed = 200; // The lower the faster
+                
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const prefix = counter.getAttribute('data-prefix') || '';
+                    const suffix = counter.getAttribute('data-suffix') || '';
+                    
+                    // Larger numbers should count faster
+                    const increment = Math.ceil(target / speed);
+                    
+                    function updateCount() {
+                        const currentValue = +counter.innerText.replace(/[^\d.-]/g, '');
+                        if (currentValue < target) {
+                            // Calculate next value, ensuring we don't exceed target
+                            const nextValue = Math.min(currentValue + increment, target);
+                            
+                            // Format with commas for thousands
+                            const formattedValue = nextValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            counter.innerText = `${prefix}${formattedValue}${suffix}`;
+                            
+                            // Continue animation
+                            if (nextValue < target) {
+                                setTimeout(updateCount, 30);
+                            }
+                        }
+                    }
+                    
+                    updateCount();
+                });
+            }
+            
+            function showSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                // Show the selected slide
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                currentSlide = index;
+                
+                // Animate counters whenever a slide becomes active
+                animateCounters();
+            }
+            
+            // Auto advance slides
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }, 5000); // Change slide every 5 seconds
+            
+            // Click on dots to change slides
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const slideIndex = parseInt(this.getAttribute('data-index'));
+                    showSlide(slideIndex);
+                });
+            });
+            
+            // Initial animation when page loads
+            animateCounters();
+        });
+    </script>
 </body>
 </html>

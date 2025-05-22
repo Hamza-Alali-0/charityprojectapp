@@ -6,24 +6,35 @@
 <body>
 <div th:fragment="confirmationModal">
   <div class="modal-overlay" id="confirmationModal" style="display: none;">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h3 id="modal-title">Confirmation</h3>
-        <button class="close-modal" onclick="closeConfirmModal()">
-          <i class="fas fa-times"></i>
+    <div class="confirmation-card">
+      <div class="confirmation-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h2 id="modal-title">Confirmation de Suppression</h2>
+      </div>
+
+      <div class="confirmation-content">
+        <p class="confirmation-message" id="modal-message">Êtes-vous sûr de vouloir supprimer cette action?</p>
+
+        <div class="action-summary" id="action-summary">
+          <!-- Action details will be inserted here via JavaScript -->
+        </div>
+
+        <p class="warning-text">Cette action est irréversible et supprimera toutes les données associées.</p>
+      </div>
+
+      <div class="confirmation-actions">
+        <button class="btn cancel-btn" onclick="closeConfirmModal()">
+          <i class="fas fa-arrow-left"></i> Annuler
         </button>
-      </div>
-      <div class="modal-body">
-        <p id="modal-message">Êtes-vous sûr de vouloir effectuer cette action ?</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeConfirmModal()">Annuler</button>
-        <a href="#" id="confirmBtn" class="btn-confirm">Confirmer</a>
+        <a href="#" id="confirmBtn" class="btn delete-btn">
+          <i class="fas fa-trash"></i> Confirmer la suppression
+        </a>
       </div>
     </div>
   </div>
 
   <style>
+    /* Styling to match the organization confirmation modal */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -37,86 +48,155 @@
       z-index: 1000;
     }
 
-    .modal-container {
+    .confirmation-card {
       background-color: white;
-      border-radius: 8px;
-      width: 400px;
+      border-radius: 12px;
+      width: 500px;
       max-width: 90%;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       animation: modalFadeIn 0.3s;
+      overflow: hidden;
+    }
+
+    .confirmation-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .confirmation-header i {
+      color: #f8d566;
+      font-size: 24px;
+    }
+
+    .confirmation-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .confirmation-content {
+      padding: 25px;
+    }
+
+    .confirmation-message {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .action-summary {
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .action-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background-color: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .action-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .action-avatar i {
+      font-size: 24px;
+      color: #6c757d;
+    }
+
+    .action-info {
+      flex: 1;
+    }
+
+    .action-info h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .action-info p {
+      margin: 5px 0;
+      font-size: 13px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-info i {
+      color: #d4af37;
+      width: 14px;
+    }
+
+    .warning-text {
+      color: #dc3545;
+      font-size: 14px;
+      margin: 0;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    .confirmation-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding: 15px 25px 25px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .cancel-btn {
+      background-color: #e9ecef;
+      color: #495057;
+    }
+
+    .cancel-btn:hover {
+      background-color: #dee2e6;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
     }
 
     @keyframes modalFadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      color: #333;
-    }
-
-    .close-modal {
-      background: none;
-      border: none;
-      font-size: 1.2em;
-      cursor: pointer;
-      color: #777;
-    }
-
-    .close-modal:hover {
-      color: #333;
-    }
-
-    .modal-body {
-      padding: 20px;
-      color: #555;
-    }
-
-    .modal-footer {
-      padding: 15px 20px;
-      border-top: 1px solid #eee;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .btn-cancel, .btn-confirm {
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-    }
-
-    .btn-cancel {
-      background-color: #f0f0f0;
-      color: #333;
-      border: 1px solid #ddd;
-    }
-
-    .btn-cancel:hover {
-      background-color: #e0e0e0;
-    }
-
-    .btn-confirm {
-      background-color: #dc3545;
-      color: white;
-      border: 1px solid #dc3545;
-    }
-
-    .btn-confirm:hover {
-      background-color: #c82333;
     }
   </style>
 
@@ -133,13 +213,34 @@
       document.getElementById('confirmationModal').style.display = 'none';
     };
 
-    // Define the showDeleteConfirmation function globally
+    // Define the showDeleteConfirmation function globally with enhanced details
     window.showDeleteConfirmation = function(event, element) {
       event.preventDefault();
       event.stopPropagation();
       const actionId = element.getAttribute('data-id');
       const actionTitle = element.getAttribute('data-title');
-
-      window.showConfirmModal(
-              "Supprimer l'action",
-              `Êtes-vous sûr de vouloir supprimer l'action "${actionTitle}" ? Cette action
+      
+      // Set the basic modal content
+      const title = "Supprimer l'action";
+      const message = `Êtes-vous sûr de vouloir supprimer cette action?`;
+      const confirmUrl = `/organisation/actions/delete/${actionId}`;
+      
+      // Show the modal
+      window.showConfirmModal(title, message, confirmUrl);
+      
+      // Add action details to the summary section
+      const summaryElement = document.getElementById('action-summary');
+      summaryElement.innerHTML = `
+        <div class="action-avatar">
+          <i class="fas fa-hand-holding-heart"></i>
+        </div>
+        <div class="action-info">
+          <h3>${actionTitle}</h3>
+          <p><i class="fas fa-fingerprint"></i> <span>ID: ${actionId}</span></p>
+        </div>
+      `;
+    };
+  </script>
+</div>
+</body>
+</html>

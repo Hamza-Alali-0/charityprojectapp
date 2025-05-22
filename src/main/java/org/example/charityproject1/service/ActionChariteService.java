@@ -1,6 +1,7 @@
 package org.example.charityproject1.service;
 
 import org.example.charityproject1.model.ActionCharite;
+import org.example.charityproject1.model.ActionStats;
 import org.example.charityproject1.model.Don;
 import org.example.charityproject1.model.Organisations;
 import org.example.charityproject1.model.Utilisateurs;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ActionChariteService {
@@ -71,9 +73,10 @@ public class ActionChariteService {
         return actionChariteRepository.findActiveActionsByOrganisation(now, organisationId);
     }
 
-    public List<ActionCharite> getArchivedActionsByOrganisation(String organisationId) {
-        Date now = new Date();
-        return actionChariteRepository.findArchivedActionsByOrganisation(now, organisationId);
+    public List<ActionCharite> getArchivedActionsByOrganisation(String orgId) {
+        return actionChariteRepository.findByOrganisationId(orgId).stream()
+                .filter(action -> !action.isActive())
+                .collect(Collectors.toList());
     }
 
     public ActionCharite getActionById(String actionId) {
@@ -158,16 +161,11 @@ public class ActionChariteService {
         return actionChariteRepository.save(action);
     }
 
-    public ActionCharite updateActionStatus(ActionCharite action) {
-        // This method updates just the action status (active/archived)
-        // We get the existing action, update its fields, and save
-        ActionCharite existingAction = actionChariteRepository.findById(action.getIdAction())
-                .orElseThrow(() -> new RuntimeException("Action not found"));
-
-        existingAction.setActive(action.isActive());
-
-        return actionChariteRepository.save(existingAction);
+    public void updateActionStatus(ActionCharite action) {
+        // Make sure this method is actually saving to the database
+        actionChariteRepository.save(action);
     }
+
     public void deleteAction(String actionId) {
         // Check if action exists before deleting
         ActionCharite action = actionChariteRepository.findById(actionId)
@@ -176,15 +174,11 @@ public class ActionChariteService {
         // Delete the action
         actionChariteRepository.deleteById(actionId);
     }
-    // ...existing code...
 
     public List<ActionCharite> getAllActiveActions() {
         Date now = new Date();
         return actionChariteRepository.findActiveActions(now);
     }
-    // ...existing code...
-
-
 
     /**
      * Load organization data for a list of actions
@@ -209,4 +203,76 @@ public class ActionChariteService {
     public List<Utilisateurs> getUsersWhoLikedAction(String actionId) {
         return utilisateursRepository.findByLikedActionsContaining(actionId);
     }
+
+    /**
+     * Calculate statistics for actions
+     * @param orgId Optional organization ID to filter by. If null, calculate global stats.
+     * @return ActionStats object containing statistics
+     */
+    public ActionStats calculateStats(String orgId) {
+        // Debug the input organization ID
+        System.out.println("Calculating stats for organization ID: " + orgId);
+        
+        List<ActionCharite> actions;
+        
+        if (orgId != null && !orgId.isEmpty()) {
+            // Use the repository method directly instead of filtering a stream
+            actions = actionChariteRepository.findByOrganisationId(orgId);
+            System.out.println("Found " + actions.size() + " actions for organization: " + orgId);
+        } else {
+            actions = actionChariteRepository.findAll();
+        }
+        
+        long totalActions = actions.size();
+        float totalCollected = 0f;
+        long totalParticipants = 0;
+        
+        for (ActionCharite action : actions) {
+            totalCollected += action.getMontantActuel();
+            totalParticipants += action.getNombreParticipants();
+        }
+        
+        System.out.println("Final stats for org " + orgId + ": " + 
+                          totalActions + " actions, " + 
+                          totalCollected + " MAD, " + 
+                          totalParticipants + " participants");
+        
+        return new ActionStats(totalActions, totalCollected, totalParticipants);
+    }
+
+    public Long countActions() {
+        return actionChariteRepository.count();
+    }
+
+    public Float calculateTotalDonations() {
+        List<ActionCharite> actions = actionChariteRepository.findAll();
+        return actions.stream()
+            .map(ActionCharite::getMontantActuel)
+            .reduce(0f, Float::sum);
+    }
+    public ActionStats calculateArchivedStats(String orgId) {
+    // Calculate stats only for archived actions
+    List<ActionCharite> archivedActions = getArchivedActionsByOrganisation(orgId);
+    
+    ActionStats stats = new ActionStats();
+    stats.setTotalActions(archivedActions.size());
+    
+    float totalCollected = 0;
+    int totalParticipants = 0;
+    
+    for (ActionCharite action : archivedActions) {
+        totalCollected += action.getMontantActuel();
+        totalParticipants += action.getNombreParticipants();
+    }
+    
+    stats.setTotalCollected(totalCollected);
+    stats.setTotalParticipants(totalParticipants);
+    
+    return stats;
+}
+public long countParticipants() {
+    List<ActionCharite> allActions = actionChariteRepository.findAll();
+    return allActions.stream().mapToLong(ActionCharite::getNombreParticipants).sum();
+}
+    
 }

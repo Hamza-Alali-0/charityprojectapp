@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,8 +35,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Public routes
-                        .requestMatchers("/auth/**","/accueil").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**","/accueil").permitAll()
+                        .requestMatchers("/","/auth/**", "/accueil", "/about", "/organizations","/organization/**", "/contact", "/campaigns","/campaigns/**").permitAll()
+                        .requestMatchers("/styles/**", "/js/**", "/images/**","/accueil").permitAll()
 
                         // Role-specific dashboard access
                         .requestMatchers("/superadmin/dashboard").hasAuthority("ROLE_SUPER_ADMIN")
@@ -48,6 +49,33 @@ public class SecurityConfig {
                         // All other requests need authentication
                         .anyRequest().authenticated()
                 )
+ .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    // Default redirect path
+                    String redirectUrl = "/accueil";
+                    
+                    // Check for role-based redirection
+                    if (authentication != null && authentication.getAuthorities() != null) {
+                        for (GrantedAuthority authority : authentication.getAuthorities()) {
+                            if ("ROLE_SUPER_ADMIN".equals(authority.getAuthority())) {
+                                redirectUrl = "/auth/login/superadmin";
+                                break;
+                            } else if ("ROLE_ORGANISATION".equals(authority.getAuthority())) {
+                                redirectUrl = "/auth/login/organisation";
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Redirect to the appropriate login page
+                    response.sendRedirect(redirectUrl);
+                })
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .permitAll()
+            )
+
                 // Use ALWAYS to maintain session for web views
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

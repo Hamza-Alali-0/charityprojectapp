@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${action.titre + ' - Campaign Details'}">Campaign Details</title>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/styles/home/home.css">
+  <link rel="stylesheet" href="/styles/dashboard.css">
+  <link rel="stylesheet" href="/styles/home/campaign.css">
+  <link rel="stylesheet" href="/styles/home/view-campaign.css">
+</head>
+<body>
+  <!-- Include Navbar fragment -->
+  <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+  <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+
+  
+  <div class="campaign-view">
+    <!-- Campaign Hero Section with Static Image -->
+    <div class="campaign-hero" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/bannerview.jpg'); position: relative;">
+      <div class="hero-content">
+        <h1 class="hero-title" th:text="${action.titre}" 
+            style="position: relative; 
+                   z-index: 10; 
+                   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                   font-weight: 700;
+                   color: #ffffff;
+                   font-size: 2.5rem;
+                   letter-spacing: 0.5px;
+                   text-shadow: 2px 2px 4px rgba(0,0,0,0.7), 0 0 10px rgba(0,0,0,0.4);
+                   margin-bottom: 1.2rem;">
+          Campaign Title
+        </h1>
+      </div>
+    </div>
+
+    <div class="campaign-container" style="position: relative;">
+      <!-- Back Button repositioned to left edge -->
+      <!-- Dynamic Back Button -->
+      <a href="#" id="dynamicBackBtn" class="back-btn" 
+         style="position: absolute; 
+                top: -20px; 
+                left: 20px; 
+                padding: 8px 15px; 
+                border-radius: 20px; 
+                font-weight: bold; 
+                font-size: 0.85rem; 
+                text-transform: uppercase; 
+                text-decoration: none; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                z-index: 100;
+                transition: background-color 0.3s ease;">
+      <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> 
+      <span id="backBtnText">Back</span>
+      </a>
+
+      <!-- Status badge on right edge (unchanged) -->
+      <div class="campaign-status-badge" 
+           th:class="${action.active ? 'campaign-status-badge active' : 'campaign-status-badge inactive'}"
+           style="position: absolute; top: -20px; right: 20px; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"
+           th:style="${action.active ? 
+                    'position: absolute; top: -20px; right: 20px; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; z-index: 100; background-color: #4CAF50; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);' : 
+                    'position: absolute; top: -20px; right: 20px; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; z-index: 100; background-color: #F44336; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);'}">
+      <span th:text="${action.active ? 'Active Campaign' : 'Inactive Campaign'}">Active Campaign</span>
+      </div>
+
+      <!-- Progress Banner -->
+      <div class="progress-banner">
+        <div class="progress-stats">
+          <div class="progress-stat">
+            <div class="stat-number" th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 0, 'POINT')} + ' MAD'">0 MAD</div>
+            <div class="stat-label">Raised</div>
+          </div>
+          
+          <div class="progress-stat">
+            <div class="stat-number" th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 0, 'POINT')} + ' MAD'">1000 MAD</div>
+            <div class="stat-label">Goal</div>
+          </div>
+          
+          <div class="progress-stat">
+            <div class="stat-number" 
+                 th:text="${action.objectifCollecte > 0 ? #numbers.formatDecimal(action.montantActuel / action.objectifCollecte * 100, 0, 0) : 0} + '%'">0%</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          
+          <div class="progress-stat">
+            <div class="stat-number" th:text="${action.getDonateursCount()}">0</div>
+            <div class="stat-label">Donors</div>
+          </div>
+        </div>
+        
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+          </div>
+        </div>
+        
+        <div class="cta-container">
+          <div class="campaign-top-info">
+            <div class="top-info-item">
+              <i class="fas fa-tag"></i>
+              <div class="top-info-content">
+                <span class="top-info-label">Category</span>
+                <span class="top-info-value" th:text="${action.categorie != null ? action.categorie.nom : 'Not specified'}">Category</span>
+              </div>
+            </div>
+            
+            <div class="top-info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <div class="top-info-content">
+                <span class="top-info-label">Location</span>
+                <span class="top-info-value" th:text="${action.lieu}">Location</span>
+              </div>
+            </div>
+            
+            <div class="top-info-item">
+              <i class="fas fa-calendar"></i>
+              <div class="top-info-content">
+                <span class="top-info-label">Date</span>
+                <span class="top-info-value" th:text="${#dates.format(action.date, 'dd MMM yyyy')}">Date</span>
+              </div>
+            </div>
+          </div>
+          
+          
+        </div>
+      </div>
+      
+      <div class="campaign-content">
+        <div class="campaign-main">
+          <!-- Media Gallery -->
+          <div th:if="${action.mediaUrls == null or action.mediaUrls.isEmpty()}" class="no-media">
+            <i class="fas fa-image"></i>
+            <span>No images available for this campaign</span>
+          </div>
+          
+          <div th:if="${action.mediaUrls != null and !action.mediaUrls.isEmpty()}" class="media-gallery">
+            <div class="gallery-main">
+              <img th:src="@{'data:image/png;base64,' + ${action.mediaUrls[0]}}" alt="Main image">
+            </div>
+
+            <div th:if="${action.mediaUrls.size() > 1}" class="gallery-thumbnails">
+              <div th:each="mediaUrl, urlStat : ${action.mediaUrls}"
+                   class="gallery-thumbnail"
+                   th:classappend="${urlStat.index == 0 ? 'active' : ''}"
+                   th:data-index="${urlStat.index}">
+                <img th:src="@{'data:image/png;base64,' + ${mediaUrl}}" alt="Thumbnail">
+              </div>
+            </div>
+          </div>
+
+          <!-- Campaign Actions -->
+          <div class="campaign-actions" style="margin-top: 20px; padding: 15px; background: none; border-radius: 0 0 var(--border-radius) var(--border-radius);">
+            <button class="donate-btn show-auth-modal" 
+                    style="flex: 1; 
+                           background-color: var(--primary-color); 
+                           color: white; 
+                           padding: 12px 25px; 
+                           border-radius: 30px; 
+                           font-weight: 600; 
+                           font-size: 1rem; 
+                           border: none; 
+                           cursor: pointer; 
+                           box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3); 
+                           transition: all 0.3s ease;">
+            <i class="fas fa-heart" style="margin-right: 8px;"></i> Donate Now
+            </button>
+            
+            <button class="like-btn show-auth-modal" 
+                    style="flex: 1; 
+                           background-color: white; 
+                           color: var(--text-color); 
+                           padding: 12px 20px; 
+                           border-radius: 30px; 
+                           font-weight: 600; 
+                           font-size: 1rem; 
+                           border: 2px solid var(--border-color); 
+                           cursor: pointer; 
+                           transition: all 0.3s ease;">
+            <i class="far fa-thumbs-up" style="margin-right: 8px;"></i> Like
+            </button>
+          </div>
+          
+          <!-- Campaign Tabs -->
+          <div class="campaign-tabs">
+            <button class="tab-button active" data-tab="about">About</button>
+            <button class="tab-button" data-tab="updates">Updates</button>
+            <button class="tab-button" data-tab="donors">Donors</button>
+          </div>
+          
+          <div class="tab-content">
+            <!-- About Tab -->
+            <div id="about" class="tab-pane active">
+              <h2 class="section-title">About This Campaign</h2>
+              <div class="campaign-description formatted-text">
+                <p th:utext="${action.description}">Campaign description goes here...</p>
+              </div>
+              
+              <!-- Action buttons for donate and like -->
+              
+              <!-- Existing meta cards and other content -->
+              <div class="campaign-meta-cards">
+                <!-- Meta cards content -->
+              </div>
+            </div>
+            
+            <!-- Updates Tab -->
+            <div id="updates" class="tab-pane">
+              <h2 class="section-title">Campaign Updates</h2>
+              <div class="updates-empty">
+                <i class="fas fa-newspaper"></i>
+                <p>No updates have been posted for this campaign yet.</p>
+              </div>
+            </div>
+            
+            <!-- Donors Tab -->
+            <div id="donors" class="tab-pane">
+              <h2 class="section-title">Recent Donors</h2>
+              <div th:if="${action.listedons != null and !action.listedons.isEmpty()}" class="donors-list">
+                <div th:each="don : ${action.listedons}" class="donor-card">
+                  <div class="donor-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="donor-info">
+                    <div class="donor-name" th:text="${don.utilisateurNom ?: 'Anonymous'}">User</div>
+                    <div class="donor-date" th:text="${#dates.format(don.date, 'dd MMM yyyy')}">Donation date</div>
+                  </div>
+                  <div class="donation-amount" th:text="${#numbers.formatDecimal(don.montant, 0, 'COMMA', 2, 'POINT')} + ' MAD'">100 MAD</div>
+                </div>
+              </div>
+              
+              <div th:if="${action.listedons == null or action.listedons.isEmpty()}" class="donors-empty">
+                <i class="fas fa-heart"></i>
+                <p>Be the first one to donate to this campaign!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="campaign-sidebar">
+          <!-- Organization Card -->
+          <div class="sidebar-card org-card" th:if="${action.organisation != null}">
+            <h3 class="card-title">Organization</h3>
+            <div class="org-info">
+              <div class="org-logo">
+                <img th:if="${action.organisation.logo != null && !action.organisation.logo.isEmpty()}" 
+                     th:src="'data:image/png;base64,' + ${action.organisation.logo}" 
+                     alt="Organization logo">
+                <img th:unless="${action.organisation.logo != null && !action.organisation.logo.isEmpty()}" 
+                     src="https://via.placeholder.com/60" 
+                     alt="Default logo">
+              </div>
+              <div class="org-details">
+                <div class="org-name" th:text="${action.organisation.nom}">Organization Name</div>
+                <a th:href="@{'/organization/' + ${action.organisation.numeroIdentif}}" class="org-link">View Profile</a>
+              </div>
+            </div>
+            <p class="org-description" th:if="${action.organisation.description != null && !action.organisation.description.isEmpty()}" 
+               th:text="${action.organisation.description.length() > 150 ? action.organisation.description.substring(0, 150) + '...' : action.organisation.description}">
+               Organization description...
+            </p>
+          </div>
+          
+          
+          
+          <!-- Campaign Stats Card -->
+          <div class="sidebar-card stats-card">
+            <h3 class="card-title">Campaign Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:text="${action.nombreParticipants}">0</div>
+                  <div class="stat-name">Participants</div>
+                </div>
+              </div>
+              
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:text="${action.getDonateursCount()}">0</div>
+                  <div class="stat-name">Donors</div>
+                </div>
+              </div>
+              
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:text="${action.getLikesCount()}">0</div>
+                  <div class="stat-name">Likes</div>
+                </div>
+              </div>
+              
+              <div class="stat-box">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-data">
+                  <div class="stat-number" th:if="${action.datelimite != null}" 
+                       th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), action.datelimite.toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate())}">
+                       30
+                  </div>
+                  <div class="stat-number" th:unless="${action.datelimite != null}">--</div>
+                  <div class="stat-name">Days Left</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+     
+      
+    </div> 
+    
+   
+    <div th:replace="~{fragements/Footer :: footer}"></div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Gallery thumbnail functionality
+          const thumbnails = document.querySelectorAll('.gallery-thumbnail');
+          const mainImage = document.querySelector('.gallery-main img');
+
+          if (thumbnails.length > 0 && mainImage) {
+            thumbnails.forEach(function(thumbnail) {
+              thumbnail.addEventListener('click', function() {
+                // Update main image
+                const imgSrc = this.querySelector('img').src;
+                mainImage.src = imgSrc;
+
+                // Update active thumbnail
+                thumbnails.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+              });
+            });
+          }
+          
+          // Tab functionality
+          const tabButtons = document.querySelectorAll('.tab-button');
+          const tabPanes = document.querySelectorAll('.tab-pane');
+          
+          tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              // Deactivate all tabs
+              tabButtons.forEach(btn => btn.classList.remove('active'));
+              tabPanes.forEach(pane => pane.classList.remove('active'));
+              
+              // Activate current tab
+              this.classList.add('active');
+              const tabId = this.getAttribute('data-tab');
+              document.getElementById(tabId).classList.add('active');
+            });
+          });
+          
+          // Setup auth modal triggers
+          const showAuthModalBtns = document.querySelectorAll('.show-auth-modal');
+          showAuthModalBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              const authModal = document.getElementById('authModal');
+              if (authModal) {
+                authModal.style.display = 'block';
+                
+                // If donation amount is specified, set it in the form
+                const amount = this.getAttribute('data-amount');
+                const amountInput = authModal.querySelector('#donationAmount');
+                if (amount && amountInput) {
+                  amountInput.value = amount;
+                } else if (this.classList.contains('custom-donation-btn')) {
+                  const customAmount = document.getElementById('customAmount').value;
+                  if (customAmount && amountInput) {
+                    amountInput.value = customAmount;
+                  }
+                }
+              }
+            });
+          });
+          
+          // Close Auth Modal on X click
+          const closeAuthModalBtn = document.querySelector('.auth-close-btn');
+          if (closeAuthModalBtn) {
+            closeAuthModalBtn.addEventListener('click', function() {
+              const authModal = document.getElementById('authModal');
+              if (authModal) {
+                authModal.style.display = 'none';
+              }
+            });
+          }
+          
+          // Close Auth Modal when clicking outside the modal content
+          window.addEventListener('click', function(e) {
+            const authModal = document.getElementById('authModal');
+            if (authModal && e.target === authModal) {
+              authModal.style.display = 'none';
+            }
+          });
+          
+          // Share functionality 
+          const shareButtons = document.querySelectorAll('.share-btn');
+          shareButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              const url = window.location.href;
+              const title = document.querySelector('.hero-title').textContent;
+              
+              if (this.classList.contains('facebook')) {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+              } else if (this.classList.contains('twitter')) {
+                window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+              } else if (this.classList.contains('whatsapp')) {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
+              } else if (this.classList.contains('linkedin')) {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+              }
+            });
+          });
+          
+          // Handle dynamic back button
+          const setupBackButton = () => {
+            const backBtn = document.getElementById('dynamicBackBtn');
+            const backBtnText = document.getElementById('backBtnText');
+            
+            // Check the referrer to determine where user came from
+            const referrer = document.referrer;
+            
+            if (referrer && referrer.includes('/organization/')) {
+              backBtnText.textContent = 'Back to organization';
+              
+              // Set click handler to go back instead of a fixed URL
+              backBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.history.back();
+              });
+            } else {
+              backBtnText.textContent = 'Back to campaigns';
+              backBtn.href = '/campaigns#all-campaigns';
+            }
+          };
+          
+          // Call the setup function
+          setupBackButton();
+        });
+      </script>
+    </body>
+    </html>

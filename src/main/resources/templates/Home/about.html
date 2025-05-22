@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - UnitedHearts</title>
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/home/home.css}">
+    <link rel="stylesheet" th:href="@{/styles/home/about.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Include the public navbar fragment -->
+    <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+    
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="about-hero-content">
+           
+            <h1>Notre <span class="accent-text">Mission</span></h1>
+            
+            <p class="tagline">Divided by Distance, United by Care</p>
+            <div class="hero-description">
+                <p>Depuis notre création, UnitedHearts travaille pour connecter les organisations caritatives avec les donateurs du monde entier, rendant la philanthropie accessible et transparente pour tous.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Our Story Section -->
+    <section class="our-story">
+        <div class="container">
+            <div class="section-header">
+                <h2>Notre <span class="accent-text">Histoire</span></h2>
+                <p>Comment tout a commencé</p>
+            </div>
+            
+            <div class="story-content">
+                <div class="story-image">
+                    <img src="/images/charityguy1.png" alt="UnitedHearts Foundation" class="parallax-img">
+                </div>
+                <div class="story-text">
+                    <p>UnitedHearts est né d'une vision simple mais puissante : créer un pont entre ceux qui veulent aider et ceux qui en ont besoin.</p>
+                    <p>Fondé en 2020, au milieu de défis mondiaux sans précédent, nous avons reconnu le besoin d'une plateforme qui pourrait unir les gens au-delà des frontières géographiques pour soutenir des causes importantes.</p>
+                    <p>Ce qui a commencé comme une petite initiative s'est transformé en une communauté mondiale de donateurs, d'organisations et de bénévoles qui travaillent ensemble pour créer un impact durable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Values Section with Statistics -->
+    <section class="values-diagram">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nos <span class="accent-text">Statistiques</span></h2>
+                <p>L'impact que nous créons ensemble</p>
+            </div>
+            
+            <div class="diagram-container">
+                <!-- Center logo -->
+                <div class="center-logo">
+                    <img src="/images/logocharity.png" alt="UnitedHearts Logo">
+                </div>
+                
+                <!-- Top values -->
+                <div class="value-item top-left">
+                    <div class="value-content">
+                        <div class="value-number" th:text="${orgCount} + '+'" data-value="${orgCount}">0+</div>
+                        <div class="value-label">Organisations</div>
+                    </div>
+                    <div class="connector-line"></div>
+                </div>
+                
+                <div class="value-item top-right">
+                    <div class="value-content">
+                        <div class="value-number" th:text="${donorCount} + '+'" data-value="${donorCount}">0+</div>
+                        <div class="value-label">Donateurs</div>
+                    </div>
+                    <div class="connector-line"></div>
+                </div>
+                
+                <!-- Mid values -->
+                <div class="value-item mid-left">
+                    <div class="value-content">
+                        <div class="value-number" th:text="${campaignCount} + '+'" data-value="${campaignCount}">0+</div>
+                        <div class="value-label">Campagnes</div>
+                    </div>
+                    <div class="connector-line"></div>
+                </div>
+                
+                <div class="value-item mid-right">
+                    <div class="value-content">
+                        <div class="value-number" th:text="${#numbers.formatDecimal(totalDonations, 0, 'COMMA', 0, 'POINT')} + ' MAD'" data-value="${totalDonations}">0 MAD</div>
+                        <div class="value-label">Dons collectés</div>
+                    </div>
+                    <div class="connector-line"></div>
+                </div>
+                
+                <!-- Text elements -->
+                <div class="top-text">
+                    <div class="top-label">N°1</div>
+                    <div class="top-desc">des plateformes de charité en ligne</div>
+                </div>
+                
+                <div class="bottom-text">
+                    <div class="bottom-label" th:text="${donorCount} + '+'" data-value="${donorCount}">0+</div>
+                    <div class="bottom-desc">Utilisateurs inscrits sur notre plateforme</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Research Strategy Section (Updated to Media 3D Display) -->
+    <section class="research-strategy-section">
+        <div class="container">
+            <!-- Restructure the research header to better connect title and description -->
+            <div class="research-header">
+                <div class="research-title">
+                    <h2>Nos <span>Initiatives</span></h2>
+                </div>
+                <div class="research-description">
+                    <p>UnitedHearts s'engage dans diverses initiatives humanitaires à travers le monde, en s'associant avec des organisations locales pour maximiser notre impact social et environnemental, tout en assurant la transparence et l'efficacité de chaque action.</p>
+                </div>
+            </div>
+            
+            <div class="media-3d-container">
+                <!-- Left card (small) -->
+                <div class="media-card left" data-position="left">
+                    <div class="media-content">
+                        <img src="/images/charityapropos1.png" alt="Soutien communautaire" class="media-image">
+                        <div class="media-overlay">
+                            <h3>Actions Locales</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Center card (main) -->
+                <div class="media-card center active" data-position="center">
+                    <div class="media-content">
+                        <img src="/images/charityapropos2.png" alt="Programmes internationaux" class="media-image">
+                        <div class="media-overlay">
+                            <h3>Programmes Internationaux</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right card (small) -->
+                <div class="media-card right" data-position="right">
+                    <div class="media-content">
+                        <img src="/images/charityapropos.png" alt="Éducation et développement" class="media-image">
+                        <div class="media-overlay">
+                            <h3>Éducation & Développement</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Button below media cards -->
+                <div class="research-button-container">
+                    <a href="/campaigns#all-campaigns" class="research-button">En savoir plus</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <div th:replace="~{fragements/Footer :: mainFooter}"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parallax effect for story image
+            window.addEventListener('scroll', function() {
+                const parallaxImg = document.querySelector('.parallax-img');
+                if (parallaxImg) {
+                    const scrollPosition = window.pageYOffset;
+                    parallaxImg.style.transform = 'translateY(' + scrollPosition * 0.05 + 'px)';
+                }
+            });
+            
+            // New animation code
+            const animateOnScroll = () => {
+                // Elements to animate
+                const elements = [
+                    '.center-logo',
+                    '.value-item',
+                    '.top-text',
+                    '.bottom-text',
+                    '.connector-line'
+                ];
+                
+                // Set up the Intersection Observer
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Start animating the diagram container
+                            entry.target.classList.add('animate');
+                            
+                            // Then animate all elements with staggered delays
+                            elements.forEach(selector => {
+                                document.querySelectorAll(selector).forEach((el, index) => {
+                                    setTimeout(() => {
+                                        el.classList.add('animate');
+                                    }, 200 * (index + 1));
+                                });
+                            });
+                            
+                            // Animate counters
+                            document.querySelectorAll('.value-number').forEach(counter => {
+                                // Extract the target value directly from the rendered text content
+                                let textValue = counter.textContent.trim();
+                                let isMoney = textValue.includes('MAD');
+                                let numericValue;
+                                
+                                // Extract numeric part from the text
+                                if (isMoney) {
+                                    // For money values, remove "MAD" and any formatting
+                                    numericValue = parseFloat(textValue.replace(/[^0-9.-]+/g, ''));
+                                } else {
+                                    // For other values, remove the "+" sign
+                                    numericValue = parseInt(textValue.replace(/\+/g, ''));
+                                }
+                                
+                                // Use default of 0 if parsing failed
+                                const target = isNaN(numericValue) ? 0 : numericValue;
+                                
+                                // For debugging - check what values are being extracted
+                                console.log('Counter text:', textValue, 'Extracted value:', numericValue);
+                                
+                                // Start from 0
+                                let count = 0;
+                                const duration = 2000; // 2 seconds
+                                const increment = target / (duration / 30);
+                                
+                                const timer = setInterval(() => {
+                                    count += increment;
+                                    if (count >= target) {
+                                        clearInterval(timer);
+                                        count = target;
+                                    }
+                                    
+                                    // Format the number with "+" or "MAD" as needed
+                                    if (isMoney) {
+                                        counter.textContent = Math.floor(count).toLocaleString() + ' MAD';
+                                    } else {
+                                        counter.textContent = Math.floor(count) + '+';
+                                    }
+                                }, 30);
+                            });
+                            
+                            // Stop observing after animation starts
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.2
+                });
+                
+                // Get diagram container and observe it
+                const diagramContainer = document.querySelector('.diagram-container');
+                if (diagramContainer) {
+                    observer.observe(diagramContainer);
+                }
+            };
+            
+            // Run the animation setup
+            animateOnScroll();
+        });
+    </script>
+    <script>
+        // Partner cards expansion
+        document.addEventListener('DOMContentLoaded', function() {
+            const partnerCards = document.querySelectorAll('.partner-card');
+            
+            partnerCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Collapse all cards first
+                    partnerCards.forEach(c => {
+                        c.classList.remove('expanded');
+                    });
+                    
+                    // Expand the clicked card
+                    this.classList.add('expanded');
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const researchCards = document.querySelectorAll('.research-card');
+            
+            researchCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // You can add specific actions for each card if needed
+                    const cardClass = this.classList[1]; // Gets "top-left", "top-right", or "center"
+                    console.log(`Card ${cardClass} clicked`);
+                    
+                    // Example: redirect to different pages based on the card
+                    // if (cardClass === 'top-left') {
+                    //     window.location.href = '/research-strategy';
+                    // } else if (cardClass === 'top-right') {
+                    //     window.location.href = '/awards';
+                    // } else if (cardClass === 'center') {
+                    //     window.location.href = '/partners';
+                    // }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mediaCards = document.querySelectorAll('.media-card');
+            
+            mediaCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Only process if it's not already the center card
+                    if (!this.classList.contains('active')) {
+                        // Get current positions
+                        const currentPosition = this.getAttribute('data-position');
+                        const currentCenter = document.querySelector('.media-card.active');
+                        
+                        // Remove active class from current center
+                        currentCenter.classList.remove('active');
+                        currentCenter.classList.add(currentPosition);
+                        currentCenter.setAttribute('data-position', currentPosition);
+                        
+                        // Make clicked card the center
+                        this.classList.remove(currentPosition);
+                        this.classList.add('active');
+                        this.classList.add('center');
+                        this.setAttribute('data-position', 'center');
+                        
+                        // Update all cards to maintain proper positioning
+                        updateCardPositions();
+                    }
+                });
+            });
+            
+            function updateCardPositions() {
+                const cards = document.querySelectorAll('.media-card');
+                
+                cards.forEach(card => {
+                    // Update class based on data-position attribute
+                    const position = card.getAttribute('data-position');
+                    
+                    // Remove all position classes first
+                    card.classList.remove('left', 'center', 'right');
+                    
+                    // Add the appropriate position class
+                    card.classList.add(position);
+                });
+            }
+        });
+    </script>
+    
+    <!-- Include the Auth Modal fragment -->
+    <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Auth modal initialization');
+            
+            // For debugging - check if the modal exists
+            const authModal = document.getElementById('authModal');
+            console.log('Auth modal element found:', authModal ? 'Yes' : 'No');
+            
+            // For debugging - check if buttons with show-auth-modal class exist
+            const modalButtons = document.querySelectorAll('.show-auth-modal');
+            console.log('Auth buttons found:', modalButtons.length);
+        });
+    </script>
+</body>
+</html>

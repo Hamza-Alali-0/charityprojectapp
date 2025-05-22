@@ -11,8 +11,7 @@ import java.util.List;
 public class Organisations {
 
     @Id
-    private String idOrganisation; // Use String for MongoDB ObjectId compatibility
-
+    private String idOrganisation; 
     @NotBlank(message = "Le nom de l'organisation est obligatoire")
     @Size(max = 100, message = "Le nom de l'organisation ne doit pas dépasser 100 caractères")
     private String nom;

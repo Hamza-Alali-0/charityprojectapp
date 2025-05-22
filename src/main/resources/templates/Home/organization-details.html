@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Details</title>
+    
+    <!-- FontAwesome - updated to match campaigns.html -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   
+    <link rel="stylesheet" href="/styles/home/home.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="/styles/home/campaign.css">
+    <link rel="stylesheet" th:href="@{/styles/home/organization-details.css}">
+</head>
+<body>
+    <!-- Include Navbar fragment -->
+    <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+    
+    <!-- Organization Hero Banner -->
+    <div class="organization-hero" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/bannerview.jpg');">
+        <!-- Add back to organizations link -->
+        <a href="/organizations#all-organizations" class="hero-back-button">
+            <i class="fas fa-arrow-left"></i> Back to Organizations
+        </a>
+        
+        <div class="hero-content">
+            <h1 class="hero-title" th:text="${organization.nom}">Organization Name</h1>
+            <p class="hero-description" th:text="${organization.description}">Organization description goes here.</p>
+        </div>
+    </div>
+    
+    <!-- Organization Detail Section -->
+    <section class="org-detail-section">
+        <div class="container">
+            <div class="section-intro">
+                <span class="stats-badge">Organization Profile</span>
+                <h2>About <span class="accent-text" th:text="${organization.nom}">Organization</span></h2>
+                <p class="intro-text">Working together to create meaningful impact in communities worldwide.</p>
+            </div>
+            
+            <div class="org-profile">
+                <div class="org-main-info">
+                    <div class="org-image-container">
+                        <div class="org-image-shape"></div>
+                        <img th:if="${organization.logo != null}" 
+                             th:src="@{'data:image/png;base64,' + ${organization.logo}}" 
+                             alt="Organization Logo" 
+                             class="org-logo">
+                        <div th:if="${organization.logo == null}" class="no-logo">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="org-info-box">
+                        <h3 th:text="${organization.nom}">Organization Name</h3>
+                        
+                        <div class="info-detail-grid">
+                            <div class="info-card" th:if="${organization.adresseLegale != null}">
+                                <div class="info-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Address</h4>
+                                    <p th:text="${organization.adresseLegale}">Address</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card" th:if="${organization.contactPrincipal != null}">
+                                <div class="info-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Primary Contact</h4>
+                                    <p th:text="${organization.contactPrincipal}">Contact</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Active Campaigns</h4>
+                                    <p th:text="${campaignCount != null ? campaignCount : 0}">0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-hands-helping"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Total Impact</h4>
+                                    <p th:text="${totalDonations != null ? #numbers.formatDecimal(totalDonations, 0, 'COMMA', 0, 'POINT') + ' MAD' : '0 MAD'}">0 MAD</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="org-description-container" th:if="${organization.description != null}">
+                    <h3>Our Mission</h3>
+                    <div class="org-description-content">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <p th:text="${organization.description}">Organization description goes here.</p>
+                    </div>
+                    
+                  
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Organization Campaigns Section -->
+    <div  class="org-campaigns-section">
+        <div  class="container">
+            <!-- Move the title before filters -->
+            <h2><span th:text="${organization.nom}">Organization</span>'s Campaigns</h2>
+            
+            <!-- Filters come right after the title -->
+            <div id="org-campaigns-section" class="campaigns-filters">
+                <form method="get" class="search-container" th:action="@{'/organization/' + ${organization.numeroIdentif}}">
+                    <input type="text" name="search" placeholder="Search campaigns..." th:value="${param.search}">
+                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="filter-container">
+                    <form method="get" th:action="@{'/organization/' + ${organization.numeroIdentif}}">
+                        <input type="hidden" name="scrollTo" value="org-campaigns-section">
+                        <select name="category" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            <th:block th:each="cat : ${categories}">
+                                <option th:value="${cat.idCategorie}" th:text="${cat.nom}" th:selected="${cat.idCategorie == selectedCategory}"></option>
+                            </th:block>
+                        </select>
+                        <select name="sort" onchange="this.form.submit()">
+                            <option value="">Sort By</option>
+                            <option value="newest" th:selected="${selectedSort == 'newest'}">Newest</option>
+                            <option value="ending-soon" th:selected="${selectedSort == 'ending-soon'}">Ending Soon</option>
+                            <option value="most-funded" th:selected="${selectedSort == 'most-funded'}">Most Funded</option>
+                            <option value="most-popular" th:selected="${selectedSort == 'most-popular'}">Most Popular</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+            
+            <div th:if="${campaigns.empty}" class="no-campaigns">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>This organization hasn't created any campaigns yet.</p>
+            </div>
+            
+            <div th:unless="${campaigns.empty}" class="actions-container">
+                <div class="actions-grid">
+                    <div th:each="campaign, iterStat : ${campaigns}" class="action-card" th:style="'transition-delay: ' + ${iterStat.index * 0.1} + 's;'">
+                        <div class="action-header">
+                            <div class="org-info">
+                                <img th:if="${organization != null && organization.logo != null}"
+                                     th:src="'data:image/png;base64,' + ${organization.logo}"
+                                     alt="Logo organisation">
+                                <img th:unless="${organization != null && organization.logo != null}"
+                                     src="https://via.placeholder.com/40"
+                                     alt="Logo par défaut">
+                                <span th:text="${organization != null ? organization.nom : 'Organisation'}">Nom Organisation</span>
+                            </div>
+                            <div class="action-category" th:if="${campaign.categorie != null}">
+                                <span th:text="${campaign.categorie.nom}">Catégorie</span>
+                            </div>
+                        </div>
+                        <div class="action-media">
+                            <img th:if="${campaign.mediaUrls != null && !campaign.mediaUrls.isEmpty()}"
+                                 th:src="'data:image/png;base64,' + ${campaign.mediaUrls[0]}"
+                                 alt="Image de l'action">
+                            <img th:unless="${campaign.mediaUrls != null && !campaign.mediaUrls.isEmpty()}"
+                                 th:if="${organization != null && organization.logo != null}"
+                                 th:src="'data:image/png;base64,' + ${organization.logo}"
+                                 alt="Logo de l'organisation"
+                                 class="org-logo-as-action-image">
+                            <div th:if="${(campaign.mediaUrls == null || campaign.mediaUrls.isEmpty()) && (organization == null || organization.logo == null)}"
+                                 class="no-image-container">
+                                <i class="fas fa-image"></i>
+                                <span>No image available</span>
+                            </div>
+                        </div>
+                        <div class="action-stats">
+                            <button class="like-btn" th:data-action-id="${campaign.idAction}">
+                                <i class="fas fa-heart"></i>
+                                <span class="like-count" th:text="${campaign.getLikesCount() != null ? campaign.getLikesCount() : 0}">0</span>
+                            </button>
+                            <div class="action-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" th:style="'width:' + ${campaign.objectifCollecte > 0 ? (campaign.montantActuel / campaign.objectifCollecte * 100 < 100 ? campaign.montantActuel / campaign.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span th:text="${#numbers.formatDecimal(campaign.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                                    <span>on</span>
+                                    <span th:text="${#numbers.formatDecimal(campaign.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-content">
+                            <h3 th:text="${campaign.titre}">Titre de l'action</h3>
+                            <div class="action-details">
+                                <div class="detail"><i class="fas fa-map-marker-alt"></i> <span th:text="${campaign.lieu}">Lieu</span></div>
+                                <div class="detail"><i class="fas fa-calendar"></i> <span th:text="${#dates.format(campaign.date, 'dd/MM/yyyy')}">Date</span></div>
+                                <div class="detail"><i class="fas fa-users"></i> <span th:text="${campaign.nombreParticipants}">0</span> participants</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <a href="/auth/login/user" class="donate-btn">
+                                <i class="fas fa-donate"></i>
+                                <span>Donate Now</span>
+                            </a>
+                            <a th:href="@{'/campaigns/view/' + ${campaign.idAction}}" class="details-btn">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Details</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add this after the actions-grid div (inside the actions-container) -->
+<div class="pagination-container">
+    <div class="pagination">
+        <a th:href="@{|/organization/${organization.numeroIdentif}?page=${currentPage - 1}${searchParams}|}" 
+           th:classappend="${currentPage == 0} ? 'disabled'" class="page-link">&laquo;</a>
+        <span class="page-info" th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}"></span>
+        <a th:href="@{|/organization/${organization.numeroIdentif}?page=${currentPage + 1}${searchParams}|}" 
+           th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'" class="page-link">&raquo;</a>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+    
+   
+    
+    <!-- Include Auth Modal fragment -->
+    <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+    
+    <!-- Include Footer fragment -->
+    <div th:replace="~{fragements/Footer :: footer}"></div>
+    
+    <!-- Stats Animation Script -->
+    <script>
+        // Animate organization stats counters on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to animate counters, similar to campaigns.html
+            function animateCounters() {
+                const statCounters = document.querySelectorAll('.organization-page-stats .stat-counter');
+                statCounters.forEach(counter => {
+                    const targetValue = counter.getAttribute('data-value');
+                    if (!targetValue) return;
+
+                    const target = parseInt(targetValue);
+                    const isMoney = counter.classList.contains('money');
+                    const duration = 2000; // Animation duration in milliseconds
+                    const frameDuration = 1000 / 60; // 60fps
+                    const totalFrames = duration / frameDuration;
+                    // Ensure valueIncrement is at least 1 for small numbers, or calculated for larger ones
+                    const valueIncrement = Math.max(1, target / totalFrames); 
+
+                    let currentValue = 0;
+
+                    function updateCounter() {
+                        currentValue += valueIncrement;
+                        const displayValue = Math.min(Math.ceil(currentValue), target);
+
+                        if (isMoney) {
+                            counter.textContent = displayValue.toLocaleString() + ' MAD';
+                        } else {
+                            counter.textContent = displayValue.toLocaleString();
+                        }
+
+                        if (currentValue < target) {
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                             // Ensure final value is exact
+                            if (isMoney) {
+                                counter.textContent = target.toLocaleString() + ' MAD';
+                            } else {
+                                counter.textContent = target.toLocaleString();
+                            }
+                        }
+                    }
+                    // Initialize text content before animation for non-JS scenarios or if animation is quick
+                    if (isMoney) {
+                        counter.textContent = '0 MAD';
+                    } else {
+                        counter.textContent = '0';
+                    }
+                    updateCounter();
+                });
+            }
+
+            // Animate stat cards (fade in/up)
+            const statCards = document.querySelectorAll('.organization-page-stats .stat-card');
+            const observerOptions = {
+                threshold: 0.2,
+                triggerOnce: true // Ensures animation runs once
+            };
+
+            const statObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Animate stat cards
+                        statCards.forEach((card, index) => {
+                            setTimeout(() => {
+                                card.classList.add('animated');
+                            }, index * 100);
+                        });
+                        // Animate counters
+                        animateCounters();
+                        statObserver.unobserve(entry.target); // Unobserve after animation
+                    }
+                });
+            }, observerOptions);
+            
+            const statsSectionToObserve = document.querySelector('.organization-page-stats');
+            if (statsSectionToObserve) {
+                 observer.observe(statsSectionToObserve); // Corrected to use the 'observer' for campaign cards
+            }
+
+
+            // Existing script for modal triggers, campaign animations, like buttons
+            // ... (setupModalTriggers, setupCampaignAnimations, setupLikeButtons) ...
+            // Ensure setupCampaignAnimations uses the correct observer and applies to .action-card
+            // The staggered delay for action-card is now added via inline style in the HTML loop.
+        });
+    </script>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup modal triggers
+            function setupModalTriggers() {
+                const showAuthModalBtns = document.querySelectorAll('.show-auth-modal');
+                showAuthModalBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'block';
+                        }
+                    });
+                });
+                
+                const closeAuthModalBtn = document.querySelector('.auth-close-btn');
+                if (closeAuthModalBtn) {
+                    closeAuthModalBtn.addEventListener('click', function() {
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'none';
+                        }
+                    });
+                }
+                
+                window.addEventListener('click', function(event) {
+                    const authModal = document.getElementById('authModal');
+                    if (event.target === authModal) {
+                        authModal.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Setup campaign animations
+            function setupCampaignAnimations() {
+                // Get all campaign cards
+                const campaignCards = document.querySelectorAll('.action-card');
+                
+                // Create observer with options
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animated');
+                            // Once animated, no need to observe anymore
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.15,
+                    rootMargin: '0px 0px -100px 0px'
+                });
+                
+                // Observe each campaign card
+                campaignCards.forEach(card => {
+                    observer.observe(card);
+                });
+            }
+            
+            // Setup like buttons functionality
+            function setupLikeButtons() {
+                const likeButtons = document.querySelectorAll('.like-btn');
+                
+                likeButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        // Always redirect to login for like functionality
+                        window.location.href = '/auth/login/user';
+                    });
+                });
+            }
+            
+            // Setup filtering and scrolling functionality
+            function setupFilterScrolling() {
+                // Add scrollTo parameter to search form
+                const searchForm = document.querySelector('.search-container');
+                if (searchForm) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'scrollTo';
+                    hiddenInput.value = 'org-campaigns-section';
+                    searchForm.appendChild(hiddenInput);
+                }
+                
+                // Scroll to campaigns section if we have query parameters or scrollTo parameter
+                function scrollToCampaignsIfNeeded() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const hasFilters = urlParams.has('search') || urlParams.has('category') || urlParams.has('sort') || urlParams.has('page');
+                    const shouldScroll = urlParams.has('scrollTo') || hasFilters;
+                    
+                    if (shouldScroll) {
+                        const scrollToElement = document.getElementById('org-campaigns-section');
+                        if (scrollToElement) {
+                            // Add a small delay to ensure DOM is fully loaded
+                            setTimeout(() => {
+                                const yOffset = -100; // Offset to account for sticky headers if any
+                                const y = scrollToElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                window.scrollTo({top: y, behavior: 'smooth'});
+                            }, 300);
+                        }
+                    }
+                }
+                
+                // Call scroll function on page load
+                scrollToCampaignsIfNeeded();
+            }
+            
+            // Initialize all functionality
+            setupModalTriggers();
+            setupCampaignAnimations();
+            setupLikeButtons();
+            setupFilterScrolling();
+        });
+    </script>
+</body>
+</html>

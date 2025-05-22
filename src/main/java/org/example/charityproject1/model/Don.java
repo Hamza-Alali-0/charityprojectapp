@@ -11,8 +11,7 @@ import java.util.Date;
 public class Don{
 
     @Id
-    private String idDon; // Utilisation de String pour la compatibilité avec MongoDB
-
+    private String idDon; 
     @Positive(message = "Le montant doit être positif")
     private float montant;
 

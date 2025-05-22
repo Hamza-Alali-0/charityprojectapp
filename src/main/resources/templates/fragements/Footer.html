@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Footer</title>
+</head>
+<body>
+<!-- Main Footer -->
+<footer class="main-footer" th:fragment="mainFooter">
+    <div class="footer-container">
+        <div class="footer-column">
+            <img src="/images/logocharity.png" alt="Charity Platform Logo" class="footer-logo">
+            <p>Empowering communities through collective action and transparent giving.</p>
+            <div class="social-icons">
+                <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        
+        <div class="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/campaigns">All Campaigns</a></li>
+                <li><a href="/organizations">Organizations</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-column">
+            <h4>Get Involved</h4>
+            <ul>
+                <li><a href="/auth/login/organisation">Organization Login</a></li>
+                <li><a href="/auth/login/user">Donor Login</a></li>
+                <li><a href="/auth/register/organisation">Register Organization</a></li>
+                <li><a href="/auth/register/user">Register as Donor</a></li>
+                <li><a href="/accueil#how-it-works">How It Works</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-column">
+            <h4>Contact Us</h4>
+            <ul class="contact-info">
+                <li>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>123 Charity Street<br>City, Country 12345</span>
+                </li>
+                <li>
+                    <i class="fas fa-phone"></i>
+                    <span>+212456789072</span>
+                </li>
+                <li>
+                    <i class="fas fa-envelope"></i>
+                    <span>info@unitedhearts.org</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2025 UnitedHearts. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/terms-of-service">Terms of Service</a>
+            <a href="/contact#faq">FAQ</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

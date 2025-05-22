@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnitedHearts - Divided by Distance, United by Care </title>
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/styles/home/home.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Include the public navbar fragment -->
+    <div th:replace="~{fragements/Navbar :: publicNavbar}"></div>
+    
+    <!-- Updated Hero Section with Carousel -->
+    <section class="hero-section charity-hero">
+        <div class="hero-carousel">
+            <!-- First Slide -->
+            <div class="hero-slide active" id="slide1">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: white;">MAKE A DIFFERENCE TODAY</span>
+                    <h1 class="hero-title" style="color: white;">"The smallest act of kindness is worth more than the grandest intention." <span class="hero-author">- Oscar Wilde</span></h1>
+                    <p class="hero-subtitle" style="color: white;">Join UnitedHearts to support impactful causes. Discover verified campaigns, donate securely, and see the real difference your contribution makes in communities worldwide.</p>
+                </div>
+                <div class="hero-image-container">
+                    <img src="/images/bannerwhite.jpg" alt="Children receiving aid" class="hero-image">
+                    <div class="hero-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>VERIFIED IMPACT</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Second Slide -->
+            <div class="hero-slide" id="slide2">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: white;">EMPOWER COMMUNITIES</span>
+                    <h1 class="hero-title" style="color: white;">"Alone we can do so little; together we can do so much." <span class="hero-author">- Helen Keller</span></h1>
+                    <p class="hero-subtitle" style="color: white;">Your support creates lasting change. Through UnitedHearts, every contribution helps build stronger, more resilient communities around the world.</p>
+                </div>
+                <div class="hero-image-container">
+                    <img src="/images/bannerblack.jpg" alt="Community empowerment" class="hero-image">
+                    <div class="hero-badge">
+                        <i class="fas fa-heart"></i>
+                        <span>COMMUNITY FIRST</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slider-controls">
+            <div class="slider-indicator-container">
+                <span class="slider-indicator active" data-slide="0"></span>
+                <span class="slider-indicator" data-slide="1"></span>
+            </div>
+            <button class="slider-button pause"><i class="fas fa-pause"></i></button>
+            <button class="slider-button prev" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+            <button class="slider-button next" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+    
+    <!-- Updated Impact Stats Section -->
+    <section class="impact-stats">
+        <div class="section-header">
+            <h2>Our <span class="accent-text">Impact</span></h2>
+            <p>Together we're making a difference around the world</p>
+        </div>
+        
+        <div class="stat-container">
+            <div class="stat-item">
+                <div class="stat-icon-container">
+                    <div class="stat-icon-bg"></div>
+                    <svg class="stat-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Modern Building/Organization SVG -->
+                        <path d="M12 3L1 9L5 11.18V21H19V11.18L23 9L12 3Z" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 21V12H15V21" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 15H14" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="stat-number" th:data-value="${orgCount}" data-symbol="+">0</h3>
+                <p class="stat-label">Organizations</p>
+               
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon-container">
+                    <div class="stat-icon-bg"></div>
+                    <svg class="stat-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Modern Campaign/Project SVG -->
+                        <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#d4af37" stroke-width="2"/>
+                        <path d="M14 9L16.5 11.5L14 14" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 9L7.5 11.5L10 14" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.5 8L11.5 16" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="stat-number" th:data-value="${campaignCount}" data-symbol="+">0</h3>
+                <p class="stat-label">Campaigns</p>
+               
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon-container">
+                    <div class="stat-icon-bg"></div>
+                    <svg class="stat-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Modern Community/Donor SVG -->
+                        <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4.5 8.5C4.5 8.5 6 10.5 6 12" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M19.5 8.5C19.5 8.5 18 10.5 18 12" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="stat-number" th:data-value="${donorCount}" data-symbol="+">0</h3>
+                <p class="stat-label">Donors</p>
+                
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon-container">
+                    <div class="stat-icon-bg"></div>
+                    <svg class="stat-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Modern Donation/Fund SVG -->
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14.5 9C14.5 7.61929 13.3807 6.5 12 6.5C10.6193 6.5 9.5 7.61929 9.5 9C9.5 11.7614 14.5 10.3333 14.5 13C14.5 14.3807 13.3807 15.5 12 15.5C10.6193 15.5 9.5 14.3807 9.5 13" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 5.5V6.5" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 15.5V16.5" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3 class="stat-number" th:data-value="${totalDonations}" data-symbol="$">0</h3>
+                <p class="stat-label">Funds Raised</p>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- App Features Section -->
+    <section class="app-features">
+        <div class="features-container">
+            <div class="features-content">
+                <span class="feature-badge">Our Platform</span>
+                <h2>Empowering <span class="accent-text">Change</span></h2>
+                <p class="features-intro">Our platform connects donors with verified causes, streamlining the giving process while ensuring every contribution creates maximum impact.</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-details">
+                            <h3>100% Verified Campaigns</h3>
+                            <p>Every campaign undergoes thorough verification to ensure your donations reach legitimate causes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="feature-details">
+                            <h3>Transparent Reporting</h3>
+                            <p>Track exactly how your donations are being used with our real-time impact reports.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <div class="feature-details">
+                            <h3>Global Reach, Local Impact</h3>
+                            <p>Support causes worldwide while seeing the direct impact on local communities.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-cta">
+                    <a href="/about" class="feature-btn">Explore  <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="features-image-container">
+                <div class="features-shape"></div>
+                <img src="/images/charityguy.png" alt="Platform in action" class="features-image">
+                <div class="features-floating-card">
+                    <div class="floating-card-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="floating-card-content">
+                        <h4>Donation Successful</h4>
+                        <p>Your $50 donation to Clean Water Project was processed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Redesigned How It Works Section with Parallax -->
+    <section id="how-it-works" class="how-it-works-parallax">
+        <div class="parallax-background"></div>
+        <div class="how-it-works-content">
+            <div class="section-header light">
+                <span class="section-badge">Simple Process</span>
+                <h2>How It <span class="accent-text">Works</span></h2>
+                <p>Four simple steps to start making a difference today</p>
+            </div>
+            
+            <div class="timeline-steps">
+                <div class="timeline-step">
+                    <div class="timeline-step-connector"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="timeline-step-content">
+                        <span class="step-number">01</span>
+                        <div class="step-info">
+                            <h3>Find a Cause</h3>
+                            <p>Browse through campaigns and find causes that resonate with your values and interests.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-step">
+                    <div class="timeline-step-connector"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-donate"></i>
+                    </div>
+                    <div class="timeline-step-content">
+                        <span class="step-number">02</span>
+                        <div class="step-info">
+                            <h3>Make a Donation</h3>
+                            <p>Contribute any amount through our secure payment system to support the campaign of your choice.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-step">
+                    <div class="timeline-step-connector"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="timeline-step-content">
+                        <span class="step-number">03</span>
+                        <div class="step-info">
+                            <h3>Track Impact</h3>
+                            <p>Follow the progress and see the real impact of your contribution with transparent reporting.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-step">
+                    <div class="timeline-step-connector"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <div class="timeline-step-content">
+                        <span class="step-number">04</span>
+                        <div class="step-info">
+                            <h3>Share</h3>
+                            <p>Spread the word and amplify your impact by sharing with your network and community.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cta-container">
+                <a href="/campaigns" class="cta-button">Start Making a Difference</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Categories Section -->
+    <section id="categories" class="categories-section">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Explore <span class="accent-text">Categories</span></h2>
+                <p class="section-subtitle">Find causes that align with your values</p>
+            </div>
+            
+            <div class="categories-slider-wrapper">
+                <div class="categories-slider">
+                    <!-- Categories from database with dynamic icons -->
+                    <th:block th:each="category : ${categories}">
+                        <div class="category-item">
+                            <div class="category-icon">
+                                <!-- Dynamic icon is set by JavaScript -->
+                                <i class="fas fa-hands-helping category-icon-element" th:data-category="${category.nom}"></i>
+                            </div>
+                            <h3 class="category-title" th:text="${category.nom}">Category Name</h3>
+                            <a th:href="@{'/campaigns?category=' + ${category.idCategorie} + '#all-campaigns'}" class="category-link">
+                                Explore <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </th:block>
+                    
+                    <!-- Fallback if no categories -->
+                    <div th:if="${#lists.isEmpty(categories)}" class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No categories available at the moment.</p>
+                    </div>
+                </div>
+                
+                <!-- Slider Navigation -->
+                <button class="category-nav-btn prev-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="category-nav-btn next-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- Decorative Separator -->
+<div class="section-separator">
+    <div class="separator-line"></div>
+    <div class="separator-icon">
+        <i class="fas fa-heart"></i>
+    </div>
+    <div class="separator-line"></div>
+</div>
+    
+    <!-- Featured Campaigns Section -->
+    <section id="featured-campaigns" class="featured-campaigns">
+        <div class="section-header">
+            <h2>Featured <span class="accent-text">Campaigns</span></h2>
+            <p>Support these impactful initiatives making a difference right now</p>
+        </div>
+        
+        <!-- Empty state when no actions available -->
+        <div th:if="${featuredActions == null or featuredActions.isEmpty()}" class="no-actions" style="text-align: center; padding: 60px 0; color: #666;">
+            <i class="fas fa-heart" style="font-size: 4em; margin-bottom: 20px; color: #d4af37; opacity: 0.5;"></i>
+            <p style="font-size: 1.1em; margin-bottom: 10px;">No campaigns available at the moment.</p>
+            <p>Check back soon for exciting new opportunities to make a difference!</p>
+        </div>
+        
+        <!-- Actions grid with dynamic content -->
+        <div th:if="${featuredActions != null and !featuredActions.isEmpty()}" class="actions-container">
+            <div class="actions-grid">
+                <!-- Dynamic action card for each action -->
+                <div th:each="action, iterStat : ${featuredActions}" th:if="${iterStat.index < 3}" class="action-card">
+                    <!-- Action Header with Organization Info -->
+                    <div class="action-header">
+                        <div class="org-info">
+                            <img th:if="${action.organisation != null && action.organisation.logo != null}"
+                                 th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                                 alt="Logo organisation">
+                            <img th:unless="${action.organisation != null && action.organisation.logo != null}"
+                                 src="https://via.placeholder.com/40"
+                                 alt="Logo par défaut">
+                            <span th:text="${action.organisation != null ? action.organisation.nom : 'Organisation'}">Nom Organisation</span>
+                        </div>
+                        <div class="action-category" th:if="${action.categorie != null}">
+                            <span th:text="${action.categorie.nom}">Catégorie</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Media -->
+                    <div class="action-media">
+                        <img th:if="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+                             th:src="'data:image/png;base64,' + ${action.mediaUrls[0]}"
+                             alt="Image de l'action">
+                        <img th:unless="${action.mediaUrls != null && !action.mediaUrls.isEmpty()}"
+                             th:if="${action.organisation != null && action.organisation.logo != null}"
+                             th:src="'data:image/png;base64,' + ${action.organisation.logo}"
+                             alt="Logo de l'organisation"
+                             class="org-logo-as-action-image">
+                        <!-- Add fallback if neither action media nor organization logo exists -->
+                        <div th:if="${(action.mediaUrls == null || action.mediaUrls.isEmpty()) && (action.organisation == null || action.organisation.logo == null)}"
+                             class="no-image-container">
+                            <i class="fas fa-image"></i>
+                            <span>No image available</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Stats -->
+                    <div class="action-stats">
+                        <button class="like-btn" 
+                                th:data-action-id="${action.idAction}"
+                                th:data-liked="${#ctx.containsVariable('user') && user != null ? action.isLikedByUser(user.userId) : false}"
+                                th:data-authenticated="${#ctx.containsVariable('user') && user != null}">
+                            <i class="fas fa-heart" th:classappend="${#ctx.containsVariable('user') && user != null && action.isLikedByUser(user.userId) ? 'liked' : ''}"></i>
+                            <span class="like-count" th:text="${action.getLikesCount()}">0</span>
+                        </button>
+
+                        <div class="action-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width:' + ${action.objectifCollecte > 0 ? (action.montantActuel / action.objectifCollecte * 100 < 100 ? action.montantActuel / action.objectifCollecte * 100 : 100) : 0} + '%'"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' MAD'">0 MAD</span>
+                                <span>on</span>
+                                <span th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' MAD'">1000 MAD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Title and Description -->
+                    <div class="action-content">
+                        <h3 th:text="${action.titre}">Titre de l'action</h3>
+                        <div class="action-details">
+                            <div class="detail"><i class="fas fa-map-marker-alt"></i> <span th:text="${action.lieu}">Lieu</span></div>
+                            <div class="detail"><i class="fas fa-calendar"></i> <span th:text="${#dates.format(action.date, 'dd/MM/yyyy')}">Date</span></div>
+                            <div class="detail"><i class="fas fa-users"></i> <span th:text="${action.nombreParticipants}">0</span> participants</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a th:href="@{'/campaigns/view/' + ${action.idAction}}" class="donate-btn">
+                            <i class="fas fa-donate"></i>
+                            <span>Donate Now</span>
+                        </a>
+                        <a th:href="@{'/campaigns/view/' + ${action.idAction}}" class="details-btn">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Details</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="view-all-container">
+            <a href="/campaigns" class="view-all-btn">View All Campaigns <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+     <!-- Join Us Section -->
+     <section class="join-us">
+        <div class="join-content">
+            <h2>Ready to Make a <span class="accent-text">Difference?</span></h2>
+            <p>Join our community of changemakers today. Whether you're looking to donate, volunteer, or start your own campaign, we're here to help you create meaningful impact.</p>
+            <div class="join-buttons">
+                <a href="#" id="showAuthModal" class="primary-btn">Get Started</a>
+                <a href="/about" class="secondary-btn">Learn More</a>
+            </div>
+        </div>
+    </section>
+    <!-- Organizations Section -  -->
+<section id="organizations" class="organizations-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2>Trusted <span class="accent-text">Organizations</span></h2>
+            <p class="section-subtitle">Partners making real impact around the world</p>
+        </div>
+        
+        <div class="organizations-slider-wrapper">
+            <div class="organizations-slider">
+                <!-- Organizations from database -->
+                <th:block th:if="${organisations != null}" th:each="org : ${organisations}">
+                    <div class="organization-item">
+                        <div class="organization-logo">
+                            <img th:if="${org.logo != null}" th:src="'data:image/png;base64,' + ${org.logo}" 
+                                 alt="Organization logo" class="org-image">
+                            <div th:unless="${org.logo != null}" class="org-placeholder">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                        <h3 class="organization-title" th:text="${org.nom}">Organization Name</h3>
+                        <p class="organization-description" th:text="${#strings.abbreviate(org.description, 100)}">
+                            Organization description...
+                        </p>
+                        <a th:href="@{'/organization/' + ${org.numeroIdentif}}" class="organization-link">
+                            View Profile <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </th:block>
+                
+                <!-- Fallback if no organizations -->
+                <div th:if="${organisations == null or #lists.isEmpty(organisations)}" class="empty-state">
+                    <i class="fas fa-building"></i>
+                    <p>No organizations available at the moment.</p>
+                </div>
+            </div>
+            
+            <!-- Slider Navigation -->
+            <button class="org-nav-btn prev-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="org-nav-btn next-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+   
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="section-header">
+            <h2>What People <span class="accent-text">Say</span></h2>
+            <p>Hear from our donors and partner organizations</p>
+        </div>
+        
+        <div class="testimonial-slider">
+            <div class="testimonial-container">
+                <div class="testimonial active">
+                    <div class="testimonial-content">
+                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                        <p>This platform has revolutionized how our organization raises funds. We've been able to reach donors globally and fund projects we never thought possible before.</p>
+                        <div class="testimonial-author">
+                            <img src="/images/testimonial1.jpg" alt="Author" class="author-image">
+                            <div class="author-details">
+                                <h4>Marie Dupont</h4>
+                                <span>Director, Education For All</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                        <p>I wanted to contribute to causes I care about but wasn't sure where to start. This platform made it simple to find trusted organizations and track exactly how my donations are making an impact.</p>
+                        <div class="testimonial-author">
+                            <img src="/images/testimonial2.jpg" alt="Author" class="author-image">
+                            <div class="author-details">
+                                <h4>Thomas Laurent</h4>
+                                <span>Regular Donor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                        <p>The transparency of this platform gives me confidence that my contributions are truly making a difference. I can see exactly where my money goes and the impact it creates.</p>
+                        <div class="testimonial-author">
+                            <img src="/images/testimonial3.jpg" alt="Author" class="author-image">
+                            <div class="author-details">
+                                <h4>Sophie Renaud</h4>
+                                <span>Monthly Supporter</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-controls">
+                <span class="control-dot active" data-index="0"></span>
+                <span class="control-dot" data-index="1"></span>
+                <span class="control-dot" data-index="2"></span>
+            </div>
+        </div>
+    </section>
+    
+   
+    
+   
+    
+    <!-- Footer -->
+   
+<div th:replace="~{fragements/Footer :: mainFooter}"></div>
+    
+    <!-- Authentication Modal -->
+    <div th:replace="~{fragements/AuthModal :: authModal}"></div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Hero Carousel Functionality
+        const slides = document.querySelectorAll('.hero-slide');
+        const indicators = document.querySelectorAll('.slider-indicator');
+        const prevButton = document.getElementById('prevSlide');
+        const nextButton = document.getElementById('nextSlide');
+        const pauseButton = document.querySelector('.slider-button.pause');
+        let currentSlide = 0;
+        let isPlaying = true;
+        let slideInterval;
+
+        // Initialize carousel
+        function startSlideshow() {
+            slideInterval = setInterval(nextSlide, 6000); // Change slide every 6 seconds
+        }
+
+        // Show specified slide
+        function showSlide(index) {
+            // Reset all slides and indicators
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(dot => dot.classList.remove('active'));
+
+            // Adjust index in case it's out of bounds
+            if (index >= slides.length) currentSlide = 0;
+            else if (index < 0) currentSlide = slides.length - 1;
+            else currentSlide = index;
+
+            // Activate current slide and indicator
+            slides[currentSlide].classList.add('active');
+            indicators[currentSlide].classList.add('active');
+        }
+
+        // Next slide function
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        // Previous slide function
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Toggle slideshow play/pause
+        function toggleSlideshow() {
+            if (isPlaying) {
+                clearInterval(slideInterval);
+                pauseButton.innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                startSlideshow();
+                pauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Event listeners for Hero Carousel
+        if (prevButton && nextButton && pauseButton && indicators.length > 0 && slides.length > 0) {
+            prevButton.addEventListener('click', function() {
+                prevSlide();
+                if (isPlaying) {
+                    clearInterval(slideInterval);
+                    startSlideshow();
+                }
+            });
+
+            nextButton.addEventListener('click', function() {
+                nextSlide();
+                if (isPlaying) {
+                    clearInterval(slideInterval);
+                    startSlideshow();
+                }
+            });
+
+            pauseButton.addEventListener('click', toggleSlideshow);
+
+            // Click on indicators to go to specific slide
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', function() {
+                    showSlide(index);
+                    if (isPlaying) {
+                        clearInterval(slideInterval);
+                        startSlideshow();
+                    }
+                });
+            });
+
+            // Start the slideshow on page load
+            startSlideshow();
+        }
+
+
+        // Enhanced counter animation with commas and symbols
+        function animateCounters() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+
+            statNumbers.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-value'));
+                const symbol = counter.getAttribute('data-symbol') || '';
+                const duration = 2500;
+                const increment = target / (duration / 16);
+                let current = 0;
+
+                const formatNumber = (num) => {
+                    return Math.ceil(num).toLocaleString();
+                };
+
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = formatNumber(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = formatNumber(target);
+                    }
+                };
+
+                updateCounter();
+            });
+        }
+
+        // Intersection Observer to trigger counter animation when in view
+        const observerOptions = {
+            threshold: 0.25
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.impact-stats');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+
+        // Testimonial slider
+        const testimonials = document.querySelectorAll('.testimonial');
+        const dots = document.querySelectorAll('.control-dot');
+        let currentTestimonial = 0;
+
+        function showTestimonial(index) {
+            if (testimonials.length === 0 || dots.length === 0) return; // Exit if no testimonials or dots
+            testimonials.forEach(t => t.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+
+            testimonials[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentTestimonial = index;
+        }
+
+        // Auto advance testimonials
+        if (testimonials.length > 1) { // Only start interval if more than one testimonial
+            setInterval(() => {
+                currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+                showTestimonial(currentTestimonial);
+            }, 5000);
+        } else if (testimonials.length === 1) {
+            showTestimonial(0); // Show the single testimonial if only one exists
+        }
+
+
+        // Click on dots to change testimonials
+        dots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                const slideIndex = parseInt(this.getAttribute('data-index'));
+                showTestimonial(slideIndex);
+            });
+        });
+
+        // Auth Modal functionality
+        const authModal = document.getElementById('authModal');
+        const showAuthModalBtns = document.querySelectorAll('#showAuthModal, .show-auth-modal');
+        const closeAuthModalBtn = authModal ? authModal.querySelector('.close') : null;
+
+        // Show modal when clicking any auth button
+        if (showAuthModalBtns.length > 0 && authModal) {
+            showAuthModalBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    authModal.style.display = 'block';
+                });
+            });
+        }
+
+        // Close modal when clicking on X
+        if (closeAuthModalBtn && authModal) {
+            closeAuthModalBtn.addEventListener('click', function() {
+                authModal.style.display = 'none';
+            });
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target == authModal) {
+                authModal.style.display = 'none';
+            }
+        });
+
+        // Parallax effect for How It Works section
+        function handleParallax() {
+            const parallaxSection = document.querySelector('.how-it-works-parallax');
+            const parallaxBg = document.querySelector('.parallax-background');
+
+            if (!parallaxSection || !parallaxBg) return;
+
+            window.addEventListener('scroll', () => {
+                const scrollPosition = window.pageYOffset;
+                const sectionPosition = parallaxSection.offsetTop;
+                const sectionHeight = parallaxSection.offsetHeight;
+
+                // Only apply parallax effect when section is in view
+                if (scrollPosition > sectionPosition - window.innerHeight &&
+                    scrollPosition < sectionPosition + sectionHeight) {
+                    const distance = scrollPosition - sectionPosition;
+                    const speed = 0.5; // Adjust speed as needed
+
+                    parallaxBg.style.transform = `translateY(${distance * speed}px)`;
+                }
+            });
+
+            // Animate timeline steps on scroll
+            const timelineSteps = document.querySelectorAll('.timeline-step-content');
+
+            const stepObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                        stepObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            timelineSteps.forEach((step, index) => {
+                step.style.opacity = 0;
+                step.style.transform = 'translateY(30px)';
+                step.style.transitionDelay = `${index * 0.2}s`;
+                stepObserver.observe(step);
+            });
+        }
+
+        // Call the function after DOM is loaded
+        handleParallax();
+
+        // Category Slider Functionality - Improved version
+        function initCategorySlider() {
+            const sliderWrapper = document.querySelector('.categories-slider-wrapper');
+            const slider = sliderWrapper ? sliderWrapper.querySelector('.categories-slider') : null;
+            const prevCatBtn = sliderWrapper ? sliderWrapper.querySelector('.prev-btn') : null;
+            const nextCatBtn = sliderWrapper ? sliderWrapper.querySelector('.next-btn') : null;
+            const categoryItems = slider ? slider.querySelectorAll('.category-item') : [];
+
+            if (slider && categoryItems.length > 0) {
+                let currentIndex = 0;
+                let itemWidth = 0;
+                let itemsVisible = 0;
+                let totalItems = categoryItems.length;
+                let gap = 25; // The gap value from CSS
+
+                // Fix for ensuring proper styling
+                categoryItems.forEach(item => {
+                    item.style.flex = '0 0 180px'; // Changed from 300px to match new size
+                });
+
+                function calculateDimensions() {
+                    const firstItem = categoryItems[0];
+                    // Get actual width including margins
+                    itemWidth = firstItem.offsetWidth + gap;
+                    // Calculate how many items can fit in the visible area
+                    const wrapperWidth = sliderWrapper.offsetWidth;
+                    itemsVisible = Math.max(1, Math.floor(wrapperWidth / itemWidth));
+                    
+                    // Update position and button states
+                    updateSliderPosition();
+                    updateButtonStates();
+                }
+
+                function updateSliderPosition() {
+                    const maxOffset = 0;
+                    const minOffset = -(Math.max(0, totalItems - itemsVisible)) * itemWidth;
+                    let offset = -currentIndex * itemWidth;
+
+                    // Clamp the offset to prevent overscrolling
+                    offset = Math.max(minOffset, Math.min(maxOffset, offset));
+                    
+                    slider.style.transform = `translateX(${offset}px)`;
+                }
+
+                function updateButtonStates() {
+                    if (prevCatBtn) prevCatBtn.disabled = currentIndex === 0;
+                    if (nextCatBtn) nextCatBtn.disabled = currentIndex >= totalItems - itemsVisible;
+                    
+                    // Visual feedback for disabled buttons
+                    if (prevCatBtn) prevCatBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+                    if (nextCatBtn) nextCatBtn.style.opacity = currentIndex >= totalItems - itemsVisible ? '0.5' : '1';
+                }
+
+                if (nextCatBtn) {
+                    nextCatBtn.addEventListener('click', () => {
+                        if (currentIndex < totalItems - itemsVisible) {
+                            currentIndex++;
+                            updateSliderPosition();
+                            updateButtonStates();
+                        }
+                    });
+                }
+
+                if (prevCatBtn) {
+                    prevCatBtn.addEventListener('click', () => {
+                        if (currentIndex > 0) {
+                            currentIndex--;
+                            updateSliderPosition();
+                            updateButtonStates();
+                        }
+                    });
+                }
+
+                // Initial calculation and setup
+                calculateDimensions();
+
+                // Recalculate on window resize
+                window.addEventListener('resize', calculateDimensions);
+                
+                // Make buttons visible since we have items
+                if (prevCatBtn) prevCatBtn.style.display = 'flex';
+                if (nextCatBtn) nextCatBtn.style.display = 'flex';
+            } else {
+                // Hide buttons if no items
+                if (prevCatBtn) prevCatBtn.style.display = 'none';
+                if (nextCatBtn) nextCatBtn.style.display = 'none';
+            }
+        }
+
+        // Initialize category slider with improved function
+        initCategorySlider();
+
+        // Dynamic category icon mapping
+        function getCategoryIcon(categoryName) {
+            // Convert to lowercase for case-insensitive matching
+            const name = categoryName.toLowerCase();
+            
+            // Define mapping of keywords to icons
+            const iconMap = {
+                // Education related
+                'education': 'fa-graduation-cap',
+                'school': 'fa-school',
+                'university': 'fa-university',
+                'learning': 'fa-book-open',
+                'books': 'fa-book',
+                'training': 'fa-chalkboard-teacher',
+                
+                // Health related
+                'health': 'fa-heartbeat',
+                'medical': 'fa-hospital',
+                'healthcare': 'fa-user-md',
+                'disease': 'fa-virus',
+                'cancer': 'fa-ribbon',
+                'santé': 'fa-heart',
+                
+                // Environment related
+                'environment': 'fa-leaf',
+                'eco': 'fa-seedling',
+                'climate': 'fa-cloud-sun',
+                'planet': 'fa-globe-americas',
+                'earth': 'fa-globe-africa',
+                'green': 'fa-tree',
+                'environnement': 'fa-leaf',
+                
+                // Animal related
+                'animal': 'fa-paw',
+                'wildlife': 'fa-hippo',
+                'pets': 'fa-dog',
+                'animaux': 'fa-paw',
+                
+                // Hunger related
+                'food': 'fa-utensils',
+                'hunger': 'fa-bread-slice',
+                'nutrition': 'fa-apple-alt',
+                'meal': 'fa-carrot',
+                'nourriture': 'fa-utensils',
+                
+                // Water related
+                'water': 'fa-tint',
+                'clean water': 'fa-hand-holding-water',
+                'sanitation': 'fa-faucet',
+                'eau': 'fa-tint',
+                
+                // Poverty related
+                'poverty': 'fa-hand-holding-usd',
+                'homeless': 'fa-home',
+                'housing': 'fa-house-user',
+                'shelter': 'fa-house-damage',
+                
+                // Children related
+                'children': 'fa-child',
+                'kids': 'fa-baby',
+                'youth': 'fa-child',
+                'enfants': 'fa-child',
+                'jeunesse': 'fa-user-graduate',
+                
+                // Elderly related
+                'elderly': 'fa-user-friends',
+                'seniors': 'fa-walking',
+                'aged care': 'fa-wheelchair',
+                
+                // Disability related
+                'disability': 'fa-wheelchair',
+                'special needs': 'fa-accessible-icon',
+                
+                // Disaster related
+                'disaster': 'fa-house-damage',
+                'emergency': 'fa-ambulance',
+                'relief': 'fa-hands-helping',
+                'crisis': 'fa-exclamation-triangle',
+                
+                // Rights/Justice related
+                'rights': 'fa-scales-balanced',
+                'justice': 'fa-gavel',
+                'equality': 'fa-balance-scale',
+                'freedom': 'fa-dove',
+                'democracy': 'fa-landmark',
+                
+                // Arts/Culture
+                'art': 'fa-palette',
+                'culture': 'fa-theater-masks',
+                'heritage': 'fa-monument',
+                'music': 'fa-music',
+                'sports': 'fa-basketball-ball',
+                
+                // Technology/Innovation
+                'technology': 'fa-laptop-code',
+                'digital': 'fa-microchip',
+                'innovation': 'fa-lightbulb',
+                'science': 'fa-flask'
+            };
+            
+            // Check if any keyword from the category name matches our map
+            for (const keyword in iconMap) {
+                if (name.includes(keyword)) {
+                    return `fas ${iconMap[keyword]}`;
+                }
+            }
+            
+            // Default icon if no match is found
+            return "fas fa-hands-helping";
+        }
+
+        // Apply dynamic icons to categories
+        function applyDynamicIcons() {
+            const iconElements = document.querySelectorAll('.category-icon-element');
+            
+            iconElements.forEach(icon => {
+                const categoryName = icon.getAttribute('data-category');
+                if (categoryName) {
+                    // Remove the default class
+                    icon.className = '';
+                    // Add the dynamically determined icon class
+                    icon.className = getCategoryIcon(categoryName);
+                }
+            });
+        }
+
+        // Apply dynamic category icons
+        applyDynamicIcons();
+
+        // Media slideshow functionality for featured campaigns
+        function initCampaignSlideshows() {
+            document.querySelectorAll('.media-slideshow').forEach(function(slideshow) {
+                const slides = slideshow.querySelectorAll('.media-slide');
+                const dots = slideshow.querySelectorAll('.media-dot');
+                const prevBtn = slideshow.querySelector('.prev-slide');
+                const nextBtn = slideshow.querySelector('.next-slide');
+
+                if (slides.length <= 1) return; // No need for controls if only one image
+
+                // Set up next/prev buttons
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent event bubbling
+                        let activeIndex = getActiveSlideIndex(slides);
+                        let newIndex = (activeIndex - 1 + slides.length) % slides.length;
+                        setActiveSlide(slides, dots, newIndex);
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent event bubbling
+                        let activeIndex = getActiveSlideIndex(slides);
+                        let newIndex = (activeIndex + 1) % slides.length;
+                        setActiveSlide(slides, dots, newIndex);
+                    });
+                }
+
+                // Set up dots
+                if (dots) {
+                    dots.forEach(function(dot, index) {
+                        dot.addEventListener('click', function(e) {
+                            e.stopPropagation(); // Prevent event bubbling
+                            setActiveSlide(slides, dots, index);
+                        });
+                    });
+                }
+            });
+        }
+
+        function getActiveSlideIndex(slides) {
+            for (let i = 0; i < slides.length; i++) {
+                if (slides[i].classList.contains('active')) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        function setActiveSlide(slides, dots, index) {
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (dots) {
+                dots.forEach(dot => dot.classList.remove('active'));
+            }
+
+            // Add active class to the selected slide and dot
+            slides[index].classList.add('active');
+            if (dots && dots[index]) {
+                dots[index].classList.add('active');
+            }
+        }
+
+        // Call this function after DOM is loaded
+        initCampaignSlideshows();
+
+        // Handle authentication required actions (likes and donations)
+        function setupAuthRequiredActions() {
+            // Get all like buttons
+            const likeButtons = document.querySelectorAll('.like-btn');
+            // Get all donate buttons
+            const donateButtons = document.querySelectorAll('.donate-btn');
+            
+            // Add click event handlers to like buttons
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Check if user is already authenticated (has a session)
+                    const isAuthenticated = button.getAttribute('data-authenticated') === 'true';
+                    
+                    if (!isAuthenticated) {
+                        e.preventDefault();
+                        // Show the auth modal
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'block';
+                        }
+                    }
+                    // If authenticated, the default action can proceed (handled by server)
+                });
+            });
+            
+            // Add click event handlers to donate buttons
+            donateButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Check if user is already authenticated
+                    const isAuthenticated = button.closest('.action-card').querySelector('.like-btn').getAttribute('data-authenticated') === 'true';
+                    
+                    if (!isAuthenticated) {
+                        e.preventDefault();
+                        // Show the auth modal
+                        const authModal = document.getElementById('authModal');
+                        if (authModal) {
+                            authModal.style.display = 'block';
+                        }
+                    }
+                    // If authenticated, proceed to the donation page
+                });
+            });
+        }
+
+        // Call the function to set up the auth-required actions
+        setupAuthRequiredActions();
+
+        // Initialize organizations slider functionality
+        function initOrganizationSlider() {
+            const sliderWrapper = document.querySelector('.organizations-slider-wrapper');
+            const slider = sliderWrapper ? sliderWrapper.querySelector('.organizations-slider') : null;
+            const prevOrgBtn = sliderWrapper ? sliderWrapper.querySelector('.prev-btn') : null;
+            const nextOrgBtn = sliderWrapper ? sliderWrapper.querySelector('.next-btn') : null;
+            const organizationItems = slider ? slider.querySelectorAll('.organization-item') : [];
+
+            if (slider && organizationItems.length > 0) {
+                let currentIndex = 0;
+                let itemWidth = 0;
+                let itemsVisible = 0;
+                let totalItems = organizationItems.length;
+                let gap = 25; // Gap between items
+
+                // Ensure consistent widths
+                organizationItems.forEach(item => {
+                    item.style.flex = '0 0 300px';
+                });
+
+                function calculateDimensions() {
+                    const firstItem = organizationItems[0];
+                    itemWidth = firstItem.offsetWidth + gap;
+                    const wrapperWidth = sliderWrapper.offsetWidth;
+                    itemsVisible = Math.max(1, Math.floor(wrapperWidth / itemWidth));
+                    
+                    updateSliderPosition();
+                    updateButtonStates();
+                }
+
+                function updateSliderPosition() {
+                    const maxOffset = 0;
+                    const minOffset = -(Math.max(0, totalItems - itemsVisible)) * itemWidth;
+                    let offset = -currentIndex * itemWidth;
+                    
+                    offset = Math.max(minOffset, Math.min(maxOffset, offset));
+                    slider.style.transform = `translateX(${offset}px)`;
+                }
+
+                function updateButtonStates() {
+                    if (prevOrgBtn) prevOrgBtn.disabled = currentIndex === 0;
+                    if (nextOrgBtn) nextOrgBtn.disabled = currentIndex >= totalItems - itemsVisible;
+                    
+                    if (prevOrgBtn) prevOrgBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+                    if (nextOrgBtn) nextOrgBtn.style.opacity = currentIndex >= totalItems - itemsVisible ? '0.5' : '1';
+                }
+
+                if (nextOrgBtn) {
+                    nextOrgBtn.addEventListener('click', () => {
+                        if (currentIndex < totalItems - itemsVisible) {
+                            currentIndex++;
+                            updateSliderPosition();
+                            updateButtonStates();
+                        }
+                    });
+                }
+
+                if (prevOrgBtn) {
+                    prevOrgBtn.addEventListener('click', () => {
+                        if (currentIndex > 0) {
+                            currentIndex--;
+                            updateSliderPosition();
+                            updateButtonStates();
+                        }
+                    });
+                }
+
+                // Initial setup
+                calculateDimensions();
+                window.addEventListener('resize', calculateDimensions);
+                
+                // Make buttons visible
+                if (prevOrgBtn) prevOrgBtn.style.display = 'flex';
+                if (nextOrgBtn) nextOrgBtn.style.display = 'flex';
+            } else {
+                // Hide buttons if no items
+                if (prevOrgBtn) prevOrgBtn.style.display = 'none';
+                if (nextOrgBtn) nextOrgBtn.style.display = 'none';
+            }
+        }
+
+        // Call the organization slider initialization
+        initOrganizationSlider();
+
+    });
+    </script>
+</body>
+</html>
